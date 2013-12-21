@@ -48,6 +48,7 @@ Forwarding                    https://77218862.ngrok.com -> 127.0.0.1:5000
 You can now use `http://77218862.ngrok.com` (or whatever random URL you are given) to register your local service broker to your external or bosh-lite Cloud Foundry:
 
 ```
+$ gcf delete-service-broker etcd-dev # only if already registered at a previous ngrok URL
 $ gcf create-service-broker etcd-dev cc secret http://77218862.ngrok.com
 ```
 
