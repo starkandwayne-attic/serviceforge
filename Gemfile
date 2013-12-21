@@ -38,3 +38,13 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 
 gem "puma"
 gem "foreman"
+
+group :test do
+  gem "rspec-rails"
+  gem "rspec-fire"
+end
+
+group :development do
+  gem 'guard'
+  gem 'guard-rspec'
+end
