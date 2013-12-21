@@ -1,0 +1,58 @@
+# This file should not be used in deployed environments. Instead, set
+# the SETTINGS_PATH environment variable to point to a configuration
+# file that contains these settings.
+
+defaults: &defaults
+  log_path: 'log/<%= Rails.env %>.log'
+  auth_username: cc
+
+  services:
+  - name: etcd-dedicated
+    id: b9698740-4810-4dc5-8da6-54581f5108c4
+    description: "etcd: A highly-available key value store for shared configuration and service discovery"
+    tags:
+      - etcd
+      - nosql
+    metadata:
+      provider:
+        name: "Stark & Wayne LLC"
+      listing:
+        imageUrl: ~
+        blurb: A highly-available key value store for shared configuration and service discovery.
+        long_description: A highly-available key value store for shared configuration and service discovery. High-availablity clusters are available.
+    plans:
+    - name: 1-server
+      id: 6e8ece8c-4fe6-4d58-9aeb-497d6aeba113
+      description: Etcd running on a single dedicated server
+      metadata:
+        cost: 100
+        bullets:
+        - content: Etcd server
+        - content: Single small server
+        - content: Development-only, no high-availability
+    - name: 3-servers
+      id: 1a448d0e-bc54-4a16-8d2f-ab701be20c40
+      description: Etcd running across three dedicated servers
+      metadata:
+        cost: 300
+        bullets:
+        - content: Etcd servers
+        - content: 3 small servers
+        - content: High availability, leader election
+    - name: 5-servers
+      id: 5cfa57fc-1474-4eb9-9afb-
+      description: Etcd running across five dedicated servers
+      metadata:
+        cost: 500
+        bullets:
+        - content: Etcd servers
+        - content: 3 small servers
+        - content: High availability, leader election
+
+development:
+  auth_password: 'secret'
+  <<: *defaults
+
+test:
+  auth_password: 'secret'
+  <<: *defaults
