@@ -1,5 +1,6 @@
 class Service
   attr_reader :id, :name, :description, :tags, :metadata, :plans
+  cattr_accessor :all
 
   def self.build(attrs)
     plan_attrs = attrs['plans'] || []

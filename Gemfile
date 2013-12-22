@@ -47,3 +47,4 @@ group :development do
 end
 
 gem "settingslogic"
+gem "etcd"

@@ -1,11 +1,12 @@
 class V2::ServiceInstancesController < V2::BaseController
   # This is actually the create
   def update
-    quota = Settings['services'][0]['max_db_per_node']
-    existing_instances = ServiceInstance.get_number_of_existing_instances
-
-    if !quota or existing_instances < quota
-      instance = ServiceInstance.new(id: params.fetch(:id))
+    if true
+      instance = ServiceInstance.new({
+        id: params.fetch(:id),
+        service_id: params.fetch(:service_id),
+        plan_id: params.fetch(:plan_id)
+      })
       instance.save
 
       render status: 201, json: instance

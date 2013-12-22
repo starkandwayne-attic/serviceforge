@@ -8,6 +8,6 @@ class V2::CatalogsController < V2::BaseController
   private
 
   def services
-    (Settings['services'] || []).map {|attrs| Service.build(attrs)}
+    Service.all
   end
 end
