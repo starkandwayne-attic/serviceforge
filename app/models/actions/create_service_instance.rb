@@ -12,12 +12,12 @@ class Actions::CreateServiceInstance
   end
 
   def destroy
-    $etcd.delete("/create_service_instances/#{service_instance_id}")
+    $etcd.delete("/actions/create_service_instances/#{service_instance_id}")
   end
 
   def to_json(*)
     {
-      "service_instance_id": service_instance_id
+      "service_instance_id" => service_instance_id
     }.to_json
   end
 end
