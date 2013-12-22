@@ -48,3 +48,5 @@ end
 
 gem "settingslogic"
 gem "etcd"
+
+gem "uuidtools"

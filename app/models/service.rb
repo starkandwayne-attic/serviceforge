@@ -2,6 +2,10 @@ class Service
   attr_reader :id, :name, :description, :tags, :metadata, :plans, :bosh
   cattr_accessor :all
 
+  def self.find_by_id(id)
+    all.find { |service| service.id == id }
+  end
+
   def self.build(attrs)
     plan_attrs = attrs['plans'] || []
     plans      = plan_attrs.map { |attr| Plan.build(attr) }

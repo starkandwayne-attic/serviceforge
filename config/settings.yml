@@ -29,6 +29,8 @@ defaults: &defaults
       password: admin
       dns_root: ~
       infrastructure: warden
+      # director_uuid: - calculated after login
+      # cpi: - cpi calculated after login (warden, openstack)
       releases:
       - name: etcd
         version: 2
