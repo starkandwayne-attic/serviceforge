@@ -6,7 +6,7 @@ class ServiceInstance
   attr_accessor :plan_id
 
   def self.find_by_id(id)
-    if node = $etcd.get("/service_instances/#{id}")
+    if node = $etcd.get("/service_instances/#{id}/model")
       attributes = JSON.parse(node.value)
       new(attributes)
     end
@@ -15,11 +15,11 @@ class ServiceInstance
   end
 
   def save
-    $etcd.set("/service_instances/#{id}", to_json)
+    $etcd.set("/service_instances/#{id}/model", to_json)
   end
 
   def destroy
-    $etcd.delete("/service_instances/#{id}")
+    $etcd.delete("/service_instances/#{id}/model")
   end
 
   def to_json(*)
