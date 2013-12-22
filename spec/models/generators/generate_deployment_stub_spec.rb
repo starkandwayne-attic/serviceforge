@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe GenerateDeploymentStub do
-  let(:service_instance) { instance_double("ServiceInstance") }
+describe Generators::GenerateDeploymentStub do
   let(:deployment_uuid_name) { "SOME-UUID-VALUE" }
   let(:director_uuid) { "director-uuid" }
 
@@ -11,7 +10,7 @@ describe GenerateDeploymentStub do
     # uuidtools = class_double("UUIDTools::UUID")
     # uuidtools.should_receive(:timestamp_create).and_return(deployment_uuid_name)
 
-    stub = GenerateDeploymentStub.new(bosh_director_uuid: director_uuid, deployment_name: deployment_uuid_name).generate_stub
+    stub = Generators::GenerateDeploymentStub.new(bosh_director_uuid: director_uuid, deployment_name: deployment_uuid_name).generate_stub
     expect(stub).to eq(<<-YAML)
 ---
 meta:

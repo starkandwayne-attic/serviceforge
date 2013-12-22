@@ -1,4 +1,4 @@
-class GenerateDeploymentStub
+class Generators::GenerateDeploymentStub
   include ActiveModel::Model
 
   attr_accessor :bosh_director_uuid, :deployment_name
