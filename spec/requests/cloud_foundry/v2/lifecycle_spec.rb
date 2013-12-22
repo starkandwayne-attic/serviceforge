@@ -13,7 +13,7 @@ describe 'the service lifecycle' do
 
   before do
     begin
-      $etcd.delete("/service_instances/#{instance_id}", recursive: true)
+      $etcd.delete("/service_instances", recursive: true)
     rescue Net::HTTPServerException
     end
   end
