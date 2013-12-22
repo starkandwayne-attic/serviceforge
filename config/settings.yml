@@ -6,6 +6,9 @@ defaults: &defaults
   log_path: 'log/<%= Rails.env %>.log'
   auth_username: cc
 
+  bin_paths:
+    - <%= Rails.root %>/vendor/bundle/bin
+
   services:
   - name: etcd-dedicated-bosh-lite
     id: b9698740-4810-4dc5-8da6-54581f5108c4
@@ -24,6 +27,8 @@ defaults: &defaults
       target: https://192.168.50.4:25555
       username: admin
       password: admin
+      dns_root: ~
+      infrastructure: warden
       releases:
       - name: etcd
         version: 2

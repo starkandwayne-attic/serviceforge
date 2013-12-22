@@ -1,0 +1,1 @@
+ENV['PATH'] = (Settings['bin_paths'] || []).join(":") + ":" + ENV['PATH']

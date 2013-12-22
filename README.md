@@ -11,6 +11,7 @@ Services as a Service. Service Broker for Cloud Foundry that is backed by BOSH.
 ## Run locally
 
 ```
+$ bundle install --local --binstubs vendor/bundle/bin
 $ foreman start -e config/environments/development/procfile.env
 ```
 
