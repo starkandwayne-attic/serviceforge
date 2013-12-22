@@ -12,18 +12,9 @@ describe 'the service lifecycle' do
   end
 
   before do
-    [
-      "/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}/model",
-      "/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}",
-      "/v2/service_instances/#{instance_id}/service_bindings",
-      "/v2/service_instances/#{instance_id}/model",
-      "/v2/service_instances/#{instance_id}",
-      "/v2/service_instances"
-    ].each do |path|
-      begin
-        $etcd.delete(path)
-      rescue
-      end
+    begin
+      $etcd.delete("/service_instances/#{instance_id}", recursive: true)
+    rescue Net::HTTPServerException
     end
   end
 
