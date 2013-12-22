@@ -2,6 +2,12 @@
 
 Services as a Service. Service Broker for Cloud Foundry that is backed by BOSH.
 
+       _____                 ___    ___   _____
+      / ___/___  ______   __/   |  /   | / ___/
+      \__ \/ _ \/ ___/ | / / /| | / /| | \__ \ 
+     ___/ /  __/ /   | |/ / ___ |/ ___ |___/ / 
+    /____/\___/_/    |___/_/  |_/_/  |_/____/  
+
 ## Dependencies
 
 * ruby 1.9+
