@@ -1,0 +1,46 @@
+meta:
+  environment: etcd-openstack
+
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu
+    version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 50
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+
+jobs:
+  - name: etcd_leader_z1
+    instances: 1
+    networks:
+      - name: etcd1
+        static_ips: ~
+  - name: etcd_z1
+    instances: 2
+    networks:
+      - name: etcd1
+        static_ips: ~
+    properties:
+      etcd:
+        leader_address: (( "0.etcd-leader-z1.etcd1." meta.environment ".microbosh" ))
+
+compilation:
+  cloud_properties:
+    instance_type: m1.small
+
+resource_pools:
+  - name: small_z1
+    cloud_properties:
+      instance_type: m1.small
+
+networks:
+  - name: floating
+    type: vip
+    cloud_properties: {}
+  - name: etcd1
+    type: dynamic
+    cloud_properties:
+      security_groups:
+        - default

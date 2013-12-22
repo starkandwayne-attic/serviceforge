@@ -1,0 +1,23 @@
+networks: (( merge ))
+
+meta:
+  environment: ~
+
+jobs:
+  - name: etcd_leader_z1
+    template: etcd
+    instances: 0
+    resource_pool: small_z1
+    networks:
+      - name: etcd1
+        static_ips: ~
+  - name: etcd_z1
+    template: etcd
+    instances: 0
+    resource_pool: small_z1
+    networks:
+      - name: etcd1
+        static_ips: ~
+    properties:
+      etcd:
+        leader_address: (( merge ))
