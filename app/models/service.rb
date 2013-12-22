@@ -1,5 +1,5 @@
 class Service
-  attr_reader :id, :name, :description, :tags, :metadata, :plans
+  attr_reader :id, :name, :description, :tags, :metadata, :plans, :bosh
   cattr_accessor :all
 
   def self.build(attrs)
@@ -14,6 +14,7 @@ class Service
     @description = attrs.fetch('description')
     @tags        = attrs.fetch('tags', [])
     @metadata    = attrs.fetch('metadata', nil)
+    @bosh        = attrs.fetch('bosh', nil)
     @plans       = attrs.fetch('plans', [])
   end
 
@@ -28,6 +29,7 @@ class Service
       'description' => self.description,
       'tags'        => self.tags,
       'metadata'    => self.metadata,
+      'bosh'        => self.bosh,
       'plans'       => self.plans.map(&:to_hash),
       'bindable'    => self.bindable?
     }

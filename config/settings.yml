@@ -7,7 +7,7 @@ defaults: &defaults
   auth_username: cc
 
   services:
-  - name: etcd-dedicated
+  - name: etcd-dedicated-bosh-lite
     id: b9698740-4810-4dc5-8da6-54581f5108c4
     description: "etcd: A highly-available key value store for shared configuration and service discovery"
     tags:
@@ -20,6 +20,14 @@ defaults: &defaults
         imageUrl: ~
         blurb: A highly-available key value store for shared configuration and service discovery.
         long_description: A highly-available key value store for shared configuration and service discovery. High-availablity clusters are available.
+    bosh:
+      target: https://192.168.50.4:25555
+      username: admin
+      password: admin
+      releases:
+      - name: etcd
+        version: 2
+        url: ~
     plans:
     - name: 1-server
       id: 6e8ece8c-4fe6-4d58-9aeb-497d6aeba113
