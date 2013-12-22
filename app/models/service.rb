@@ -29,7 +29,6 @@ class Service
       'description' => self.description,
       'tags'        => self.tags,
       'metadata'    => self.metadata,
-      'bosh'        => self.bosh,
       'plans'       => self.plans.map(&:to_hash),
       'bindable'    => self.bindable?
     }
