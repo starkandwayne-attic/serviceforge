@@ -1,2 +1,2 @@
 # TODO: make configurable via env var & config file
-$etcd = Etcd.client(port: 5200)
+$etcd = Etcd.client(port: ENV['ETCD_PORT'])

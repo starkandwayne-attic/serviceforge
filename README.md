@@ -84,3 +84,9 @@ etcd-dedicated   1-server, 5-servers, 3-servers   etcd: A highly-available key v
 
 ## Running Tests
 
+The integration tests require `etcd` to be running.
+
+```
+$ foreman start -e config/environments/test/procfile.env
+$ guard
+```
