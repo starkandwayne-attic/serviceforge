@@ -49,5 +49,7 @@ end
 gem "settingslogic"
 gem "etcd"
 
+gem "bosh_cli", "~> 1.5.0.pre"
+
 gem "uuidtools"
 gem "escape"
