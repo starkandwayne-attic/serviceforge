@@ -19,6 +19,9 @@ describe Actions::CreateServiceInstance do
 
 
   it "has lifecycle" do
+    uuid_klass = class_double("UUIDTools::UUID").as_stubbed_const
+    uuid_klass.should_receive(:timestamp_create).and_return(deployment_name)
+
     action = Actions::CreateServiceInstance.new(service_id: service_id, service_instance_id: service_instance_id)
     action.save
 
@@ -28,7 +31,8 @@ describe Actions::CreateServiceInstance do
     data = JSON.parse($etcd.get("/actions/create_service_instances/#{service_instance_id}").value)
     expect(data).to eq({
       'service_id' => service_id,
-      'service_instance_id' => service_instance_id
+      'service_instance_id' => service_instance_id,
+      'deployment_name' => deployment_name
     })
 
     ##
@@ -37,9 +41,6 @@ describe Actions::CreateServiceInstance do
     service_klass = class_double("Service").as_stubbed_const
     service_klass.should_receive(:find_by_id).and_return(service)
     service.should_receive(:bosh).and_return({"director_uuid" => director_uuid})
-
-    uuid_klass = class_double("UUIDTools::UUID").as_stubbed_const
-    uuid_klass.should_receive(:timestamp_create).and_return(deployment_name)
 
     gds_klass = class_double("Generators::GenerateDeploymentStub").as_stubbed_const
     gds_klass.should_receive(:new).with({bosh_director_uuid: director_uuid, deployment_name: deployment_name}).and_return(generator)

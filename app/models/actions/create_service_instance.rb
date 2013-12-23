@@ -12,11 +12,13 @@ class Actions::CreateServiceInstance
   attr_accessor :service_id, :service_instance_id, :deployment_name
 
   def save
+    generate_deployment_uuid_name
     $etcd.set("/actions/create_service_instances/#{service_instance_id}", to_json)
   end
 
   def perform
     deployment_stub = generate_deployment_stub
+    deployment_manifest = generate_deployment_manifest(deployment_stub)
   end
 
   def destroy
@@ -26,14 +28,18 @@ class Actions::CreateServiceInstance
   def to_json(*)
     {
       "service_id" => service_id,
-      "service_instance_id" => service_instance_id
+      "service_instance_id" => service_instance_id,
+      "deployment_name" => deployment_name
     }.to_json
   end
 
   private
   def generate_deployment_stub
-    generate_deployment_uuid_name
     Generators::GenerateDeploymentStub.new(bosh_director_uuid: director_uuid, deployment_name: deployment_name).generate_stub
+  end
+
+  def generate_deployment_manifest(deployment_stub)
+    
   end
 
   def service_instance
