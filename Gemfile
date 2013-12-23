@@ -50,3 +50,4 @@ gem "settingslogic"
 gem "etcd"
 
 gem "uuidtools"
+gem "escape"
