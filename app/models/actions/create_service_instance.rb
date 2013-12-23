@@ -6,6 +6,14 @@
 #
 # For service instances provisioned via BOSH, then a deployment manifest is generated and
 # the Service's BOSH is given the request to deploy the Service's release.
+#
+# Example usage:
+#   action = Actions::CreateServiceInstance.new(
+#     service_id: 'b9698740-4810-4dc5-8da6-54581f5108c4', # etcd-dedicated-bosh-lite
+#     service_plan_id: '6e8ece8c-4fe6-4d58-9aeb-497d6aeba113', # 1-server
+#     service_instance_id: 'foobar')
+#   action.save
+#   action.perform
 class Actions::CreateServiceInstance
   include ActiveModel::Model
 
