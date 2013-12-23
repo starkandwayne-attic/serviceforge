@@ -52,7 +52,6 @@ describe Actions::CreateServiceInstance do
     ##
     service_klass = class_double('Service').as_stubbed_const
     service_klass.should_receive(:find_by_id).and_return(service)
-    service.should_receive(:bosh).and_return({'director_uuid' => director_uuid})
     service.should_receive(:find_plan_by_id).and_return(service_plan)
     service.should_receive(:bosh_service_stub_paths).and_return(service_stub_paths)
     service_plan.should_receive(:deployment_stub).and_return(service_plan_stub)
@@ -69,8 +68,9 @@ describe Actions::CreateServiceInstance do
     }).and_return(manifest_generator)
     manifest_generator.should_receive(:generate_manifest).and_return(deployment_manifest)
 
-    action.should_receive(:bosh_director_client).and_return(bosh_director_client)
-    bosh_director_client.should_receive(:deploy).with(deployment_manifest).and_return(bosh_deploy_task_id)
+    action.should_receive(:bosh_director_client).twice.and_return(bosh_director_client)
+    bosh_director_client.should_receive(:deploy).with(deployment_manifest).and_return([:running, bosh_deploy_task_id])
+    bosh_director_client.should_receive(:director_uuid).and_return(director_uuid)
 
     action.perform
 

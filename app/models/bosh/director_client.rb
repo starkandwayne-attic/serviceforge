@@ -25,6 +25,10 @@ class Bosh::DirectorClient
     @api ||= Bosh::Cli::Client::Director.new(target, username, password, api_options)
   end
 
+  def director_uuid
+    @director_uuid ||= api.get_status["uuid"]
+  end
+
   # Calls out to BOSH director to deploy/re-deploy a deployment
   # Returns [status, bosh_task_id]
   def deploy(yaml_manifest)

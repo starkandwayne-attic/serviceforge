@@ -32,6 +32,7 @@ class Actions::CreateServiceInstance
   def perform
     deployment_stub = generate_deployment_stub
     deployment_manifest = generate_deployment_manifest(deployment_stub)
+
     perform_bosh_deploy_and_save_task_id(deployment_manifest)
   end
 
@@ -67,7 +68,7 @@ class Actions::CreateServiceInstance
   end
 
   def perform_bosh_deploy_and_save_task_id(deployment_manifest)
-    self.bosh_task_id = bosh_director_client.deploy(deployment_manifest)
+    status, self.bosh_task_id = bosh_director_client.deploy(deployment_manifest)
     save
   end
 
@@ -88,11 +89,11 @@ class Actions::CreateServiceInstance
   end
 
   def director_uuid
-    service.bosh["director_uuid"]
+    bosh_director_client.director_uuid
   end
 
   def bosh_director_client
-    service.bosh_director_client
+    service.bosh
   end
 
   def generate_deployment_uuid_name

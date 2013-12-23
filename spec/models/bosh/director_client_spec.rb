@@ -18,4 +18,11 @@ describe Bosh::DirectorClient do
   describe "#release_templates builds Bosh::ReleaseTemplates" do
     it { expect(subject.release_templates).to be_instance_of(Bosh::ReleaseTemplates) }
   end
+
+  describe "#director_uuid cached on connection" do
+    it do
+      subject.api.should_receive(:get_status).and_return({"name"=>"Bosh Lite Director", "uuid"=>"UUID"})
+      expect(subject.director_uuid).to eq("UUID")
+    end
+  end
 end
