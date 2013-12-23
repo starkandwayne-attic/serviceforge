@@ -51,7 +51,7 @@ class Actions::CreateServiceInstance
   end
 
   def perform_bosh_deploy_and_save_task_id(deployment_manifest)
-    self.bosh_task_id = bosh_director_client.deploy_and_return_task_id(deployment_manifest)
+    self.bosh_task_id = bosh_director_client.deploy(deployment_manifest)
     save
   end
 

@@ -64,7 +64,7 @@ describe Actions::CreateServiceInstance do
     manifest_generator.should_receive(:generate_manifest).and_return(deployment_manifest)
 
     action.should_receive(:bosh_director_client).and_return(bosh_director_client)
-    bosh_director_client.should_receive(:deploy_and_return_task_id).with(deployment_manifest).and_return(bosh_deploy_task_id)
+    bosh_director_client.should_receive(:deploy).with(deployment_manifest).and_return(bosh_deploy_task_id)
 
     action.perform
 

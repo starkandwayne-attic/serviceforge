@@ -1,5 +1,7 @@
 require 'cli' # bosh_cli
 
+# Wrapper around Bosh::Cli::Client::Director
+# Exposes the required Director methods.
 class BoshDirectorClient
   include ActiveModel::Model
 
@@ -12,7 +14,7 @@ class BoshDirectorClient
   attr_accessor :dns_root, :cpi
 
   def self.build(attrs)
-    attrs['api_options'] ||= {}
+    attrs['api_options'] ||= {no_track: true}
     new(attrs)
   end
 
@@ -21,7 +23,9 @@ class BoshDirectorClient
   end
 
   # Calls out to BOSH director to deploy/re-deploy a deployment
-  def deploy_and_return_task_id(yaml_manifest)
-    
+  # Returns [status, bosh_task_id]
+  def deploy(yaml_manifest)
+    status, task_id = api.deploy(yaml_manifest)
+    [status, task_id]
   end
 end
