@@ -41,13 +41,21 @@ class Actions::CreateServiceInstance
   end
 
   private
+  def service_stub_paths
+    service.bosh_service_stub_paths
+  end
+
   def generate_deployment_stub
     Generators::GenerateDeploymentStub.new(bosh_director_uuid: director_uuid, deployment_name: deployment_name).generate_stub
   end
 
   def generate_deployment_manifest(deployment_stub)
     # TODO how pass through binding information? (not required for etcd or redis)
-    Generators::GenerateDeploymentManifest.new(deployment_stub: deployment_stub, service_plan_stub: service_plan_stub).generate_manifest
+    Generators::GenerateDeploymentManifest.new({
+      service_stub_paths: service_stub_paths,
+      deployment_stub: deployment_stub,
+      service_plan_stub: service_plan_stub
+    }).generate_manifest
   end
 
   def perform_bosh_deploy_and_save_task_id(deployment_manifest)

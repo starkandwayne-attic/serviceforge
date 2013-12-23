@@ -4,7 +4,10 @@ require 'tempfile'
 class Generators::GenerateDeploymentManifest
   include ActiveModel::Model
 
+  # File paths to YAML files
   attr_accessor :service_stub_paths
+
+  # YAML strings
   attr_accessor :service_plan_stub, :deployment_stub
 
   def generate_manifest

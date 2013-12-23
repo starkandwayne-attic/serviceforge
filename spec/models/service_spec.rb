@@ -212,6 +212,28 @@ describe Service do
     it { expect(subject.bosh.target).to eq('https://192.168.50.4:25555') }
   end
 
+  describe "#bosh_service_stub_paths" do
+    subject {
+      Service.build(
+        'id'          => 'my-id',
+        'name'        => 'my-name',
+        'description' => 'my-desc',
+        'bosh' => {
+          'target' => 'https://192.168.50.4:25555',
+          'username' => 'admin',
+          'password' => 'admin',
+          'release_templates' => {
+            'base_path' => '/path/to',
+            'templates' => %w[file1.yml file2.yml]
+          }
+        }
+      )
+    }
+    it do
+      expect(subject.bosh_service_stub_paths).to eq(["/path/to/file1.yml", "/path/to/file2.yml"])
+    end
+  end
+
 end
 
 

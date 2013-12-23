@@ -12,6 +12,7 @@ describe Actions::CreateServiceInstance do
   let(:service_plan)          { instance_double("Plan") }
   let(:service_id)            { 'service-id-1' }
   let(:service_instance_id)   { 'service-instance-id-1' }
+  let(:service_stub_paths)    { %w[/path/to/file1.yml /path/to/file2.yml] }
   let(:deployment_stub)       { "---\nname: something" }
   let(:service_plan_stub)     { "---\njobs:\n  - name: etc\n  - instances: 2" }
   let(:director_uuid)         { "director-uuid" }
@@ -53,6 +54,7 @@ describe Actions::CreateServiceInstance do
     service_klass.should_receive(:find_by_id).and_return(service)
     service.should_receive(:bosh).and_return({'director_uuid' => director_uuid})
     service.should_receive(:find_plan_by_id).and_return(service_plan)
+    service.should_receive(:bosh_service_stub_paths).and_return(service_stub_paths)
     service_plan.should_receive(:deployment_stub).and_return(service_plan_stub)
 
     gds_klass = class_double('Generators::GenerateDeploymentStub').as_stubbed_const
@@ -60,7 +62,11 @@ describe Actions::CreateServiceInstance do
     stub_generator.should_receive(:generate_stub).and_return(deployment_stub)
 
     gdm_klass = class_double("Generators::GenerateDeploymentManifest").as_stubbed_const
-    gdm_klass.should_receive(:new).with({deployment_stub: deployment_stub, service_plan_stub: service_plan_stub}).and_return(manifest_generator)
+    gdm_klass.should_receive(:new).with({
+      service_stub_paths: service_stub_paths,
+      deployment_stub: deployment_stub,
+      service_plan_stub: service_plan_stub
+    }).and_return(manifest_generator)
     manifest_generator.should_receive(:generate_manifest).and_return(deployment_manifest)
 
     action.should_receive(:bosh_director_client).and_return(bosh_director_client)

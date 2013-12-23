@@ -48,4 +48,8 @@ class Service
     plans.find { |plan| plan.id == plan_id }
   end
 
+  def bosh_service_stub_paths
+    bosh.release_templates.template_paths
+  end
+
 end
