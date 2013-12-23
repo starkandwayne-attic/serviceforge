@@ -33,6 +33,8 @@ class Actions::CreateServiceInstance
     deployment_stub = generate_deployment_stub
     deployment_manifest = generate_deployment_manifest(deployment_stub)
 
+    puts deployment_manifest
+
     perform_bosh_deploy_and_save_task_id(deployment_manifest)
   end
 

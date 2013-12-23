@@ -19,7 +19,7 @@ meta:
 director_uuid: PLACEHOLDER-DIRECTOR-UUID
 releases:
   - name: etcd
-    version: latest
+    version: 2
 properties:
   etcd: {}
     YAML

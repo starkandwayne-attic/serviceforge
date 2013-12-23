@@ -3,7 +3,7 @@ meta:
 
   stemcell:
     name: bosh-stemcell
-    version: latest
+    version: 993
 
 update:
   canaries: 1
