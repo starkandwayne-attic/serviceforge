@@ -9,14 +9,14 @@
 class Actions::CreateServiceInstance
   include ActiveModel::Model
 
-  attr_accessor :service_id, :service_instance_id, :deployment_uuid_name
+  attr_accessor :service_id, :service_instance_id, :deployment_name
 
   def save
     $etcd.set("/actions/create_service_instances/#{service_instance_id}", to_json)
   end
 
   def perform
-    deployment_stub
+    deployment_stub = generate_deployment_stub
   end
 
   def destroy
@@ -31,9 +31,9 @@ class Actions::CreateServiceInstance
   end
 
   private
-  def deployment_stub
+  def generate_deployment_stub
     generate_deployment_uuid_name
-    Generators::GenerateDeploymentStub.new(bosh_director_uuid: director_uuid, deployment_name: deployment_uuid_name).generate_stub
+    Generators::GenerateDeploymentStub.new(bosh_director_uuid: director_uuid, deployment_name: deployment_name).generate_stub
   end
 
   def service_instance
@@ -49,6 +49,6 @@ class Actions::CreateServiceInstance
   end
 
   def generate_deployment_uuid_name
-    self.deployment_uuid_name ||= UUIDTools::UUID.timestamp_create.to_s
+    self.deployment_name ||= UUIDTools::UUID.timestamp_create.to_s
   end
 end
