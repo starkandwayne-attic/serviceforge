@@ -9,14 +9,14 @@ describe Actions::CreateServiceInstance do
   let(:stub_generator)        { instance_double("Generators::GenerateDeploymentStub") }
   let(:manifest_generator)    { instance_double("Generators::GenerateDeploymentManifest") }
   let(:service)               { instance_double("Service") }
-  let(:service_plan)          { instance_double("Plan") }
   let(:service_id)            { 'service-id-1' }
-  let(:deployment_name_prefix) { 'etcd' }
+  let(:service_plan)          { instance_double("Plan") }
   let(:service_instance_id)   { 'service-instance-id-1' }
   let(:service_stub_paths)    { %w[/path/to/file1.yml /path/to/file2.yml] }
   let(:deployment_stub)       { "---\nname: something" }
   let(:service_plan_stub)     { "---\njobs:\n  - name: etc\n  - instances: 2" }
   let(:director_uuid)         { "director-uuid" }
+  let(:deployment_name_prefix) { 'etcd' }
   let(:deployment_uuid)       { "deployment-uuid" }
   let(:deployment_name)       { "#{deployment_name_prefix}-#{deployment_uuid}" }
   let(:deployment_manifest)   { "---\nname: something\ndirector_uuid: director-uuid" }

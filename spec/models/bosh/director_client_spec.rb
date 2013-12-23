@@ -25,4 +25,26 @@ describe Bosh::DirectorClient do
       expect(subject.director_uuid).to eq("UUID")
     end
   end
+
+  describe "#deploy" do
+    describe "returns [:running, task_id]" do
+      before {
+        deploy_manifest = "--- {}"
+        subject.api.should_receive(:deploy).with(deploy_manifest).and_return([:running, 123])
+        @status, @task_id = subject.deploy(deploy_manifest)
+      }
+      it { expect(@status).to eq(:running) }
+      it { expect(@task_id).to eq(123) }
+    end
+  end
+
+  describe "#delete" do
+    before {
+      deployment_name = "foobar"
+      subject.api.should_receive(:delete_deployment).with(deployment_name, force: true).and_return([:running, 123])
+      @status, @task_id = subject.delete(deployment_name)
+    }
+    it { expect(@status).to eq(:running) }
+    it { expect(@task_id).to eq(123) }
+  end
 end

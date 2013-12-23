@@ -20,7 +20,7 @@ meta:
 director_uuid: #{director_uuid}
 releases:
   - name: etcd
-    version: latest
+    version: 2
 properties:
   etcd: {}
     YAML

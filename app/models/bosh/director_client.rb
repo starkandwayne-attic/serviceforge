@@ -35,4 +35,9 @@ class Bosh::DirectorClient
     status, task_id = api.deploy(yaml_manifest)
     [status, task_id]
   end
+
+  def delete(deployment_name)
+    status, task_id = api.delete_deployment(deployment_name, force: true)
+    [status, task_id]
+  end
 end
