@@ -88,8 +88,5 @@ describe Actions::CreateServiceInstance do
       'bosh_task_id' => bosh_deploy_task_id
     })
 
-
-    action.destroy
-    expect{ $etcd.get("/actions/create_service_instances/#{service_instance_id}") }.to raise_error(Net::HTTPServerException)
   end
 end

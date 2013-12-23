@@ -38,10 +38,6 @@ class Actions::CreateServiceInstance
     perform_bosh_deploy_and_save_task_id(deployment_manifest)
   end
 
-  def destroy
-    $etcd.delete("/actions/create_service_instances/#{service_instance_id}")
-  end
-
   def to_json(*)
     {
       "service_id" => service_id,
