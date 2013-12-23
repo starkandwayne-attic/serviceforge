@@ -35,7 +35,7 @@ class Generators::GenerateDeploymentManifest
   end
 
   def spiff_cmd(args)
-    Escape.shell_command(["spiff", *(args.flatten)])
+    Escape.shell_command(["spiff", "merge", *(args.flatten)])
   end
 
   # Store contents in a tempfile and return File object
@@ -43,6 +43,7 @@ class Generators::GenerateDeploymentManifest
   def tempfile(name, contents=nil)
     file = Tempfile.new(name)
     file.write(contents) unless contents.blank?
+    file.rewind
     file
   end
 end

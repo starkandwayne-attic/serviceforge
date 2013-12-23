@@ -21,7 +21,7 @@ describe Generators::GenerateDeploymentManifest do
   describe "#spiff_merge" do
     subject { Generators::GenerateDeploymentManifest.new }
     it "merges list of templates into output file" do
-      subject.should_receive(:`).with("spiff file1.yml file2.yml > /path/output.yml")
+      subject.should_receive(:`).with("spiff merge file1.yml file2.yml > /path/output.yml")
       subject.spiff_merge(%w[file1.yml file2.yml], "/path/output.yml")
     end
   end
