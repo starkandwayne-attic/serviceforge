@@ -17,6 +17,8 @@ class Generators::GenerateDeploymentManifest
       deployment_stub_file.try(:path)
     ].compact
     spiff_merge(input_file_paths, output_file.path)
+    output_file.rewind
+    output_file.read
   ensure
     service_plan_stub_file.try(:close)
     deployment_stub_file.try(:close)

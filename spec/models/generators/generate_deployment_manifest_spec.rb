@@ -10,9 +10,11 @@ describe Generators::GenerateDeploymentManifest do
       subject.deployment_stub = "--- {}"
       subject.should_receive(:tempfile).with('service_plan_stub', "--- {}").and_return(double(path: "temp1"))
       subject.should_receive(:tempfile).with('deployment_stub', "--- {}").and_return(double(path: "temp2"))
-      subject.should_receive(:tempfile).with('output').and_return(double(path: "output.yml"))
+      output_file = double(path: "output.yml", rewind: true, close: true, read: "OUTPUT")
+      subject.should_receive(:tempfile).with('output').and_return(output_file)
       subject.should_receive(:spiff_merge).with(%w[file1.yml file2.yml temp1 temp2], "output.yml")
-      subject.generate_manifest
+      manifest = subject.generate_manifest
+      expect(manifest).to eq("OUTPUT")
     end
   end
 
