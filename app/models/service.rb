@@ -1,5 +1,6 @@
 class Service
   attr_reader :id, :name, :description, :tags, :metadata, :plans
+  attr_reader :deployment_name_prefix
   attr_reader :bosh, :release_templates
 
   cattr_accessor :all
@@ -18,14 +19,15 @@ class Service
   end
 
   def initialize(attrs)
-    @id                = attrs.fetch('id')
-    @name              = attrs.fetch('name')
-    @description       = attrs.fetch('description')
-    @tags              = attrs.fetch('tags', [])
-    @metadata          = attrs.fetch('metadata', nil)
-    @bosh              = attrs.fetch('bosh', nil)
-    @release_templates = attrs.fetch('release_templates', nil)
-    @plans             = attrs.fetch('plans', [])
+    @id                     = attrs.fetch('id')
+    @name                   = attrs.fetch('name')
+    @deployment_name_prefix = attrs.fetch('deployment_name_prefix', @name)
+    @description            = attrs.fetch('description')
+    @tags                   = attrs.fetch('tags', [])
+    @metadata               = attrs.fetch('metadata', nil)
+    @bosh                   = attrs.fetch('bosh', nil)
+    @release_templates      = attrs.fetch('release_templates', nil)
+    @plans                  = attrs.fetch('plans', [])
   end
 
   def bindable?

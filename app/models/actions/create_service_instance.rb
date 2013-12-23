@@ -96,7 +96,11 @@ class Actions::CreateServiceInstance
     service.bosh
   end
 
+  def deployment_name_prefix
+    service.deployment_name_prefix
+  end
+
   def generate_deployment_uuid_name
-    self.deployment_name ||= UUIDTools::UUID.timestamp_create.to_s
+    self.deployment_name ||= "#{deployment_name_prefix}-#{UUIDTools::UUID.timestamp_create.to_s}"
   end
 end

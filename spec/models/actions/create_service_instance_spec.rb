@@ -11,12 +11,14 @@ describe Actions::CreateServiceInstance do
   let(:service)               { instance_double("Service") }
   let(:service_plan)          { instance_double("Plan") }
   let(:service_id)            { 'service-id-1' }
+  let(:deployment_name_prefix) { 'etcd' }
   let(:service_instance_id)   { 'service-instance-id-1' }
   let(:service_stub_paths)    { %w[/path/to/file1.yml /path/to/file2.yml] }
   let(:deployment_stub)       { "---\nname: something" }
   let(:service_plan_stub)     { "---\njobs:\n  - name: etc\n  - instances: 2" }
   let(:director_uuid)         { "director-uuid" }
-  let(:deployment_name)       { "deployment-name" }
+  let(:deployment_uuid)       { "deployment-uuid" }
+  let(:deployment_name)       { "#{deployment_name_prefix}-#{deployment_uuid}" }
   let(:deployment_manifest)   { "---\nname: something\ndirector_uuid: director-uuid" }
   let(:bosh_director_client)  { instance_double("Bosh::DirectorClient") }
   let(:bosh_deploy_task_id)   { 123 }
@@ -31,9 +33,12 @@ describe Actions::CreateServiceInstance do
 
   it "has lifecycle" do
     uuid_klass = class_double("UUIDTools::UUID").as_stubbed_const
-    uuid_klass.should_receive(:timestamp_create).and_return(deployment_name)
+    uuid_klass.should_receive(:timestamp_create).and_return(deployment_uuid)
 
     action = Actions::CreateServiceInstance.new(service_id: service_id, service_instance_id: service_instance_id)
+    service_klass = class_double('Service').as_stubbed_const
+    service_klass.should_receive(:find_by_id).and_return(service)
+    service.should_receive(:deployment_name_prefix).and_return(deployment_name_prefix)
     action.save
 
     ##
@@ -50,8 +55,6 @@ describe Actions::CreateServiceInstance do
     ##
     ## Generate deployment manifest
     ##
-    service_klass = class_double('Service').as_stubbed_const
-    service_klass.should_receive(:find_by_id).and_return(service)
     service.should_receive(:find_plan_by_id).and_return(service_plan)
     service.should_receive(:bosh_service_stub_paths).and_return(service_stub_paths)
     service_plan.should_receive(:deployment_stub).and_return(service_plan_stub)

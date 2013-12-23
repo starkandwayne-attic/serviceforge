@@ -11,6 +11,7 @@ defaults: &defaults
 
   services:
   - name: etcd-dedicated-bosh-lite
+    deployment_name_prefix: etcd
     id: b9698740-4810-4dc5-8da6-54581f5108c4
     description: "etcd: A highly-available key value store for shared configuration and service discovery"
     tags:
