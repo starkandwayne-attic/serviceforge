@@ -39,7 +39,7 @@ class Service
   end
 
   def find_plan_by_id(plan_id)
-    
+    plans.find { |plan| plan.id == plan_id }
   end
 
   def bosh_director_client

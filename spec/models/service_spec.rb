@@ -165,8 +165,18 @@ describe Service do
   end
 
   describe "#find_plan_by_id" do
-    it "finds plan"
-    it "returns nil if plan does not exist"
+    subject { Service.all.first }
+
+    it "finds plan" do
+      one_server_plan_id = "6e8ece8c-4fe6-4d58-9aeb-497d6aeba113"
+      plan = subject.find_plan_by_id(one_server_plan_id)
+      expect(plan).to_not be_nil
+      expect(plan.name).to eq("1-server")
+    end
+
+    it "returns nil if plan does not exist" do
+      expect(subject.find_plan_by_id("unknown")).to be_nil
+    end
   end
 
   describe '#bosh_director_client' do
