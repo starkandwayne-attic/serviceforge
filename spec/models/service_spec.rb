@@ -211,6 +211,7 @@ describe Service do
     it { expect(subject.bosh).to be_instance_of(BoshDirectorClient) }
     it { expect(subject.bosh.target).to eq('https://192.168.50.4:25555') }
   end
+
 end
 
 

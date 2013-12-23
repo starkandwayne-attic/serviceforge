@@ -35,9 +35,13 @@ defaults: &defaults
       - name: etcd
         version: 2
         url: ~
-      template:
+      release_templates:
         base_path: <%= Rails.root %>/templates
-        command: make_manifest warden
+        templates:
+         - etcd-deployment.yml
+         - etcd-jobs.yml
+         - etcd-properties.yml
+         - etcd-infrastructure-warden.yml
     plans:
     - name: 1-server
       id: 6e8ece8c-4fe6-4d58-9aeb-497d6aeba113
