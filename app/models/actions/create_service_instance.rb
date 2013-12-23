@@ -1,3 +1,11 @@
+# Created when Broker received requests to create a new service. Performs the action
+# of creating a new service.
+#
+# Currently the entire behaviour is executed in current thread/process. In future, move
+# this into background thread/worker.
+#
+# For service instances provisioned via BOSH, then a deployment manifest is generated and
+# the Service's BOSH is given the request to deploy the Service's release.
 class Actions::CreateServiceInstance
   include ActiveModel::Model
 
