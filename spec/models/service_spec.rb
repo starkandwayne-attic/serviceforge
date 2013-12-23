@@ -195,7 +195,7 @@ describe Service do
 
   end
 
-  describe '#bosh builds BoshDirectorClient (a wrapper of Bosh::Cli::Client::Director)' do
+  describe '#bosh builds Bosh::DirectorClient (a wrapper of Bosh::Cli::Client::Director)' do
     subject {
       Service.build(
         'id'          => 'my-id',
@@ -208,7 +208,7 @@ describe Service do
         }
       )
     }
-    it { expect(subject.bosh).to be_instance_of(BoshDirectorClient) }
+    it { expect(subject.bosh).to be_instance_of(Bosh::DirectorClient) }
     it { expect(subject.bosh.target).to eq('https://192.168.50.4:25555') }
   end
 

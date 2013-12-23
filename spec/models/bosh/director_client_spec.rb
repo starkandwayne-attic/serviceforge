@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe BoshDirectorClient do
-  subject { BoshDirectorClient.build({
+describe Bosh::DirectorClient do
+  subject { Bosh::DirectorClient.build({
       'target' => 'https://192.168.50.4:25555',
       'username' => 'admin',
       'password' => 'admin',

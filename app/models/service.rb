@@ -12,7 +12,7 @@ class Service
     plan_attrs = attrs['plans'] || []
     plans      = plan_attrs.map { |attr| Plan.build(attr) }
     if bosh_attrs = attrs.delete('bosh')
-      bosh = BoshDirectorClient.build(bosh_attrs)
+      bosh = Bosh::DirectorClient.build(bosh_attrs)
     end
     new(attrs.merge('plans' => plans, 'bosh' => bosh))
   end

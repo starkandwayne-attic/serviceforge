@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # forced loading to avoid 'not a defined constant' rspec-fire issue
-require 'bosh_director_client'
+require 'bosh/director_client'
 require 'generators/generate_deployment_stub'
 require 'generators/generate_deployment_manifest'
 
@@ -18,7 +18,7 @@ describe Actions::CreateServiceInstance do
   let(:director_uuid)         { "director-uuid" }
   let(:deployment_name)       { "deployment-name" }
   let(:deployment_manifest)   { "---\nname: something\ndirector_uuid: director-uuid" }
-  let(:bosh_director_client)  { instance_double("BoshDirectorClient") }
+  let(:bosh_director_client)  { instance_double("Bosh::DirectorClient") }
   let(:bosh_deploy_task_id)   { 123 }
 
   before do

@@ -2,7 +2,7 @@ require 'cli' # bosh_cli
 
 # Wrapper around Bosh::Cli::Client::Director
 # Exposes the required Director methods.
-class BoshDirectorClient
+class Bosh::DirectorClient
   include ActiveModel::Model
 
   attr_accessor :target, :username, :password, :api_options
