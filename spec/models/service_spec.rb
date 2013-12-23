@@ -165,18 +165,34 @@ describe Service do
   end
 
   describe "#find_plan_by_id" do
-    subject { Service.all.first }
+
+    before do
+      plan_1_to_hash = double(:plan_1_to_hash)
+      plan_2_to_hash = double(:plan_2_to_hash)
+      @plan_1         = double(:plan_1, to_hash: plan_1_to_hash, id: "plan_1")
+      @plan_2         = double(:plan_2, to_hash: plan_2_to_hash, id: "plan_2")
+    end
+    subject {
+      Service.new(
+        'plans'       => [@plan_1, @plan_2],
+        'id'          => 'my-id',
+        'name'        => 'my-name',
+        'description' => 'my-description',
+        'tags'        => ['tagA', 'tagB'],
+        'metadata'    => { 'meta' => 'data' },
+      )
+    }
 
     it "finds plan" do
-      one_server_plan_id = "6e8ece8c-4fe6-4d58-9aeb-497d6aeba113"
-      plan = subject.find_plan_by_id(one_server_plan_id)
+      plan = subject.find_plan_by_id("plan_1")
       expect(plan).to_not be_nil
-      expect(plan.name).to eq("1-server")
+      expect(plan.id).to eq("plan_1")
     end
 
     it "returns nil if plan does not exist" do
       expect(subject.find_plan_by_id("unknown")).to be_nil
     end
+
   end
 
   describe '#bosh_director_client' do
