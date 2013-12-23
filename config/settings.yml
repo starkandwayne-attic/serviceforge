@@ -43,6 +43,7 @@ defaults: &defaults
       id: 6e8ece8c-4fe6-4d58-9aeb-497d6aeba113
       description: Etcd running on a single dedicated server
       metadata:
+        cluster_size: 1
         cost: 100
         bullets:
         - content: Etcd server
@@ -52,6 +53,7 @@ defaults: &defaults
       id: 1a448d0e-bc54-4a16-8d2f-ab701be20c40
       description: Etcd running across three dedicated servers
       metadata:
+        cluster_size: 3
         cost: 300
         bullets:
         - content: Etcd servers
@@ -61,6 +63,7 @@ defaults: &defaults
       id: 5cfa57fc-1474-4eb9-9afb-
       description: Etcd running across five dedicated servers
       metadata:
+        cluster_size: 5
         cost: 500
         bullets:
         - content: Etcd servers

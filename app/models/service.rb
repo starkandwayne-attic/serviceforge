@@ -38,4 +38,11 @@ class Service
     }
   end
 
+  def find_plan_by_id(plan_id)
+    
+  end
+
+  def bosh_director_client
+    raise "not implemented bosh_director_client with #deploy(manifest); called from CreateServiceInstance"
+  end
 end

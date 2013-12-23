@@ -33,6 +33,7 @@ describe 'GET /v2/catalog' do
     expect(plan.fetch('description')).to eq('Etcd running on a single dedicated server')
     expect(plan.fetch('metadata')).to eq(
       {
+        'cluster_size' => 1,
         'cost' => 100,
         'bullets' => [
           { 'content' => 'Etcd server' },

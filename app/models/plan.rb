@@ -20,4 +20,19 @@ class Plan
       'metadata'    => self.metadata,
     }
   end
+
+  def cluster_size
+    @metadata['cluster_size'].to_i
+  end
+
+  # spiff YAML stub that applies service plan specific configuration
+  # For example, number of servers/jobs in the cluster
+  def deployment_stub
+    <<-YAML
+---
+jobs:
+- name: etcd
+  instances: #{cluster_size - 1}
+    YAML
+  end
 end
