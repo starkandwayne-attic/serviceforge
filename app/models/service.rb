@@ -9,7 +9,10 @@ class Service
   def self.build(attrs)
     plan_attrs = attrs['plans'] || []
     plans      = plan_attrs.map { |attr| Plan.build(attr) }
-    new(attrs.merge('plans' => plans))
+    if bosh_attrs = attrs['bosh']
+      bosh = BoshDirectorClient.build(bosh_attrs)
+    end
+    new(attrs.merge('plans' => plans, 'bosh' => bosh))
   end
 
   def initialize(attrs)
@@ -42,7 +45,4 @@ class Service
     plans.find { |plan| plan.id == plan_id }
   end
 
-  def bosh_director_client
-    raise "not implemented bosh_director_client with #deploy(manifest); called from CreateServiceInstance"
-  end
 end
