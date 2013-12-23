@@ -76,8 +76,16 @@ defaults: &defaults
 
 development:
   auth_password: 'secret'
+  etcd:
+    host: 127.0.0.1
+    port: 5200
+
   <<: *defaults
 
 test:
   auth_password: 'secret'
+  etcd:
+    host: 127.0.0.1
+    port: 6200
+
   <<: *defaults
