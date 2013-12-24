@@ -1,1 +1,0 @@
-Service.all = (Settings['services'] || []).map {|attrs| Service.build(attrs)}

@@ -38,6 +38,7 @@ class V2::ServiceInstancesController < V2::BaseController
       action.save
       action.perform
 
+      # TODO - archive, not destroy
       instance.destroy
       status = 200
     else

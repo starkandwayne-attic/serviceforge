@@ -3,7 +3,9 @@ class Service
   attr_reader :deployment_name_prefix
   attr_reader :bosh, :release_templates
 
-  cattr_accessor :all
+  def self.all
+    @all ||= (Settings['services'] || []).map {|attrs| Service.build(attrs)}
+  end
 
   def self.find_by_id(id)
     all.find { |service| service.id == id }
