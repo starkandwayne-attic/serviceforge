@@ -40,4 +40,9 @@ class Bosh::DirectorClient
     status, task_id = api.delete_deployment(deployment_name, force: true)
     [status, task_id]
   end
+
+  # returns true (the {"name" => deployment_name, ...} object) if deployment_name is a current deployment on BOSH
+  def deployment_exists?(deployment_name)
+    api.list_deployments.find { |deployment| deployment["name"] == deployment_name }
+  end
 end

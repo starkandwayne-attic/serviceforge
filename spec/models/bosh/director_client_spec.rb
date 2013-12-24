@@ -26,19 +26,17 @@ describe Bosh::DirectorClient do
     end
   end
 
-  describe "#deploy" do
-    describe "returns [:running, task_id]" do
-      before {
-        deploy_manifest = "--- {}"
-        subject.api.should_receive(:deploy).with(deploy_manifest).and_return([:running, 123])
-        @status, @task_id = subject.deploy(deploy_manifest)
-      }
-      it { expect(@status).to eq(:running) }
-      it { expect(@task_id).to eq(123) }
-    end
+  describe "#deploy(manifest)" do
+    before {
+      deploy_manifest = "--- {}"
+      subject.api.should_receive(:deploy).with(deploy_manifest).and_return([:running, 123])
+      @status, @task_id = subject.deploy(deploy_manifest)
+    }
+    it { expect(@status).to eq(:running) }
+    it { expect(@task_id).to eq(123) }
   end
 
-  describe "#delete" do
+  describe "#delete(deployment_name)" do
     before {
       deployment_name = "foobar"
       subject.api.should_receive(:delete_deployment).with(deployment_name, force: true).and_return([:running, 123])
@@ -46,5 +44,20 @@ describe Bosh::DirectorClient do
     }
     it { expect(@status).to eq(:running) }
     it { expect(@task_id).to eq(123) }
+  end
+
+  describe "#deployment_exists?(deployment_name)" do
+    it "returns deployment object if api.list_deployments includes name" do
+      subject.api.should_receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
+      result = subject.deployment_exists?("cf-warden")
+      expect(result).to be_instance_of(Hash)
+      expect(result["name"]).to eq("cf-warden")
+    end
+
+    it "returns false if api.list_deployments does not include name" do
+      subject.api.should_receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
+      result = subject.deployment_exists?("deployment-xxx")
+      expect(result).to be_false
+    end
   end
 end
