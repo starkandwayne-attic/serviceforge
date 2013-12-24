@@ -17,8 +17,7 @@ describe Actions::CreateServiceInstance do
   let(:service_plan_stub)     { "---\njobs:\n  - name: etc\n  - instances: 2" }
   let(:director_uuid)         { "director-uuid" }
   let(:deployment_name_prefix) { 'etcd' }
-  let(:deployment_uuid)       { "deployment-uuid" }
-  let(:deployment_name)       { "#{deployment_name_prefix}-#{deployment_uuid}" }
+  let(:deployment_name)       { "#{deployment_name_prefix}-#{service_instance_id}" }
   let(:deployment_manifest)   { "---\nname: something\ndirector_uuid: director-uuid" }
   let(:bosh_director_client)  { instance_double("Bosh::DirectorClient") }
   let(:bosh_deploy_task_id)   { 123 }
@@ -32,9 +31,6 @@ describe Actions::CreateServiceInstance do
 
 
   it "has lifecycle" do
-    uuid_klass = class_double("UUIDTools::UUID").as_stubbed_const
-    uuid_klass.should_receive(:timestamp_create).and_return(deployment_uuid)
-
     action = Actions::CreateServiceInstance.new(service_id: service_id, service_instance_id: service_instance_id)
     service_klass = class_double('Service').as_stubbed_const
     service_klass.should_receive(:find_by_id).and_return(service)

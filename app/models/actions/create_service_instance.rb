@@ -97,6 +97,6 @@ class Actions::CreateServiceInstance
   end
 
   def generate_deployment_uuid_name
-    self.deployment_name ||= "#{deployment_name_prefix}-#{UUIDTools::UUID.timestamp_create.to_s}"
+    self.deployment_name ||= "#{deployment_name_prefix}-#{service_instance_id}"
   end
 end
