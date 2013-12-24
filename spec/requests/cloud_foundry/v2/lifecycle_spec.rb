@@ -92,8 +92,8 @@ describe 'the service lifecycle' do
     instance = JSON.parse(response.body)
 
     expect(instance.fetch('credentials')).to eq({
-      'hostname' => '10.244.0.6',
-      'host' => '10.244.0.6',
+      'hostname' => '10.244.2.6',
+      'host' => '10.244.2.6',
       'port' => 4001
     })
 
@@ -105,8 +105,8 @@ describe 'the service lifecycle' do
       'id' => binding_id,
       'service_instance_id' => instance_id,
       'credentials' => {
-        'hostname' => '10.244.0.6',
-        'host' => '10.244.0.6',
+        'hostname' => '10.244.2.6',
+        'host' => '10.244.2.6',
         'port' => 4001
       }
     })
