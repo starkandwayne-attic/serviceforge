@@ -88,6 +88,12 @@ service          plans                            description
 etcd-dedicated   1-server, 5-servers, 3-servers   etcd: A highly-available key value store...
 ```
 
+You can now provision a service:
+
+```
+$ gcf create-service etcd-dedicated-bosh-lite 5-servers my-5-pack
+```
+
 ## Running Tests
 
 The integration tests require `etcd` to be running.
