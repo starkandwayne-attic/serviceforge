@@ -8,6 +8,9 @@ describe Bosh::DirectorClient do
       'release_templates' => {
         'base_path' => '/path/to/templates',
         'templates' => ['file1.yml', 'file2.yml']
+      },
+      'binding_config' => {
+        'master_host_job_name' => 'leader_job_name'
       }
     })
   }
@@ -92,7 +95,7 @@ describe Bosh::DirectorClient do
     let(:deployment_name) { "deployment-name"}
     let(:task_id) { 1234 }
     it {
-      subject.api.should_receive(:request_and_track).with(:get, "/deployments/#{deployment_name}/vms?format=full", {}).and_return(["done", task_id])
+      subject.api_with_tracking.should_receive(:request_and_track).with(:get, "/deployments/#{deployment_name}/vms?format=full", {}).and_return(["done", task_id])
       subject.api.should_receive(:get_task_result_log).with(task_id).and_return(vms_state_log)
       result, result_task_id = subject.fetch_vm_state(deployment_name)
       expect(result).to eq(vms_state)

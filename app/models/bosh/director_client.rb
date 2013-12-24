@@ -8,7 +8,7 @@ class Bosh::DirectorClient
   attr_accessor :target, :username, :password, :api_options
   attr_accessor :infrastructure
 
-  attr_accessor :releases, :release_templates
+  attr_accessor :releases, :release_templates, :binding_config
 
   # attributes looked up from director
   attr_accessor :dns_root, :cpi
@@ -23,6 +23,10 @@ class Bosh::DirectorClient
 
   def api
     @api ||= Bosh::Cli::Client::Director.new(target, username, password, api_options)
+  end
+
+  def api_with_tracking
+    @api_with_tracking ||= Bosh::Cli::Client::Director.new(target, username, password, api_options.merge(no_track: false))
   end
 
   def director_uuid
@@ -59,10 +63,10 @@ class Bosh::DirectorClient
 
     url = "/deployments/#{deployment_name}/vms?format=full"
 
-    status, task_id = api.request_and_track(:get, url, options)
+    status, task_id = api_with_tracking.request_and_track(:get, url, options)
 
     if status.to_sym != :done
-      raise DirectorError, 'Failed to fetch VMs information from director'
+      raise Bosh::Cli::DirectorError, "Failed to fetch VMs information from director (status: #{status}, task_id: #{task_id})"
     end
 
     output = api.get_task_result_log(task_id)

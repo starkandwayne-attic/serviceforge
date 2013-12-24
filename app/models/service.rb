@@ -2,6 +2,8 @@ class Service
   attr_reader :id, :name, :description, :tags, :metadata, :plans
   attr_reader :deployment_name_prefix
   attr_reader :bosh, :release_templates
+  attr_reader :master_host_job_name
+  
 
   def self.all
     @all ||= (Settings['services'] || []).map {|attrs| Service.build(attrs)}
@@ -59,4 +61,7 @@ class Service
     bosh.release_templates.template_paths
   end
 
+  def bosh_master_host_job_name
+    bosh.binding_config["master_host_job_name"]
+  end
 end

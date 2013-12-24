@@ -212,7 +212,7 @@ describe Service do
     it { expect(subject.bosh.target).to eq('https://192.168.50.4:25555') }
   end
 
-  describe "#bosh_service_stub_paths" do
+  describe "bosh helpers" do
     subject {
       Service.build(
         'id'          => 'my-id',
@@ -225,14 +225,22 @@ describe Service do
           'release_templates' => {
             'base_path' => '/path/to',
             'templates' => %w[file1.yml file2.yml]
+          },
+          'binding_config' => {
+            'master_host_job_name' => 'leader_job_name'
           }
         }
       )
     }
-    it do
+    it "#bosh_service_stub_paths" do
       expect(subject.bosh_service_stub_paths).to eq(["/path/to/file1.yml", "/path/to/file2.yml"])
     end
+
+    it "#bosh_master_host_job_name" do
+      expect(subject.bosh_master_host_job_name).to eq("leader_job_name")
+    end
   end
+
 
 end
 

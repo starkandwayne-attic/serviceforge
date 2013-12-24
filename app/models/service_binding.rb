@@ -4,14 +4,14 @@ class ServiceBinding
   attr_accessor :id, :service_instance, :credentials
 
   def self.find(service_instance, id)
-      if node = $etcd.get("/service_instances/#{service_instance.id}/service_bindings/#{id}/model")
-        attributes = JSON.parse(node.value)
-        attributes["service_instance"] = service_instance
-        attributes.delete("service_instance_id")
-        new(attributes)
-      end
-    rescue Net::HTTPServerException
-      # key not in etcd
+    if node = $etcd.get("/service_instances/#{service_instance.id}/service_bindings/#{id}/model")
+      attributes = JSON.parse(node.value)
+      attributes["service_instance"] = service_instance
+      attributes.delete("service_instance_id")
+      new(attributes)
+    end
+  rescue Net::HTTPServerException
+    # key not in etcd
   end
 
   def save
