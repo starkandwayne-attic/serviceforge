@@ -78,6 +78,28 @@ describe Bosh::DirectorClient do
     }
   end
 
+  describe "#fetch_vm_state(deployment_name)" do
+    let(:vms_state_log) {
+      <<-LOG
+        {"job_name": "name", "index": 0, "ips": ["10.244.0.2"]}
+        {"job_name": "name", "index": 1, "ips": ["10.244.0.6"]}
+      LOG
+    }
+    let(:vms_state) {
+      [{"job_name"=>"name", "index"=>0, "ips"=>['10.244.0.2']},
+       {"job_name"=>"name", "index"=>1, "ips"=>['10.244.0.6']}]
+    }
+    let(:deployment_name) { "deployment-name"}
+    let(:task_id) { 1234 }
+    it {
+      subject.api.should_receive(:request_and_track).with(:get, "/deployments/#{deployment_name}/vms?format=full", {}).and_return(["done", task_id])
+      subject.api.should_receive(:get_task_result_log).with(task_id).and_return(vms_state_log)
+      result, result_task_id = subject.fetch_vm_state(deployment_name)
+      expect(result).to eq(vms_state)
+      expect(result_task_id).to eq(task_id)
+    }
+  end
+
   describe "#track_task(task_id)" do
     let(:director) { instance_double('Bosh::Cli::Client::Director') }
     let(:task_id) { 123 }

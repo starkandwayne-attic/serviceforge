@@ -112,6 +112,12 @@ describe 'the service lifecycle' do
     })
 
     ##
+    ## Test the etcd /actions/update_service_bindings record
+    ##
+    data = JSON.parse($etcd.get("/actions/update_service_binding/#{binding_id}").value)
+    expect(data).to_not be_nil
+
+    ##
     ## Unbind
     ##
     delete "/v2/service_instances/#{instance_id}/service_bindings/#{binding_id}"

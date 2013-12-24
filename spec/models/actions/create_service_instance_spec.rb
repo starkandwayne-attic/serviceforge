@@ -11,7 +11,7 @@ describe Actions::CreateServiceInstance do
   let(:deployment_stub)       { "---\nname: something" }
   let(:service_plan_stub)     { "---\njobs:\n  - name: etc\n  - instances: 2" }
   let(:director_uuid)         { "director-uuid" }
-  let(:deployment_name_prefix) { 'etcd' }
+  let(:deployment_name_prefix) { 'test-etcd' }
   let(:deployment_name)       { "#{deployment_name_prefix}-#{service_instance_id}" }
   let(:deployment_manifest)   { "---\nname: something\ndirector_uuid: director-uuid" }
   let(:bosh_director_client)  { instance_double("Bosh::DirectorClient") }

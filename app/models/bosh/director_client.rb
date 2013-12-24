@@ -54,6 +54,25 @@ class Bosh::DirectorClient
     api.list_vms(deployment_name)
   end
 
+  def fetch_vm_state(deployment_name, options={})
+    options = options.dup
+
+    url = "/deployments/#{deployment_name}/vms?format=full"
+
+    status, task_id = api.request_and_track(:get, url, options)
+
+    if status.to_sym != :done
+      raise DirectorError, 'Failed to fetch VMs information from director'
+    end
+
+    output = api.get_task_result_log(task_id)
+
+    result = output.to_s.split("\n").map do |vm_state|
+      JSON.parse(vm_state)
+    end
+    [result, task_id]
+  end
+
   def task_state(task_id)
     api.get_task_state(task_id)
   end
