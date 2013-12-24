@@ -33,6 +33,11 @@ describe 'the service lifecycle' do
     cleanup_bosh_deployments
   end
 
+  after do
+    cleanup_etcd_service_instances
+    cleanup_bosh_deployments
+  end
+
   it 'provisions, deprovisions' do
     ##
     ## Provision the instance
@@ -46,9 +51,10 @@ describe 'the service lifecycle' do
     instance = JSON.parse(response.body)
 
     expect(instance).to eq({
-      "id" => instance_id,
-      "service_id" => service_id,
-      "plan_id" => plan_id
+      'id' => instance_id,
+      'service_id' => service_id,
+      'plan_id' => plan_id,
+      'deployment_name' => deployment_name
     })
 
     ##
@@ -58,7 +64,8 @@ describe 'the service lifecycle' do
     expect(data).to eq({
       'id' => instance_id, 
       'service_id' => service_id,
-      'plan_id' => plan_id
+      'plan_id' => plan_id,
+      'deployment_name' => deployment_name
     })
 
     ##

@@ -33,8 +33,9 @@ describe Actions::DeleteServiceInstance do
         'bosh_task_id' => nil
       })
 
-      action.should_receive(:bosh_director_client).and_return(bosh_director_client)
+      action.should_receive(:bosh_director_client).exactly(2).times.and_return(bosh_director_client)
       bosh_director_client.should_receive(:delete).with(deployment_name).and_return([:running, bosh_delete_task_id])
+      bosh_director_client.should_receive(:track_task).with(bosh_delete_task_id).and_return("done")
       action.perform
 
       ##

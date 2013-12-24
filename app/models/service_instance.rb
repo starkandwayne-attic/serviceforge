@@ -4,6 +4,7 @@ class ServiceInstance
   attr_accessor :id
   attr_accessor :service_id
   attr_accessor :plan_id
+  attr_accessor :deployment_name
 
   def self.find_by_id(id)
     if node = $etcd.get("/service_instances/#{id}/model")
@@ -30,7 +31,8 @@ class ServiceInstance
     {
       id: id,
       service_id: service_id,
-      plan_id: plan_id
+      plan_id: plan_id,
+      deployment_name: deployment_name
     }
   end
 end
