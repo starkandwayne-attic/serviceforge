@@ -1,10 +1,5 @@
 require 'spec_helper'
 
-# forced loading to avoid 'not a defined constant' rspec-fire issue
-require 'bosh/director_client'
-require 'generators/generate_deployment_stub'
-require 'generators/generate_deployment_manifest'
-
 describe Actions::CreateServiceInstance do
   let(:stub_generator)        { instance_double("Generators::GenerateDeploymentStub") }
   let(:manifest_generator)    { instance_double("Generators::GenerateDeploymentManifest") }
