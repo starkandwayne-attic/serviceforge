@@ -41,8 +41,35 @@ class Bosh::DirectorClient
     [status, task_id]
   end
 
+  def list_deployments
+    api.list_deployments
+  end
+
   # returns true (the {"name" => deployment_name, ...} object) if deployment_name is a current deployment on BOSH
   def deployment_exists?(deployment_name)
     api.list_deployments.find { |deployment| deployment["name"] == deployment_name }
+  end
+
+  def list_vms(deployment_name)
+    api.list_vms(deployment_name)
+  end
+
+  def task_state(task_id)
+    api.get_task_state(task_id)
+  end
+
+  def track_task(task_id)
+    tracker = Bosh::Cli::TaskTracker.new(api, task_id)
+    status  = tracker.track
+  end
+
+  def wait_for_tasks_to_complete(task_ids)
+    until task_ids.empty?
+      task_ids.each do |bosh_task_id|
+        unless task_state(bosh_task_id) == "running"
+          task_ids.delete(bosh_task_id)
+        end
+      end
+    end
   end
 end

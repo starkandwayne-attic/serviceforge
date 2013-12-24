@@ -9,6 +9,14 @@ class V2::ServiceInstancesController < V2::BaseController
       })
       instance.save
 
+      action = Actions::CreateServiceInstance.new({
+        service_id: params.fetch(:service_id),
+        service_plan_id: params.fetch(:plan_id),
+        service_instance_id: params.fetch(:id)
+      })
+      action.save
+      action.perform
+
       render status: 201, json: instance
     else
       render status: 507, json: {'description' => 'Service plan capacity has been reached'}

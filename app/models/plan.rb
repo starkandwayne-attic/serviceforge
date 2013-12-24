@@ -31,8 +31,8 @@ class Plan
     <<-YAML
 ---
 jobs:
-- name: etcd
-  instances: #{cluster_size - 1}
+  - name: etcd_z1
+    instances: #{cluster_size - 1}
     YAML
   end
 end

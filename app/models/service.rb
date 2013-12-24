@@ -22,6 +22,9 @@ class Service
     @id                     = attrs.fetch('id')
     @name                   = attrs.fetch('name')
     @deployment_name_prefix = attrs.fetch('deployment_name_prefix', @name)
+    if Settings.extra_deployment_name_prefix
+      @deployment_name_prefix = "#{Settings.extra_deployment_name_prefix}-#{@deployment_name_prefix}"
+    end
     @description            = attrs.fetch('description')
     @tags                   = attrs.fetch('tags', [])
     @metadata               = attrs.fetch('metadata', nil)

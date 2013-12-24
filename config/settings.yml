@@ -65,7 +65,7 @@ defaults: &defaults
         - content: 3 small servers
         - content: High availability, leader election
     - name: 5-servers
-      id: 5cfa57fc-1474-4eb9-9afb-
+      id: 5cfa57fc-1474-4eb9-9afb
       description: Etcd running across five dedicated servers
       metadata:
         cluster_size: 5
@@ -81,6 +81,8 @@ development:
     host: 127.0.0.1
     port: 5200
 
+  extra_deployment_name_prefix: ~
+
   <<: *defaults
 
 test:
@@ -89,4 +91,5 @@ test:
     host: 127.0.0.1
     port: 6200
 
+  extra_deployment_name_prefix: test
   <<: *defaults

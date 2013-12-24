@@ -1,21 +1,36 @@
 require 'spec_helper'
 
 describe 'the service lifecycle' do
-  let(:instance_id)  { 'instance-1' }
-  let(:service_id)   { 'etcd-dedicated-id' }
-  let(:plan_id)      { '1-server-id' }
-  let(:binding_id)   { 'binding-1' }
-  let(:app_guid)     { 'app-guid-1' }
+  let(:seed) { RSpec.configuration.seed }
+  let(:service_id)   { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated-bosh-lite
+  let(:service)      { Service.find_by_id(service_id) }
+  let(:plan_id)      { '5cfa57fc-1474-4eb9-9afb' } # 5-server
+  let(:instance_id)  { "instance-#{seed}" }
+  let(:binding_id)   { "binding-#{seed}" }
+  let(:app_guid)     { "app-guid-#{seed}" }
+  let(:deployment_name) { "test-etcd-#{instance_id}" }
 
-  def cleanup_etcd_services
-  rescue
+  def cleanup_etcd_service_instances
+    $etcd.delete("/service_instances", recursive: true)
+  rescue Net::HTTPServerException
+  end
+
+  def cleanup_bosh_deployments
+    Service.all.each do |service|
+      delete_task_ids = []
+      service.bosh.list_deployments.each do |deployment|
+        if deployment["name"] =~ /^#{service.deployment_name_prefix}\-/
+          _, bosh_task_id = service.bosh.delete(deployment["name"])
+          delete_task_ids << bosh_task_id
+        end
+      end
+      service.bosh.wait_for_tasks_to_complete(delete_task_ids)
+    end
   end
 
   before do
-    begin
-      $etcd.delete("/service_instances", recursive: true)
-    rescue Net::HTTPServerException
-    end
+    cleanup_etcd_service_instances
+    cleanup_bosh_deployments
   end
 
   it 'provisions, deprovisions' do
@@ -45,6 +60,15 @@ describe 'the service lifecycle' do
       'service_id' => service_id,
       'plan_id' => plan_id
     })
+
+    ##
+    ## Test bosh for deployment entry
+    ##
+    deployment_exists = service.bosh.deployment_exists?(deployment_name)
+    expect(deployment_exists).to_not be_nil
+
+    vms = service.bosh.list_vms(deployment_name)
+    expect(vms.size).to eq(5)
 
     ##
     ## Bind
@@ -97,5 +121,12 @@ describe 'the service lifecycle' do
     ##
     expect{ $etcd.get("/service_instances/#{instance_id}/service_bindings/#{binding_id}/model") }.to raise_error(Net::HTTPServerException)
     expect{ $etcd.get("/service_instances/#{instance_id}/model") }.to raise_error(Net::HTTPServerException)
+
+    ##
+    ## Test deployment entry no longer exists
+    ##
+    deployment_exists = service.bosh.deployment_exists?(deployment_name)
+    expect(deployment_exists).to be_false
+
   end
 end

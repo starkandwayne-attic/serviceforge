@@ -67,9 +67,10 @@ describe Actions::CreateServiceInstance do
     }).and_return(manifest_generator)
     manifest_generator.should_receive(:generate_manifest).and_return(deployment_manifest)
 
-    action.should_receive(:bosh_director_client).twice.and_return(bosh_director_client)
+    action.should_receive(:bosh_director_client).exactly(3).times.and_return(bosh_director_client)
     bosh_director_client.should_receive(:deploy).with(deployment_manifest).and_return([:running, bosh_deploy_task_id])
     bosh_director_client.should_receive(:director_uuid).and_return(director_uuid)
+    bosh_director_client.should_receive(:track_task).with(bosh_deploy_task_id).and_return("done")
 
     action.perform
 

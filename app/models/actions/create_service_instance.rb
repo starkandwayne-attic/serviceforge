@@ -34,6 +34,8 @@ class Actions::CreateServiceInstance
     deployment_manifest = generate_deployment_manifest(deployment_stub)
 
     perform_bosh_deploy_and_save_task_id(deployment_manifest)
+
+    bosh_director_client.track_task(bosh_task_id)
   end
 
   def to_json(*)

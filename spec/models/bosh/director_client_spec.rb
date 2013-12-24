@@ -46,6 +46,14 @@ describe Bosh::DirectorClient do
     it { expect(@task_id).to eq(123) }
   end
 
+  describe "#list_deployments" do
+    it {
+      subject.api.should_receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
+      result = subject.list_deployments
+      expect(result).to eq([{"name"=>"cf-warden"}])
+    }
+  end
+
   describe "#deployment_exists?(deployment_name)" do
     it "returns deployment object if api.list_deployments includes name" do
       subject.api.should_receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
@@ -58,6 +66,37 @@ describe Bosh::DirectorClient do
       subject.api.should_receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
       result = subject.deployment_exists?("deployment-xxx")
       expect(result).to be_false
+    end
+  end
+
+  describe "#list_vms" do
+    let(:vms) { [{"job"=>"etcd_leader_z1", "index"=>0}, {"job"=>"etcd_z1", "index"=>0}, {"job"=>"etcd_z1", "index"=>1}] }
+    it {
+      subject.api.should_receive(:list_vms).with("name").and_return(vms)
+      result = subject.list_vms("name")
+      expect(result).to eq(vms)
+    }
+  end
+
+  describe "#track_task(task_id)" do
+    let(:director) { instance_double('Bosh::Cli::Client::Director') }
+    let(:task_id) { 123 }
+    let(:task_tracker) { instance_double('Bosh::Cli::TaskTracker') }
+    it "tracks a task until completed" do
+      subject.should_receive(:api).and_return(director)
+      tracker_klass = class_double('Bosh::Cli::TaskTracker').as_stubbed_const
+      tracker_klass.should_receive(:new).with(director, task_id).and_return(task_tracker)
+      task_tracker.should_receive(:track)
+      subject.track_task(123)
+    end
+  end
+
+  describe "#wait_for_tasks_to_complete(task_ids)" do
+    it "waits for each task to stop running then returns" do
+      subject.api.should_receive(:get_task_state).with(1).and_return("done")
+      subject.api.should_receive(:get_task_state).with(2).and_return("running")
+      subject.api.should_receive(:get_task_state).with(2).and_return("done")
+      subject.wait_for_tasks_to_complete([1,2])
     end
   end
 end
