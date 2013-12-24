@@ -9,7 +9,6 @@
 # Example usage:
 #   action = Actions::UpdateServiceBinding.new(
 #     service_id: 'b9698740-4810-4dc5-8da6-54581f5108c4', # etcd-dedicated-bosh-lite
-#     service_instance_id: 'foobar',
 #     service_binding_id: 'foobar-myapp',
 #     deployment_name: 'etcd-dcb1c536-6c0b-11e3-9bba-8438354ccefa',
 #     master_host_job_name: 'etcd_leader_z1')
@@ -19,7 +18,7 @@ class Actions::UpdateServiceBinding
   include ActiveModel::Model
 
   # required for constructor
-  attr_accessor :service_id, :service_instance_id, :service_binding_id
+  attr_accessor :service_id, :service_binding_id
   attr_accessor :deployment_name, :master_host_job_name
 
   # set during usage
@@ -38,7 +37,6 @@ class Actions::UpdateServiceBinding
   def to_json(*)
     {
       'service_id' => service_id,
-      'service_instance_id' => service_instance_id,
       'service_binding_id' => service_binding_id,
       'deployment_name' => deployment_name,
       'bosh_task_id' => bosh_task_id,

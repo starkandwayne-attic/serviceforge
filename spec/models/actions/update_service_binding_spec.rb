@@ -1,16 +1,14 @@
 require 'spec_helper'
 
 describe Actions::UpdateServiceBinding do
-  let(:service)                { instance_double("Service") }
-  let(:service_binding)        { instance_double("ServiceBinding") }
-  let(:service_id)             { 'service-1' }
-  let(:service_instance_id)    { 'service-instance-id-1' }
-  let(:service_binding_id)     { 'service-binding-id-1' }
-  let(:deployment_name_prefix) { 'test-etcd' }
-  let(:deployment_name)        { "#{deployment_name_prefix}-#{service_instance_id}" }
+  let(:service)               { instance_double("Service") }
+  let(:service_binding)       { instance_double("ServiceBinding") }
+  let(:service_id)            { 'service-1' }
+  let(:service_binding_id)    { 'service-binding-id-1' }
+  let(:deployment_name)       { 'deployment-name' }
   let(:bosh_director_client)  { instance_double("Bosh::DirectorClient") }
-  let(:master_host_job_name)   { 'etcd_leader_z1' }
-  let(:master_host_address)    { '10.244.2.6' }
+  let(:master_host_job_name)  { 'etcd_leader_z1' }
+  let(:master_host_address)   { '10.244.2.6' }
   let(:vms_state) {
     [{"job_name"=>master_host_job_name, "index"=>0, "ips"=>[master_host_address]}]
   }
@@ -18,7 +16,6 @@ describe Actions::UpdateServiceBinding do
 
   subject { Actions::UpdateServiceBinding.new({
     service_id: service_id,
-    service_instance_id: service_instance_id,
     service_binding_id: service_binding_id,
     deployment_name: deployment_name,
     master_host_job_name: master_host_job_name
@@ -33,7 +30,6 @@ describe Actions::UpdateServiceBinding do
     data = JSON.parse($etcd.get("/actions/update_service_binding/#{service_binding_id}").value)
     expect(data).to eq({
       'service_id' => service_id,
-      'service_instance_id' => service_instance_id,
       'service_binding_id' => service_binding_id,
       'deployment_name' => deployment_name,
       'master_host_job_name' => master_host_job_name,
@@ -54,7 +50,6 @@ describe Actions::UpdateServiceBinding do
     data = JSON.parse($etcd.get("/actions/update_service_binding/#{service_binding_id}").value)
     expect(data).to eq({
       'service_id' => service_id,
-      'service_instance_id' => service_instance_id,
       'service_binding_id' => service_binding_id,
       'deployment_name' => deployment_name,
       'master_host_job_name' => master_host_job_name,
