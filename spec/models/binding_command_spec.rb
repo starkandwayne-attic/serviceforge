@@ -36,9 +36,12 @@ describe BindingCommand do
         'attributes' => { 'some_attribute' => 'somevalue' }
       })
 
-      command.perform
+      loaded_command = BindingCommand.find_by_auth_token(auth_token)
+      expect(loaded_command.to_json).to eq(command.to_json)
 
-      command.destroy
+      loaded_command.perform
+
+      loaded_command.destroy
 
       ##
       ## Test that etcd entries no longer exist

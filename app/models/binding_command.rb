@@ -12,6 +12,15 @@ class BindingCommand
   # to its constructor
   attr_accessor :klass, :attributes
 
+  def self.find_by_auth_token(auth_token)
+    if node = $etcd.get("/binding_commands/#{auth_token}/model")
+      attributes = JSON.parse(node.value)
+      new(attributes)
+    end
+  rescue Net::HTTPServerException
+    # key not in etcd
+  end
+
   def save
     $etcd.set("/binding_commands/#{auth_token}/model", to_json)
   end
