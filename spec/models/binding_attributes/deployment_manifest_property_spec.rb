@@ -9,10 +9,14 @@ properties:
     secret: some-secret
     YAML
   }
+  let(:deployment_name) { 'deployment-name' }
+  let(:service_id)      { 'service-id-1' }
 
   subject do
     BindingAttributes::DeploymentManifestProperty.new({
-      deployment_manifest: deployment_manifest
+      service_id: service_id,
+      deployment_manifest: deployment_manifest,
+      deployment_name: deployment_name
     })
   end
 
