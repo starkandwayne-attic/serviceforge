@@ -10,6 +10,7 @@
 #   action.perform
 class Actions::DeleteServiceInstance
   include ActiveModel::Model
+  include Helpers::ServiceAccessor
 
   # required for constructor
   attr_accessor :service_id, :service_instance_id, :deployment_name
@@ -40,14 +41,6 @@ class Actions::DeleteServiceInstance
   def perform_bosh_delete_and_save_task_id(deployment_name)
     status, self.bosh_task_id = bosh_director_client.delete(deployment_name)
     save
-  end
-
-  def bosh_director_client
-    service.bosh
-  end
-
-  def service
-    @service ||= Service.find_by_id(service_id)
   end
 
 end
