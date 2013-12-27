@@ -1,9 +1,4 @@
-class BindingAttributes::DeploymentManifestProperty
-  include ActiveModel::Model
-
-  # common
-  attr_accessor :service_id, :deployment_name, :deployment_manifest
-
+class BindingAttributes::DeploymentManifestProperty < BindingAttribute
   # specific to this BindingAttribute
   attr_accessor :key
 
