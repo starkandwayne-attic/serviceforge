@@ -86,6 +86,23 @@ describe Service do
         expect(service.tags).to eq([])
       end
     end
+
+    context 'when the default_credentials attr is missing' do
+      let(:service) do
+        Service.build(
+          'id'          => 'my-id',
+          'name'        => 'my-name',
+          'description' => 'my description',
+          'tags'        => ['tagA', 'tagB'],
+          'plans'       => []
+        )
+      end
+
+      it 'sets the field to {}' do
+        expect(service.default_credentials).to eq({})
+      end
+    end
+
   end
 
   describe '#to_hash' do
