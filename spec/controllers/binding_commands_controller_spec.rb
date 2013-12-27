@@ -3,11 +3,13 @@ require 'spec_helper'
 describe BindingCommandsController do
   let(:unique_binding_auth_token) { 'unique-binding-auth-token' }
   let(:command) { instance_double('BindingCommand') }
+  let(:command_action) { instance_double('DummyBindingCommandAction') }
 
   describe "invoke commands" do
     describe "to find and perform a registered command" do
       before do
         expect(BindingCommand).to receive(:find_by_auth_token).with(unique_binding_auth_token).and_return(command)
+        expect(command).to receive(:perform)
       end
 
       it {

@@ -15,11 +15,12 @@ describe Actions::UpdateServiceBinding do
   let(:bosh_task_id)       { 123 }
 
   subject { Actions::UpdateServiceBinding.new({
-    service_id: service_id,
-    service_binding_id: service_binding_id,
-    deployment_name: deployment_name,
-    master_host_job_name: master_host_job_name
-  }) }
+      service_id: service_id,
+      service_binding_id: service_binding_id,
+      deployment_name: deployment_name,
+      master_host_job_name: master_host_job_name
+    })
+  }
 
   it "set host/hostname to primary server IP on all service instance bindings" do
     subject.save

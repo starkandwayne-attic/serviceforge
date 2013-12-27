@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-class DummyBindingCommand
+class DummyBindingCommandAction
   include ActiveModel::Model
   attr_accessor :some_attribute
   def perform; end
@@ -22,7 +22,7 @@ describe BindingCommand do
         service_instance_id: service_instance_id,
         service_binding_id: service_binding_id,
         auth_token: auth_token,
-        klass: 'DummyBindingCommand',
+        klass: 'DummyBindingCommandAction',
         attributes: { 'some_attribute' => 'somevalue' }
       })
       command.save
@@ -32,7 +32,7 @@ describe BindingCommand do
         'service_instance_id' => service_instance_id,
         'service_binding_id' => service_binding_id,
         'auth_token' => auth_token,
-        'klass' => 'DummyBindingCommand',
+        'klass' => 'DummyBindingCommandAction',
         'attributes' => { 'some_attribute' => 'somevalue' }
       })
 

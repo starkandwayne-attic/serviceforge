@@ -4,36 +4,50 @@ describe V2::ServiceBindingsController do
   let(:service)         { instance_double('Service') }
   let(:service_id)      { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated-bosh-lite
   let(:instance_klass)  { class_double('ServiceInstance').as_stubbed_const }
-  let(:instance)        { instance_double('ServiceInstance') }
   let(:instance_id)     { 'instance-1' }
   let(:deployment_name) { 'deployment-name' }
-  let(:instance)        { ServiceInstance.new(id: instance_id, service_id: service_id, deployment_name: deployment_name) }
+  let(:instance)        { instance_double('ServiceInstance', id: instance_id, service_id: service_id, deployment_name: deployment_name) }
 
   before do
     authenticate
-    instance.save
   end
-
-  after { instance.destroy }
 
   describe '#update' do
     let(:binding_id) { 'binding-123' }
-    let(:action_klass) { class_double('Actions::UpdateServiceBinding').as_stubbed_const }
-    let(:action)     { instance_double('Actions::UpdateServiceBinding') }
+    let(:binding_klass) { class_double('ServiceBinding').as_stubbed_const }
+    let(:binding)    { instance_double('ServiceBinding') }
+    let(:usb_klass)  { class_double('Actions::UpdateServiceBinding').as_stubbed_const }
+    let(:usb)        { instance_double('Actions::UpdateServiceBinding') }
+    let(:cbc_klass)  { class_double('Actions::CreateBindingCommands').as_stubbed_const }
+    let(:cbc)        { instance_double('Actions::CreateBindingCommands') }
     let(:master_host_job_name) { 'etcd_leader_z1' }
     let(:master_host_address)  { '10.1.2.3' }
 
     it "fetches master_host_address from bosh deployment" do
       expect(instance_klass).to receive(:find_by_id).with(instance_id).and_return(instance)
-      action_klass.should_receive(:new).with({
+      # expect(instance).to receive(:service_id).and_return()
+      expect(binding_klass).to receive(:new).with(id: binding_id, service_instance: instance).and_return(binding)
+      expect(binding).to receive(:save)
+      expect(binding).to receive(:credentials).and_return({})
+
+      usb_klass.should_receive(:new).with({
         service_id: service_id,
         service_binding_id: binding_id,
         deployment_name: deployment_name,
         master_host_job_name: master_host_job_name
-      }).and_return(action)
-      expect(action).to receive(:save)
-      expect(action).to receive(:perform)
-      expect(action).to receive(:master_host_address).and_return(master_host_address)
+      }).and_return(usb)
+      expect(usb).to receive(:save)
+      expect(usb).to receive(:perform)
+      expect(usb).to receive(:master_host_address).and_return(master_host_address)
+
+      cbc_klass.should_receive(:new).with({
+        service_id: service_id,
+        service_instance_id: instance_id,
+        service_binding_id: binding_id,
+        deployment_name: deployment_name
+      }).and_return(cbc)
+      expect(cbc).to receive(:save)
+      expect(cbc).to receive(:perform)
 
       put :update, id: binding_id, service_instance_id: instance_id
     end
