@@ -13,19 +13,17 @@ describe V2::ServiceBindingsController do
   end
 
   describe '#update' do
-    let(:binding_id) { 'binding-123' }
+    let(:binding_id)    { 'binding-123' }
     let(:binding_klass) { class_double('ServiceBinding').as_stubbed_const }
-    let(:binding)    { instance_double('ServiceBinding') }
-    let(:prepare_klass)  { class_double('Actions::PrepareServiceBinding').as_stubbed_const }
-    let(:prepare)        { instance_double('Actions::PrepareServiceBinding') }
-    let(:cbc_klass)  { class_double('Actions::CreateBindingCommands').as_stubbed_const }
-    let(:cbc)        { instance_double('Actions::CreateBindingCommands') }
+    let(:binding)       { instance_double('ServiceBinding') }
+    let(:prepare_klass) { class_double('Actions::PrepareServiceBinding').as_stubbed_const }
+    let(:prepare)       { instance_double('Actions::PrepareServiceBinding') }
+    let(:cbc_klass)     { class_double('Actions::CreateBindingCommands').as_stubbed_const }
+    let(:cbc)           { instance_double('Actions::CreateBindingCommands') }
 
     it "prepares binding & creates binding commands" do
       expect(instance_klass).to receive(:find_by_id).with(instance_id).and_return(instance)
-      # expect(instance).to receive(:service_id).and_return()
-      expect(binding_klass).to receive(:new).with(id: binding_id, service_instance: instance).and_return(binding)
-      expect(binding).to receive(:save)
+      expect(binding_klass).to receive(:create).with(service_binding_id: binding_id, service_instance_id: instance_id).and_return(binding)
 
       prepare_klass.should_receive(:new).with({
         service_id: service_id,
