@@ -23,6 +23,17 @@ describe ServiceBinding do
     end
   end
 
+  describe "#save" do
+    it "update credentials" do
+      subject.credentials = { "key" => "value" }
+      subject.save
+      expect(subject.credentials["key"]).to eq("value")
+
+      reloaded = ServiceBinding.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
+      expect(reloaded.credentials["key"]).to eq("value")
+    end
+  end
+
   describe '#destroy' do
     it 'removes etcd entry' do
       subject.destroy
