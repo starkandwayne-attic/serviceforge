@@ -1,7 +1,11 @@
 class Service
   attr_reader :id, :name, :description, :tags, :metadata, :plans
   attr_reader :deployment_name_prefix
-  attr_reader :bosh, :release_templates, :default_credentials
+
+  attr_reader :bosh, :release_templates
+  attr_reader :default_credentials, :detect_credentials
+
+  # TODO remove master_host_job_name and use :detect_credentials
   attr_reader :master_host_job_name
   
 
@@ -32,11 +36,12 @@ class Service
     @description            = attrs.fetch('description')
     @tags                   = attrs.fetch('tags', [])
     @metadata               = attrs.fetch('metadata', nil)
+    @plans                  = attrs.fetch('plans', [])
 
     @default_credentials    = attrs.fetch('default_credentials', {})
+    @detect_credentials     = attrs.fetch('detect_credentials', [])
     @bosh                   = attrs.fetch('bosh', nil)
     @release_templates      = attrs.fetch('release_templates', nil)
-    @plans                  = attrs.fetch('plans', [])
   end
 
   def bindable?

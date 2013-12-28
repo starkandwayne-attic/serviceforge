@@ -103,6 +103,22 @@ describe Service do
       end
     end
 
+    context 'when the detect_credentials attr is missing' do
+      let(:service) do
+        Service.build(
+          'id'          => 'my-id',
+          'name'        => 'my-name',
+          'description' => 'my description',
+          'tags'        => ['tagA', 'tagB'],
+          'plans'       => []
+        )
+      end
+
+      it 'sets the field to {}' do
+        expect(service.detect_credentials).to eq([])
+      end
+    end
+
   end
 
   describe '#to_hash' do

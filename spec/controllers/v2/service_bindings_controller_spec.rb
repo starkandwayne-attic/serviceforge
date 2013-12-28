@@ -16,8 +16,8 @@ describe V2::ServiceBindingsController do
     let(:binding_id) { 'binding-123' }
     let(:binding_klass) { class_double('ServiceBinding').as_stubbed_const }
     let(:binding)    { instance_double('ServiceBinding') }
-    let(:usb_klass)  { class_double('Actions::UpdateServiceBinding').as_stubbed_const }
-    let(:usb)        { instance_double('Actions::UpdateServiceBinding') }
+    let(:prepare_klass)  { class_double('Actions::PrepareServiceBinding').as_stubbed_const }
+    let(:prepare)        { instance_double('Actions::PrepareServiceBinding') }
     let(:cbc_klass)  { class_double('Actions::CreateBindingCommands').as_stubbed_const }
     let(:cbc)        { instance_double('Actions::CreateBindingCommands') }
     let(:master_host_job_name) { 'etcd_leader_z1' }
@@ -28,17 +28,13 @@ describe V2::ServiceBindingsController do
       # expect(instance).to receive(:service_id).and_return()
       expect(binding_klass).to receive(:new).with(id: binding_id, service_instance: instance).and_return(binding)
       expect(binding).to receive(:save)
-      expect(binding).to receive(:credentials).and_return({})
 
-      usb_klass.should_receive(:new).with({
+      prepare_klass.should_receive(:new).with({
         service_id: service_id,
         service_binding_id: binding_id,
-        deployment_name: deployment_name,
-        master_host_job_name: master_host_job_name
-      }).and_return(usb)
-      expect(usb).to receive(:save)
-      expect(usb).to receive(:perform)
-      expect(usb).to receive(:master_host_address).and_return(master_host_address)
+        deployment_name: deployment_name
+      }).and_return(prepare)
+      expect(prepare).to receive(:perform)
 
       cbc_klass.should_receive(:new).with({
         service_id: service_id,

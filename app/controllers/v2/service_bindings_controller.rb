@@ -8,15 +8,15 @@ class V2::ServiceBindingsController < V2::BaseController
     service_id = instance.service_id
     service = Service.find_by_id(service_id)
 
-    action = Actions::UpdateServiceBinding.new(
+    # Constructs the service binding credentials
+    # from the Service configuration:
+    # * default credentials such as a port
+    # * detected credentials such as a host address
+    action = Actions::PrepareServiceBinding.new(
       service_id: instance.service_id,
       service_binding_id: binding_id,
-      deployment_name: instance.deployment_name,
-      master_host_job_name: service.bosh_master_host_job_name)
-    action.save
+      deployment_name: instance.deployment_name)
     action.perform
-
-    binding.credentials["master_host_address"] = action.master_host_address
 
     action = Actions::CreateBindingCommands.new({
       service_id: instance.service_id,
@@ -24,7 +24,7 @@ class V2::ServiceBindingsController < V2::BaseController
       service_binding_id: binding_id,
       deployment_name: instance.deployment_name
     })
-    action.save
+    action.save # TODO necessary? can it be removed?
     action.perform
 
     render status: 201, json: binding
