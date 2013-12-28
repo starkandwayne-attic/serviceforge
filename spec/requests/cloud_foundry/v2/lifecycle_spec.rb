@@ -87,6 +87,7 @@ describe 'the service lifecycle' do
     expect(response.status).to eq(201)
     instance = JSON.parse(response.body)
 
+    p instance
     credentials = instance.fetch('credentials')
     service_plans = credentials.delete('service_plans')
     expect(credentials).to eq({

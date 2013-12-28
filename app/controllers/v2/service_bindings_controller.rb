@@ -1,8 +1,10 @@
 class V2::ServiceBindingsController < V2::BaseController
 
-  # Follow params provided by Cloud Controller:
-  # * id             - service_binding_id
-  # * instance_id    - service_instance_id
+  # Following params provided by Rails routing:
+  # * id                  - service_binding_id
+  # * service_instance_id - service_instance_id
+  #
+  # Following params provided by Cloud Controller:
   # * plan_id        - service_plan_id (should be same as on ServiceInstance)
   # * service_id     - service_id
   # * app_guid       - not used currently
@@ -21,13 +23,14 @@ class V2::ServiceBindingsController < V2::BaseController
     # * detected credentials such as a host address
     action = Actions::PrepareServiceBinding.new(
       service_id: service_instance.service_id,
+      service_instance_id: service_instance_id,
       service_binding_id: service_binding_id,
       deployment_name: service_instance.deployment_name)
     action.perform
 
     action = Actions::CreateBindingCommands.new({
-      service_id: service_instance.service_id,
-      service_instance_id: service_instance.id,
+      service_id: service_id,
+      service_instance_id: service_instance_id,
       service_binding_id: service_binding_id,
       deployment_name: service_instance.deployment_name
     })
