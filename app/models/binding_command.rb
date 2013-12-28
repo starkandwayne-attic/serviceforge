@@ -35,6 +35,6 @@ class BindingCommand
 
   private
   def binding_command_object
-    @binding_command_object ||= Object.const_get(klass).new(attributes)
+    @binding_command_object ||= eval(klass).new(attributes)
   end
 end

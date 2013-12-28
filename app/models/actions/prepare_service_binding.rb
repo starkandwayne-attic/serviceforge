@@ -24,7 +24,7 @@ class Actions::PrepareServiceBinding
 
   def detect_binding_attributes
     service.detect_credentials.each do |binding_cred|
-      klass = Object.const_get(binding_cred['class'])
+      klass = eval(binding_cred['class'])
       klass_attributes = binding_cred['attributes']
       binding_key = binding_cred['name']
       binding_attr = klass.new({
