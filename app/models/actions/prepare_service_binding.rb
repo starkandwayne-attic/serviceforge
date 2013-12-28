@@ -7,19 +7,17 @@ class Actions::PrepareServiceBinding
   include Helpers::ServiceAccessor
 
   # required for constructor
-  attr_accessor :service_id, :service_binding_id, :deployment_name
-
-  # resulting credentials value
-  attr_accessor :credentials
+  attr_accessor :service_id, :service_instance_id, :service_binding_id, :deployment_name
 
   def perform
     start_with_default_credentials
     detect_binding_attributes
+    store_credentials_in_service_binding
   end
 
   private
   def start_with_default_credentials
-    self.credentials = service.default_credentials.clone
+    @credentials = service.default_credentials.clone
   end
 
   def detect_binding_attributes
@@ -34,7 +32,12 @@ class Actions::PrepareServiceBinding
       }.merge(klass_attributes))
       binding_value = binding_attr.value
 
-      credentials[binding_key] = binding_value
+      @credentials[binding_key] = binding_value
     end
+  end
+
+  def store_credentials_in_service_binding
+    service_binding.credentials = @credentials
+    service_binding.save
   end
 end

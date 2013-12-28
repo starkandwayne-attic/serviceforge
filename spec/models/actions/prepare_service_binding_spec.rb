@@ -19,21 +19,23 @@ describe Actions::PrepareServiceBinding do
   subject {
     Actions::PrepareServiceBinding.new(
       service_id: service_id,
+      service_instance_id: service_instance_id,
       service_binding_id: service_binding_id,
       deployment_name: deployment_name)
   }
 
   before {
     expect(class_double('Service').as_stubbed_const).to receive(:find_by_id).with(service_id).and_return(service)
+    expect(class_double('ServiceBinding').as_stubbed_const).to receive(:find_by_instance_id_and_binding_id).with(service_instance_id, service_binding_id).and_return(service_binding)
+    expect(service_binding).to receive(:save)
   }
 
   it "includes Service#default_credentials" do
     expect(service).to receive(:default_credentials).and_return(default_credentials)
     expect(service).to receive(:detect_credentials).and_return([])
+    expect(service_binding).to receive(:"credentials=").with(default_credentials)
 
     subject.perform
-
-    expect(subject.credentials).to eq(default_credentials)
   end
 
   it "applies Service#detect_credentials" do
@@ -47,12 +49,11 @@ describe Actions::PrepareServiceBinding do
         }
       }
     ])
-
-    subject.perform
-
-    expect(subject.credentials).to eq({
+    expect(service_binding).to receive(:"credentials=").with({
       'host' => '1.2.3.4'
     })
+
+    subject.perform
   end
 
   it "detect_credentials can override default_credentials" do
@@ -66,12 +67,11 @@ describe Actions::PrepareServiceBinding do
         }
       }
     ])
-
-    subject.perform
-
-    expect(subject.credentials).to eq({
+    expect(service_binding).to receive(:"credentials=").with({
       'host' => '1.2.3.4',
       'port' => 1234
     })
+
+    subject.perform
   end
 end
