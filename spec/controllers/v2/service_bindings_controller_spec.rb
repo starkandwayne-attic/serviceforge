@@ -20,10 +20,8 @@ describe V2::ServiceBindingsController do
     let(:prepare)        { instance_double('Actions::PrepareServiceBinding') }
     let(:cbc_klass)  { class_double('Actions::CreateBindingCommands').as_stubbed_const }
     let(:cbc)        { instance_double('Actions::CreateBindingCommands') }
-    let(:master_host_job_name) { 'etcd_leader_z1' }
-    let(:master_host_address)  { '10.1.2.3' }
 
-    it "fetches master_host_address from bosh deployment" do
+    it "prepares binding & creates binding commands" do
       expect(instance_klass).to receive(:find_by_id).with(instance_id).and_return(instance)
       # expect(instance).to receive(:service_id).and_return()
       expect(binding_klass).to receive(:new).with(id: binding_id, service_instance: instance).and_return(binding)

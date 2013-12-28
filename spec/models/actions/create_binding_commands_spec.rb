@@ -16,7 +16,7 @@ describe Actions::CreateBindingCommands do
     }) 
   }
 
-  it "set host/hostname to primary server IP on all service instance bindings" do
+  it "set host to primary server IP on all service instance bindings" do
     subject.save
 
     ##

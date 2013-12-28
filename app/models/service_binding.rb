@@ -15,11 +15,6 @@ class ServiceBinding
   end
 
   def save
-    self.credentials = {
-      "host" => "10.244.2.6",
-      "hostname" => "10.244.2.6",
-      "port" => 4001
-    }
     $etcd.set("/service_instances/#{service_instance.id}/service_bindings/#{id}/model", to_json)
   end
 

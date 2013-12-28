@@ -5,10 +5,6 @@ class Service
   attr_reader :bosh, :release_templates
   attr_reader :default_credentials, :detect_credentials
 
-  # TODO remove master_host_job_name and use :detect_credentials
-  attr_reader :master_host_job_name
-  
-
   def self.all
     @all ||= (Settings['services'] || []).map {|attrs| Service.build(attrs)}
   end
@@ -68,7 +64,4 @@ class Service
     bosh.release_templates.template_paths
   end
 
-  def bosh_master_host_job_name
-    bosh.binding_config["master_host_job_name"]
-  end
 end

@@ -96,8 +96,6 @@ describe 'the service lifecycle' do
     credentials = instance.fetch('credentials')
     service_plans = credentials.delete('service_plans')
     expect(credentials).to eq({
-      'master_host_address' => '10.244.2.6',
-      'hostname' => '10.244.2.6',
       'host' => '10.244.2.6',
       'port' => 4001
     })
@@ -138,7 +136,6 @@ describe 'the service lifecycle' do
       'id' => binding_id,
       'service_instance_id' => instance_id,
       'credentials' => {
-        'hostname' => '10.244.2.6',
         'host' => '10.244.2.6',
         'port' => 4001
       }

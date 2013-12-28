@@ -8,7 +8,7 @@ class Bosh::DirectorClient
   attr_accessor :target, :username, :password, :api_options
   attr_accessor :infrastructure
 
-  attr_accessor :releases, :release_templates, :binding_config
+  attr_accessor :releases, :release_templates
 
   # attributes looked up from director
   attr_accessor :dns_root, :cpi
