@@ -1,36 +1,28 @@
 class ServiceBinding
   include ActiveModel::Model
 
-  attr_accessor :id, :service_instance, :credentials
+  attr_accessor :service_binding_id, :service_instance_id, :credentials
 
-  def self.find(service_instance, id)
-    if node = $etcd.get("/service_instances/#{service_instance.id}/service_bindings/#{id}/model")
+  def self.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
+    if node = $etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model")
       attributes = JSON.parse(node.value)
-      attributes["service_instance"] = service_instance
-      attributes.delete("service_instance_id")
       new(attributes)
     end
   rescue Net::HTTPServerException
     # key not in etcd
   end
 
+  def self.create(attributes)
+    binding = new(attributes)
+    binding.save
+    binding
+  end
+
   def save
-    $etcd.set("/service_instances/#{service_instance.id}/service_bindings/#{id}/model", to_json)
+    $etcd.set("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model", to_json)
   end
 
   def destroy
-    $etcd.delete("/service_instances/#{service_instance.id}/service_bindings/#{id}/model")
-  end
-
-  def attributes
-    {
-      "id" => id,
-      "service_instance_id" => service_instance.id,
-      "credentials" => credentials
-    }
-  end
-
-  def to_json(*)
-    attributes.to_json
+    $etcd.delete("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model")
   end
 end
