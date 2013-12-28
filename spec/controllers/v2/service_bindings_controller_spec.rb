@@ -44,7 +44,6 @@ describe V2::ServiceBindingsController do
         service_binding_id: service_binding_id,
         deployment_name: deployment_name
       }).and_return(cbc)
-      expect(cbc).to receive(:save)
       expect(cbc).to receive(:perform)
 
       put :update, id: service_binding_id, service_instance_id: service_instance_id

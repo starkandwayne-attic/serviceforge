@@ -34,7 +34,6 @@ class V2::ServiceBindingsController < V2::BaseController
       service_binding_id: service_binding_id,
       deployment_name: service_instance.deployment_name
     })
-    action.save # TODO necessary? can it be removed?
     action.perform
 
     # reload after saves
