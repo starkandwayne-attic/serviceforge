@@ -10,6 +10,7 @@ describe Actions::CreateBindingCommands do
   let(:credentials)           { instance_double("Hash") }
   let(:scale_1_server_uuid)   { 'scale_1_server_uuid' }
   let(:scale_3_servers_uuid)  { 'scale_3_servers_uuid' }
+  let(:request_host)          { 'http://broker-address' }
   let(:expected_binding_commands) {
     {
       'current_plan' => '5-servers',
@@ -38,6 +39,7 @@ describe Actions::CreateBindingCommands do
   end
 
   it {
+    expect(subject).to receive(:request_host).exactly(2).times.and_return(request_host)
     expect(subject).to receive(:generate_binding_command_uuid).and_return(scale_1_server_uuid)
     expect(subject).to receive(:generate_binding_command_uuid).and_return(scale_3_servers_uuid)
     subject.perform

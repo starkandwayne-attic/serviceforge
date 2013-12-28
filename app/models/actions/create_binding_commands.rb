@@ -8,8 +8,8 @@ class Actions::CreateBindingCommands
     service_binding.credentials["binding_commands"] = {
       'current_plan' => current_plan_label,
       'commands' => {
-        '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/#{generate_binding_command_uuid}" },
-        '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/#{generate_binding_command_uuid}" },
+        '1-server'  => { 'method' => 'PUT', 'url' => "#{request_host}/binding_commands/#{generate_binding_command_uuid}" },
+        '3-servers' => { 'method' => 'PUT', 'url' => "#{request_host}/binding_commands/#{generate_binding_command_uuid}" },
       }
     }
     
@@ -19,6 +19,10 @@ class Actions::CreateBindingCommands
   private
   def generate_binding_command_uuid
     "xxx"
+  end
+
+  def request_host
+    'http://broker-address'
   end
 
   def current_plan_label
