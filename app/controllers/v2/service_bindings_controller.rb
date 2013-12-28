@@ -37,6 +37,8 @@ class V2::ServiceBindingsController < V2::BaseController
     action.save # TODO necessary? can it be removed?
     action.perform
 
+    # reload after saves
+    service_binding = ServiceBinding.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
     render status: 201, json: service_binding
   end
 

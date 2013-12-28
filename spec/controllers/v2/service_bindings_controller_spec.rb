@@ -26,6 +26,9 @@ describe V2::ServiceBindingsController do
       expect(service_binding_klass).to receive(:create).
         with(service_binding_id: service_binding_id, service_instance_id: service_instance_id).
         and_return(service_binding)
+      expect(service_binding_klass).to receive(:find_by_instance_id_and_binding_id).
+        with(service_instance_id, service_binding_id).
+        and_return(service_binding)
 
       prepare_klass.should_receive(:new).with({
         service_id: service_id,
