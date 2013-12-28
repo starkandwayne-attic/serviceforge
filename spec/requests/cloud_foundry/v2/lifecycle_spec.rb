@@ -89,37 +89,39 @@ describe 'the service lifecycle' do
 
     p instance
     credentials = instance.fetch('credentials')
-    service_plans = credentials.delete('service_plans')
+    binding_commands = credentials.delete('binding_commands')
     expect(credentials).to eq({
       'host' => '10.244.2.6',
       'port' => 4001
     })
 
-    # 'service_plans' => {
-    #   'help' => 'send PUT to plan URL to trigger change',
-    #   'current' => '5-servers',
-    #   'plans' => {
-    #     '1-server' => { 'url' => 'http://broker-address/apps/v1/services/UUID/change_plan/1-server' },
-    #     '3-servers' => { 'url' => 'http://broker-address/apps/v1/services/UUID/change_plan/3-servers' },
-    #     '5-servers' => '{ 'url' => http://broker-address/apps/v1/services/UUID/change_plan/5-servers' }
+    # 'binding_commands' => {
+    #   'current_plan' => current_plan_label,
+    #   'commands' => {
+    #     '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_comamnds/AUTH_TOKEN" },
+    #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_comamnds/OTHER_TOKEN" },
     #   }
     # }
-    expect(service_plans.fetch('current')).to eq('5-servers') # see let(:plan_id)
-    plans = service_plans.fetch('plans')
-    expect(plans).to be_instance_of(Hash)
+    expect(binding_commands.fetch('current_plan')).to eq('5-servers') # see let(:plan_id)
+    commands = binding_commands.fetch('commands')
+    expect(commands).to be_instance_of(Hash)
 
-    three_server_plan_url = plans.fetch('3-servers').fetch('url')
+    three_server_plan_url = commands.fetch('3-servers').fetch('url')
+    three_server_plan_method = commands.fetch('3-servers').fetch('method')
+
     # Trigger downgrade to 1-server plan
-    put URI.parse(three_server_plan_url).path
+    expect(three_server_plan_method).to eq('PUT')
+    put URI.parse(three_server_plan_url).path, {}
+    expect(response.status).to eq(200)
 
     ##
     ## Test the etcd /service_instances entry
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
     expect(data).to eq({
-      'id' => service_instance_id, 
+      'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
-      'plan_id' => three_server_plan_id,
+      'service_plan_id' => three_server_plan_id,
       'deployment_name' => deployment_name
     })
 
@@ -128,7 +130,7 @@ describe 'the service lifecycle' do
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model").value)
     expect(data).to eq({
-      'id' => binding_id,
+      'service_binding_id' => binding_id,
       'service_instance_id' => service_instance_id,
       'credentials' => {
         'host' => '10.244.2.6',
