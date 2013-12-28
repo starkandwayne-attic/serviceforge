@@ -1,8 +1,15 @@
 class V2::ServiceBindingsController < V2::BaseController
+
+  # Follow params provided by Cloud Controller:
+  # * id             - service_binding_id
+  # * instance_id    - service_instance_id
+  # * plan_id        - service_plan_id (should be same as on ServiceInstance)
+  # * service_id     - service_id
+  # * app_guid       - not used currently
   def update
     service_instance_id = params.fetch(:service_instance_id)
-    service_instance = ServiceInstance.find_by_id(service_instance_id)
     service_binding_id = params.fetch(:id)
+    service_instance = ServiceInstance.find_by_id(service_instance_id)
     service_binding = ServiceBinding.create(service_binding_id: service_binding_id, service_instance_id: service_instance_id)
 
     service_id = service_instance.service_id
