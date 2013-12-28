@@ -16,7 +16,7 @@ class ServiceInstance
   end
 
   def save
-    $etcd.set("/service_instances/#{id}/model", to_json)
+    $etcd.set("/service_instances/#{id}/model", attributes.to_json)
   end
 
   def destroy
@@ -24,15 +24,15 @@ class ServiceInstance
   end
 
   def to_json(*)
-    attributes.to_json
+    {}.to_json
   end
 
   def attributes
     {
-      id: id,
-      service_id: service_id,
-      plan_id: plan_id,
-      deployment_name: deployment_name
+      'id' => id,
+      'service_id' => service_id,
+      'plan_id' => plan_id,
+      'deployment_name' => deployment_name
     }
   end
 end
