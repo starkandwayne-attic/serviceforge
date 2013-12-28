@@ -14,6 +14,7 @@ class BindingAttributes::JobIpAddress < BindingAttribute
   end
 
   def deployment_vms
-    bosh_director_client.list_vms(deployment_name)
+    vms, task_id = bosh_director_client.fetch_vm_state(deployment_name)
+    vms
   end
 end

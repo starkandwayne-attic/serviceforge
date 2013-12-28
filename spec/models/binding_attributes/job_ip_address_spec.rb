@@ -31,7 +31,7 @@ properties:
     
     before {
       expect(class_double('Service').as_stubbed_const).to receive(:find_by_id).with(service_id).and_return(service)
-      expect(bosh_director_client).to receive(:list_vms).with(deployment_name).and_return(vms_state)
+      expect(bosh_director_client).to receive(:fetch_vm_state).with(deployment_name).and_return([vms_state, 'some-task-id'])
     }
 
     it "find IP from deployment with explicit job_name/job_index" do
