@@ -3,7 +3,7 @@
 # a working auth_token then they are authorized to invoke to command, and
 # also authenticated as a specific service instance & service binding.
 class BindingCommand
-  include ActiveModel::Model
+  include EtcdModel
 
   attr_accessor :auth_token
   attr_accessor :service_instance_id, :service_binding_id

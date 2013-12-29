@@ -9,8 +9,7 @@
 #   action.save
 #   action.perform
 class Actions::DeleteServiceInstance
-  include ActiveModel::Model
-  include Helpers::ServiceAccessor
+  include EtcdModel
 
   # required for constructor
   attr_accessor :service_id, :service_instance_id, :deployment_name

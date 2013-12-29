@@ -29,12 +29,11 @@ class V2::ServiceInstancesController < V2::BaseController
   def destroy
     if instance = ServiceInstance.find_by_id(params.fetch(:id))
 
-      action = Actions::DeleteServiceInstance.new({
-        service_instance_id: instance.id,
+      action = Actions::DeleteServiceInstance.create({
+        service_instance_id: instance.service_instance_id,
         service_id: instance.service_id,
         deployment_name: instance.deployment_name
       })
-      action.save
       action.perform
 
       # TODO - archive, not destroy

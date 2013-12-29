@@ -1,4 +1,6 @@
-module Helpers::ServiceAccessor
+module ServiceAccessor
+  extend ActiveSupport::Concern
+
   def service
     @service ||= Service.find_by_id(service_id)
   end

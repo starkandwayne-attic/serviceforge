@@ -1,6 +1,5 @@
 class Actions::CreateBindingCommands
-  include ActiveModel::Model
-  include Helpers::ServiceAccessor
+  include EtcdModel
 
   attr_accessor :service_id, :service_instance_id, :service_binding_id, :deployment_name
 

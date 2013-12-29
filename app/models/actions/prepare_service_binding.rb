@@ -3,8 +3,7 @@
 # * default credentials such as a port
 # * detected credentials such as a host address
 class Actions::PrepareServiceBinding
-  include ActiveModel::Model
-  include Helpers::ServiceAccessor
+  include EtcdModel
 
   # required for constructor
   attr_accessor :service_id, :service_instance_id, :service_binding_id, :deployment_name

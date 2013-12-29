@@ -1,5 +1,5 @@
 class ServiceInstance
-  include ActiveModel::Model
+  include EtcdModel
 
   attr_accessor :service_instance_id
   attr_accessor :service_id

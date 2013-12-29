@@ -1,5 +1,5 @@
 class ServiceBinding
-  include ActiveModel::Model
+  include EtcdModel
 
   attr_accessor :service_binding_id, :service_instance_id, :credentials
 

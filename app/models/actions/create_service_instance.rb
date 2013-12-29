@@ -15,8 +15,7 @@
 #   action.save
 #   action.perform
 class Actions::CreateServiceInstance
-  include ActiveModel::Model
-  include Helpers::ServiceAccessor
+  include EtcdModel
 
   # required for constructor
   attr_accessor :service_id, :service_plan_id, :service_instance_id

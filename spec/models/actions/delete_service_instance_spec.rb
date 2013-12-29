@@ -19,8 +19,7 @@ describe Actions::DeleteServiceInstance do
     end
 
     it "deletes an existing service" do
-      action = Actions::DeleteServiceInstance.new(service_id: service_id, service_instance_id: service_instance_id, deployment_name: deployment_name)
-      action.save
+      action = Actions::DeleteServiceInstance.create(service_id: service_id, service_instance_id: service_instance_id, deployment_name: deployment_name)
 
       ##
       ## Test the etcd entry
