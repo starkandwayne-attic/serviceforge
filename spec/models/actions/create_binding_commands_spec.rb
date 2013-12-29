@@ -7,7 +7,8 @@ describe Actions::CreateBindingCommands do
   let(:service_instance_id)   { 'service-instance-id-1' }
   let(:service_binding_id)    { 'service-binding-id-1' }
   let(:deployment_name)       { 'deployment-name' }
-  let(:credentials)           { instance_double("Hash") }
+  let(:credentials)           { instance_double('Hash') }
+  let(:uuid)                  { instance_double('UUID') }
   let(:vms_state_uuid)        { 'vms_state_uuid' }
   let(:scale_1_server_uuid)   { 'scale_1_server_uuid' }
   let(:scale_3_servers_uuid)  { 'scale_3_servers_uuid' }
@@ -32,6 +33,7 @@ describe Actions::CreateBindingCommands do
   }
 
   before do
+    expect(class_double("UUID").as_stubbed_const).to receive(:new).and_return(uuid)
     expect(class_double("ServiceBinding").as_stubbed_const).to receive(:find_by_instance_id_and_binding_id).
       with(service_instance_id, service_binding_id).
       and_return(service_binding)
@@ -42,7 +44,7 @@ describe Actions::CreateBindingCommands do
 
   it {
     expect(subject).to receive(:request_host).exactly(1).times.and_return(request_host)
-    expect(subject).to receive(:generate_binding_command_uuid).and_return(vms_state_uuid)
+    expect(uuid).to receive(:generate).and_return(vms_state_uuid)
     # expect(subject).to receive(:generate_binding_command_uuid).and_return(scale_1_server_uuid)
     # expect(subject).to receive(:generate_binding_command_uuid).and_return(scale_3_servers_uuid)
     subject.perform

@@ -33,7 +33,11 @@ class Actions::CreateBindingCommands
 
   private
   def generate_binding_command_uuid
-    "xxx"
+    uuid.generate
+  end
+
+  def uuid
+    @uuid ||= UUID.new
   end
 
   def request_host
