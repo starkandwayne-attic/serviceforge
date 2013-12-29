@@ -15,7 +15,7 @@
 #   action.save
 #   action.perform
 class Actions::CreateServiceInstance
-  include ActiveModel::Model
+  include EtcdModel
 
   # required for constructor
   attr_accessor :service_id, :service_plan_id, :service_instance_id
@@ -78,20 +78,12 @@ class Actions::CreateServiceInstance
     service_plan.deployment_stub
   end
 
-  def service
-    @service ||= Service.find_by_id(service_id)
-  end
-
   def service_plan
     @service_plan || service.find_plan_by_id(service_plan_id)
   end
 
   def director_uuid
     bosh_director_client.director_uuid
-  end
-
-  def bosh_director_client
-    service.bosh
   end
 
   def deployment_name_prefix

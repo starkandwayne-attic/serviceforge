@@ -1,9 +1,9 @@
 class Service
   attr_reader :id, :name, :description, :tags, :metadata, :plans
   attr_reader :deployment_name_prefix
+
   attr_reader :bosh, :release_templates
-  attr_reader :master_host_job_name
-  
+  attr_reader :default_credentials, :detect_credentials
 
   def self.all
     @all ||= (Settings['services'] || []).map {|attrs| Service.build(attrs)}
@@ -32,9 +32,12 @@ class Service
     @description            = attrs.fetch('description')
     @tags                   = attrs.fetch('tags', [])
     @metadata               = attrs.fetch('metadata', nil)
+    @plans                  = attrs.fetch('plans', [])
+
+    @default_credentials    = attrs.fetch('default_credentials', {})
+    @detect_credentials     = attrs.fetch('detect_credentials', [])
     @bosh                   = attrs.fetch('bosh', nil)
     @release_templates      = attrs.fetch('release_templates', nil)
-    @plans                  = attrs.fetch('plans', [])
   end
 
   def bindable?
@@ -61,7 +64,4 @@ class Service
     bosh.release_templates.template_paths
   end
 
-  def bosh_master_host_job_name
-    bosh.binding_config["master_host_job_name"]
-  end
 end

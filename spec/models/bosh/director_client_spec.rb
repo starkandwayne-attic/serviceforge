@@ -8,9 +8,6 @@ describe Bosh::DirectorClient do
       'release_templates' => {
         'base_path' => '/path/to/templates',
         'templates' => ['file1.yml', 'file2.yml']
-      },
-      'binding_config' => {
-        'master_host_job_name' => 'leader_job_name'
       }
     })
   }

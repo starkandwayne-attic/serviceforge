@@ -24,6 +24,13 @@ defaults: &defaults
         imageUrl: ~
         blurb: A highly-available key value store for shared configuration and service discovery.
         long_description: A highly-available key value store for shared configuration and service discovery. High-availablity clusters are available.
+    default_credentials:
+      port: 4001
+    detect_credentials:
+      - name: host
+        class: BindingAttributes::JobIpAddress
+        attributes:
+          job_name: etcd_leader_z1
     bosh:
       target: https://192.168.50.4:25555
       username: admin
@@ -43,8 +50,6 @@ defaults: &defaults
          - etcd-jobs.yml
          - etcd-properties.yml
          - etcd-infrastructure-warden.yml
-      binding_config:
-        master_host_job_name: etcd_leader_z1
     plans:
     - name: 1-server
       id: 6e8ece8c-4fe6-4d58-9aeb-497d6aeba113

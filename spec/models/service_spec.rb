@@ -86,6 +86,39 @@ describe Service do
         expect(service.tags).to eq([])
       end
     end
+
+    context 'when the default_credentials attr is missing' do
+      let(:service) do
+        Service.build(
+          'id'          => 'my-id',
+          'name'        => 'my-name',
+          'description' => 'my description',
+          'tags'        => ['tagA', 'tagB'],
+          'plans'       => []
+        )
+      end
+
+      it 'sets the field to {}' do
+        expect(service.default_credentials).to eq({})
+      end
+    end
+
+    context 'when the detect_credentials attr is missing' do
+      let(:service) do
+        Service.build(
+          'id'          => 'my-id',
+          'name'        => 'my-name',
+          'description' => 'my description',
+          'tags'        => ['tagA', 'tagB'],
+          'plans'       => []
+        )
+      end
+
+      it 'sets the field to {}' do
+        expect(service.detect_credentials).to eq([])
+      end
+    end
+
   end
 
   describe '#to_hash' do
@@ -225,9 +258,6 @@ describe Service do
           'release_templates' => {
             'base_path' => '/path/to',
             'templates' => %w[file1.yml file2.yml]
-          },
-          'binding_config' => {
-            'master_host_job_name' => 'leader_job_name'
           }
         }
       )
@@ -236,9 +266,6 @@ describe Service do
       expect(subject.bosh_service_stub_paths).to eq(["/path/to/file1.yml", "/path/to/file2.yml"])
     end
 
-    it "#bosh_master_host_job_name" do
-      expect(subject.bosh_master_host_job_name).to eq("leader_job_name")
-    end
   end
 
 

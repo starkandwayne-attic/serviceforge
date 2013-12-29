@@ -1,30 +1,52 @@
 class V2::ServiceBindingsController < V2::BaseController
-  def update
-    instance = ServiceInstance.find_by_id(params.fetch(:service_instance_id))
-    binding = ServiceBinding.new(id: params.fetch(:id), service_instance: instance)
-    binding.save
 
-    service_id = instance.service_id
+  # Following params provided by Rails routing:
+  # * id                  - service_binding_id
+  # * service_instance_id - service_instance_id
+  #
+  # Following params provided by Cloud Controller:
+  # * plan_id        - service_plan_id (should be same as on ServiceInstance)
+  # * service_id     - service_id
+  # * app_guid       - not used currently
+  def update
+    service_instance_id = params.fetch(:service_instance_id)
+    service_binding_id = params.fetch(:id)
+    service_instance = ServiceInstance.find_by_id(service_instance_id)
+    service_binding = ServiceBinding.create(service_binding_id: service_binding_id, service_instance_id: service_instance_id)
+
+    service_id = service_instance.service_id
     service = Service.find_by_id(service_id)
 
-    action = Actions::UpdateServiceBinding.new(
-      service_id: instance.service_id,
-      service_binding_id: binding.id,
-      deployment_name: instance.deployment_name,
-      master_host_job_name: service.bosh_master_host_job_name)
-    action.save
+    # Constructs the service binding credentials
+    # from the Service configuration:
+    # * default credentials such as a port
+    # * detected credentials such as a host address
+    action = Actions::PrepareServiceBinding.new(
+      service_id: service_instance.service_id,
+      service_instance_id: service_instance_id,
+      service_binding_id: service_binding_id,
+      deployment_name: service_instance.deployment_name)
     action.perform
 
-    binding.credentials["master_host_address"] = action.master_host_address
-    binding.save
+    action = Actions::CreateBindingCommands.new({
+      service_id: service_id,
+      service_instance_id: service_instance_id,
+      service_binding_id: service_binding_id,
+      deployment_name: service_instance.deployment_name
+    })
+    action.perform
 
-    render status: 201, json: binding
+    # reload after saves
+    service_binding = ServiceBinding.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
+    render status: 201, json: service_binding
   end
 
   def destroy
-    instance = ServiceInstance.find_by_id(params.fetch(:service_instance_id))
-    if binding = ServiceBinding.find(instance, params.fetch(:id))
-      binding.destroy
+    service_instance_id = params.fetch(:service_instance_id)
+    service_binding_id = params.fetch(:id)
+    service_binding = ServiceBinding.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
+    if service_binding
+      service_binding.destroy
       status = 204
     else
       status = 410
