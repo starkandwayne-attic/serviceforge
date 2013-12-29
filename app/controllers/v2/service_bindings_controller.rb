@@ -43,8 +43,9 @@ class V2::ServiceBindingsController < V2::BaseController
 
   def destroy
     service_instance_id = params.fetch(:service_instance_id)
-    service_instance = ServiceInstance.find_by_id(service_instance_id)
-    if service_binding = ServiceBinding.find(service_instance, params.fetch(:id))
+    service_binding_id = params.fetch(:id)
+    service_binding = ServiceBinding.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
+    if service_binding
       service_binding.destroy
       status = 204
     else
