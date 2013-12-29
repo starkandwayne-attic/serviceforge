@@ -2,6 +2,9 @@
 # without any additional authentication or authorization. If they can provide
 # a working auth_token then they are authorized to invoke to command, and
 # also authenticated as a specific service instance & service binding.
+#
+# TODO perhaps rename to RegisteredBindingCommand to decouple from
+# the actual BindingCommands themselves
 class BindingCommand
   include EtcdModel
 
