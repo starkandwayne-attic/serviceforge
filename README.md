@@ -94,6 +94,18 @@ You can now provision a service:
 $ gcf create-service etcd-dedicated-bosh-lite 5-servers my-5-pack
 ```
 
+### Updating ngrok
+
+If you stop/restart your ngrok tunnel, you will be given a new URL and you will need to update the `broker_url` for your Cloud Controller Service Broker.
+
+Run the first command to find your service broker's URL; the second command to update the `broker_url` field to the new ngrok URL.
+
+```
+cf curl GET /v2/service_brokers
+cf curl PUT /v2/service_brokers/e1e0a07e-7530-4552-b99b-08f34739ea22 -b '{"broker_url": "http://ee81a54.ngrok.com"}'
+```
+
+
 ## Running Tests
 
 The integration tests require `etcd` to be running.
