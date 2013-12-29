@@ -8,12 +8,15 @@
 class BindingCommand
   include EtcdModel
 
-  attr_accessor :auth_token
+  attr_accessor :label, :auth_token
   attr_accessor :service_instance_id, :service_binding_id
 
   # Which Binding class to invoke and the attributes to pass
   # to its constructor
   attr_accessor :klass, :attributes
+
+  # How the BindingCommand can be invoked:
+  attr_accessor :http_method
 
   def self.find_by_auth_token(auth_token)
     if node = $etcd.get("/binding_commands/#{auth_token}/model")

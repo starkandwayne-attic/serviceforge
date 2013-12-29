@@ -114,6 +114,21 @@ describe 'the service lifecycle' do
     })
 
     # 'binding_commands' => {
+    #   'commands' => {
+    #     'vms_state' => { 'method' => 'GET', 'url' => "http://broker-address/binding_comamnds/CMD_AUTH_TOKEN" }
+    #   }
+    # }
+
+    vms_state_cmd = binding_commands.fetch('commands').fetch('vms-state')
+    expect(vms_state_cmd).to_not be_nil
+    expect(vms_state_cmd['method']).to eq('GET')
+
+    get URI.parse(vms_state_cmd['url']).path
+    expect(response.status).to eq(200)
+    vms_state = JSON.parse(response.body)
+    expect(vms_state.size).to eq(5) # one for each VM in 5-servers cluster
+
+    # 'binding_commands' => {
     #   'current_plan' => current_plan_label,
     #   'commands' => {
     #     '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_comamnds/AUTH_TOKEN" },

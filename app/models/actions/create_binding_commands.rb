@@ -4,12 +4,28 @@ class Actions::CreateBindingCommands
   attr_accessor :service_id, :service_instance_id, :service_binding_id, :deployment_name
 
   def perform
+    commands = {
+      # '1-server'  => { 'method' => 'PUT', 'url' => "#{request_host}/binding_commands/#{generate_binding_command_uuid}" },
+      # '3-servers' => { 'method' => 'PUT', 'url' => "#{request_host}/binding_commands/#{generate_binding_command_uuid}" },
+    }
+
+    auth_token = generate_binding_command_uuid
+    label = 'vms-state'
+    http_method = 'GET'
+
+    command = BindingCommand.create(service_instance_id: service_instance_id,
+      service_binding_id: service_binding_id,
+      auth_token: auth_token,
+      label: label,
+      http_method: http_method,
+      klass: 'BindingCommands::Bosh::DeploymentVmState',
+      attributes: {deployment_name: deployment_name, service_id: service_id})
+
+    commands.merge!(command_hash(label, http_method, auth_token))
+    
     service_binding.credentials["binding_commands"] = {
       'current_plan' => current_plan_label,
-      'commands' => {
-        '1-server'  => { 'method' => 'PUT', 'url' => "#{request_host}/binding_commands/#{generate_binding_command_uuid}" },
-        '3-servers' => { 'method' => 'PUT', 'url' => "#{request_host}/binding_commands/#{generate_binding_command_uuid}" },
-      }
+      'commands' => commands
     }
     
     service_binding.save
@@ -22,6 +38,14 @@ class Actions::CreateBindingCommands
 
   def request_host
     'http://broker-address'
+  end
+
+  def command_url(auth_token)
+    "#{request_host}/binding_commands/#{auth_token}"
+  end
+
+  def command_hash(label, http_method, auth_token)
+    { label => { 'method' => http_method, 'url' => command_url(auth_token) } }
   end
 
   def current_plan_label
