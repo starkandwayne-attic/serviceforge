@@ -41,7 +41,7 @@ defaults: &defaults
       # cpi: - cpi calculated after login (warden, openstack)
       releases:
       - name: etcd
-        version: 2
+        version: 3
         url: ~
       release_templates:
         base_path: <%= Rails.root %>/templates
