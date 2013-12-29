@@ -11,7 +11,7 @@ Services as a Service. Service Broker for Cloud Foundry that is backed by BOSH.
 ## Dependencies
 
 * ruby 1.9+
-* etcd 0.2.rc3 - [install latest release](https://github.com/coreos/etcd/releases/)
+* etcd 0.2 - [install latest release](https://github.com/coreos/etcd/releases/)
 * Redis 2.8.3+ - [install latest release](http://redis.io/download)
 
 ## Run locally
