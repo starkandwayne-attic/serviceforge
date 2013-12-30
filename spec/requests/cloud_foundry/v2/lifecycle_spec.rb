@@ -123,6 +123,11 @@ describe 'the service lifecycle' do
     expect(vms_state_cmd).to_not be_nil
     expect(vms_state_cmd['method']).to eq('GET')
 
+    # GET is required for this binding_command, so PUT should fail with 405
+    put URI.parse(vms_state_cmd['url']).path
+    expect(response.status).to eq(405)
+
+    # Now try GET as required...
     get URI.parse(vms_state_cmd['url']).path
     expect(response.status).to eq(200)
     vms_state = JSON.parse(response.body)
