@@ -34,10 +34,10 @@ class RegisteredBindingCommand
   end
 
   def perform
-    binding_command.perform
+    binding_command_action.perform
   end
 
-  def binding_command
-    @binding_command ||= eval(klass).new(attributes)
+  def binding_command_action
+    @binding_command_action ||= eval(klass).new(attributes)
   end
 end

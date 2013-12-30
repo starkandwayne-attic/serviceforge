@@ -10,7 +10,7 @@ describe BindingCommandsController do
       before do
         expect(RegisteredBindingCommand).to receive(:find_by_auth_token).with(unique_binding_auth_token).and_return(command)
         expect(command).to receive(:perform)
-        expect(command).to receive(:binding_command).and_return(command_action)
+        expect(command).to receive(:binding_command_action).and_return(command_action)
         expect(command_action).to receive(:to_json).and_return("{'some': 'json'}")
       end
 

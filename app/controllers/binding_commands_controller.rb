@@ -7,7 +7,7 @@ class BindingCommandsController < ApplicationController
     auth_token = params.fetch(:binding_auth_token)
     if @binding_command = RegisteredBindingCommand.find_by_auth_token(auth_token)
       binding_command.perform
-      result = binding_command.binding_command
+      result = binding_command.binding_command_action
       render json: result.to_json, status: 200
     else
       render nothing: true, status: :unauthorized
