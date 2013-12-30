@@ -1,12 +1,13 @@
 require 'spec_helper'
 
 describe V2::ServiceBindingsController do
-  let(:service)         { instance_double('Service') }
-  let(:service_id)      { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated-bosh-lite
-  let(:instance_klass)  { class_double('ServiceInstance').as_stubbed_const }
+  let(:service)             { instance_double('Service') }
+  let(:service_id)          { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated-bosh-lite
+  let(:instance_klass)      { class_double('ServiceInstance').as_stubbed_const }
   let(:service_instance_id) { 'instance-1' }
-  let(:deployment_name) { 'deployment-name' }
-  let(:service_instance)        { instance_double('ServiceInstance', service_instance_id: service_instance_id, service_id: service_id, deployment_name: deployment_name) }
+  let(:deployment_name)     { 'deployment-name' }
+  let(:service_instance)    { instance_double('ServiceInstance', service_instance_id: service_instance_id, service_id: service_id, deployment_name: deployment_name) }
+  let(:request_base_url)    { 'http://127.0.0.1:6000' }
 
   before do
     authenticate
@@ -42,7 +43,8 @@ describe V2::ServiceBindingsController do
         service_id: service_id,
         service_instance_id: service_instance_id,
         service_binding_id: service_binding_id,
-        deployment_name: deployment_name
+        deployment_name: deployment_name,
+        request_base_url: request_base_url
       }).and_return(cbc)
       expect(cbc).to receive(:perform)
 

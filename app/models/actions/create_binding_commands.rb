@@ -2,11 +2,12 @@ class Actions::CreateBindingCommands
   include EtcdModel
 
   attr_accessor :service_id, :service_instance_id, :service_binding_id, :deployment_name
+  attr_accessor :request_base_url
 
   def perform
     commands = {
-      # '1-server'  => { 'method' => 'PUT', 'url' => "#{request_host}/binding_commands/#{generate_binding_command_uuid}" },
-      # '3-servers' => { 'method' => 'PUT', 'url' => "#{request_host}/binding_commands/#{generate_binding_command_uuid}" },
+      # '1-server'  => { 'method' => 'PUT', 'url' => "#{request_base_url}/binding_commands/#{generate_binding_command_uuid}" },
+      # '3-servers' => { 'method' => 'PUT', 'url' => "#{request_base_url}/binding_commands/#{generate_binding_command_uuid}" },
     }
 
     auth_token = generate_binding_command_uuid
@@ -39,12 +40,8 @@ class Actions::CreateBindingCommands
     @uuid ||= UUID.new
   end
 
-  def request_host
-    'http://broker-address'
-  end
-
   def command_url(auth_token)
-    "#{request_host}/binding_commands/#{auth_token}"
+    "#{request_base_url}/binding_commands/#{auth_token}"
   end
 
   def command_hash(label, http_method, auth_token)

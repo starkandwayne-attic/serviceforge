@@ -12,7 +12,7 @@ describe Actions::CreateBindingCommands do
   let(:vms_state_uuid)        { 'vms_state_uuid' }
   let(:scale_1_server_uuid)   { 'scale_1_server_uuid' }
   let(:scale_3_servers_uuid)  { 'scale_3_servers_uuid' }
-  let(:request_host)          { 'http://broker-address' }
+  let(:request_base_url)      { 'http://broker-address' }
   let(:expected_binding_commands) {
     {
       'commands' => {
@@ -27,7 +27,8 @@ describe Actions::CreateBindingCommands do
       service_id: service_id,
       service_instance_id: service_instance_id,
       service_binding_id: service_binding_id,
-      deployment_name: deployment_name
+      deployment_name: deployment_name,
+      request_base_url: request_base_url
     }) 
   }
 
@@ -42,7 +43,6 @@ describe Actions::CreateBindingCommands do
   end
 
   it {
-    expect(subject).to receive(:request_host).exactly(1).times.and_return(request_host)
     expect(uuid).to receive(:generate).and_return(vms_state_uuid)
     # expect(subject).to receive(:generate_binding_command_uuid).and_return(scale_1_server_uuid)
     # expect(subject).to receive(:generate_binding_command_uuid).and_return(scale_3_servers_uuid)

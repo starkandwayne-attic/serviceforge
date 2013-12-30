@@ -90,6 +90,8 @@ development:
 
   extra_deployment_name_prefix: ~
 
+  base_url: http://127.0.0.1:5000
+
   <<: *defaults
 
 test:
@@ -99,4 +101,7 @@ test:
     port: 6200
 
   extra_deployment_name_prefix: test
+
+  base_url: http://127.0.0.1:6000
+
   <<: *defaults

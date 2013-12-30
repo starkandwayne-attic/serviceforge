@@ -32,7 +32,8 @@ class V2::ServiceBindingsController < V2::BaseController
       service_id: service_id,
       service_instance_id: service_instance_id,
       service_binding_id: service_binding_id,
-      deployment_name: service_instance.deployment_name
+      deployment_name: service_instance.deployment_name,
+      request_base_url: request_base_url
     })
     action.perform
 
@@ -44,6 +45,11 @@ class V2::ServiceBindingsController < V2::BaseController
   def destroy
     service_instance_id = params.fetch(:service_instance_id)
     service_binding_id = params.fetch(:id)
+
+    # action = Actions::DestroyBindingCommands.new(
+    # 
+    # )
+
     service_binding = ServiceBinding.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
     if service_binding
       service_binding.destroy
@@ -53,5 +59,10 @@ class V2::ServiceBindingsController < V2::BaseController
     end
 
     render status: status, json: {}
+  end
+
+  protected
+  def request_base_url
+    ENV['SERVAAS_BASE_URL'] || Settings.base_url || request.base_url
   end
 end
