@@ -36,11 +36,10 @@ class BindingCommand
   end
 
   def perform
-    binding_command_object.perform
+    binding_command.perform
   end
 
-  private
-  def binding_command_object
-    @binding_command_object ||= eval(klass).new(attributes)
+  def binding_command
+    @binding_command ||= eval(klass).new(attributes)
   end
 end
