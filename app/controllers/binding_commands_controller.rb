@@ -5,7 +5,7 @@ class BindingCommandsController < ApplicationController
 
   def update
     auth_token = params.fetch(:binding_auth_token)
-    if @binding_command = BindingCommand.find_by_auth_token(auth_token)
+    if @binding_command = RegisteredBindingCommand.find_by_auth_token(auth_token)
       binding_command.perform
       result = binding_command.binding_command
       render json: result.to_json, status: 200

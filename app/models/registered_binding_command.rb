@@ -1,11 +1,9 @@
-# Each BindingCommand allows a single bound-application to invoke a command
+# Each RegisteredBindingCommand allows a single bound-application to invoke a command
 # without any additional authentication or authorization. If they can provide
 # a working auth_token then they are authorized to invoke to command, and
 # also authenticated as a specific service instance & service binding.
 #
-# TODO perhaps rename to RegisteredBindingCommand to decouple from
-# the actual BindingCommands themselves
-class BindingCommand
+class RegisteredBindingCommand
   include EtcdModel
 
   attr_accessor :label, :auth_token
@@ -15,7 +13,7 @@ class BindingCommand
   # to its constructor
   attr_accessor :klass, :attributes
 
-  # How the BindingCommand can be invoked:
+  # How the RegisteredBindingCommand can be invoked:
   attr_accessor :http_method
 
   def self.find_by_auth_token(auth_token)

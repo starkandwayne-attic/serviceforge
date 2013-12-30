@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BindingCommands::Bosh::DeploymentVmState do
+describe BindingCommandActions::Bosh::DeploymentVmState do
   let(:service_id) { 'service-id-1' }
   let(:deployment_name) { 'deployment-name' }
   let(:bosh_director_client)  { instance_double("Bosh::DirectorClient") }
@@ -13,7 +13,7 @@ describe BindingCommands::Bosh::DeploymentVmState do
      {'job_name'=>'other_job', 'index'=>0, 'ips'=>['10.244.2.254']}]
   }
 
-  subject { BindingCommands::Bosh::DeploymentVmState.new({
+  subject { BindingCommandActions::Bosh::DeploymentVmState.new({
     service_id: service_id,
     deployment_name: deployment_name
   })}

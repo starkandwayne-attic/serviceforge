@@ -13,12 +13,12 @@ class Actions::CreateBindingCommands
     label = 'vms-state'
     http_method = 'GET'
 
-    command = BindingCommand.create(service_instance_id: service_instance_id,
+    command = RegisteredBindingCommand.create(service_instance_id: service_instance_id,
       service_binding_id: service_binding_id,
       auth_token: auth_token,
       label: label,
       http_method: http_method,
-      klass: 'BindingCommands::Bosh::DeploymentVmState',
+      klass: 'BindingCommandActions::Bosh::DeploymentVmState',
       attributes: {deployment_name: deployment_name, service_id: service_id})
 
     commands.merge!(command_hash(label, http_method, auth_token))
