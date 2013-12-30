@@ -123,7 +123,7 @@ describe 'the service lifecycle' do
     expect(vms_state_cmd).to_not be_nil
     expect(vms_state_cmd['method']).to eq('GET')
 
-    get URI.parse(vms_state_cmd['url']).path
+    put URI.parse(vms_state_cmd['url']).path
     expect(response.status).to eq(200)
     vms_state = JSON.parse(response.body)
     expect(vms_state.size).to eq(5) # one for each VM in 5-servers cluster

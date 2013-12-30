@@ -9,16 +9,23 @@ describe BindingCommandsController do
     describe "to find and perform a registered command" do
       before do
         expect(RegisteredBindingCommand).to receive(:find_by_auth_token).with(unique_binding_auth_token).and_return(command)
+        expect(command).to receive(:http_method).and_return('PUT')
+      end
+
+      it "correctly uses PUT" do
         expect(command).to receive(:perform)
         expect(command).to receive(:binding_command_action).and_return(command_action)
         expect(command_action).to receive(:to_json).and_return("{'some': 'json'}")
-      end
 
-      it {
         put :update, binding_auth_token: unique_binding_auth_token
         expect(response.status).to eq(200)
         expect(response.body).to eq("{'some': 'json'}")
-      }
+      end
+
+      it "incorrectly uses GET" do
+        get :show, binding_auth_token: unique_binding_auth_token
+        expect(response.status).to eq(405)
+      end
     end
 
     it "returns 401 unauthorized if using invalid/unknown auth_code" do
