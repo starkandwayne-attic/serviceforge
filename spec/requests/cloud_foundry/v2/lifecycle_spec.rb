@@ -115,7 +115,7 @@ describe 'the service lifecycle' do
 
     # 'binding_commands' => {
     #   'commands' => {
-    #     'vms_state' => { 'method' => 'GET', 'url' => "http://broker-address/binding_comamnds/CMD_AUTH_TOKEN" }
+    #     'vms_state' => { 'method' => 'GET', 'url' => "http://broker-address/binding_commands/CMD_AUTH_TOKEN" }
     #   }
     # }
 
@@ -136,8 +136,8 @@ describe 'the service lifecycle' do
     # 'binding_commands' => {
     #   'current_plan' => current_plan_label,
     #   'commands' => {
-    #     '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_comamnds/AUTH_TOKEN" },
-    #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_comamnds/OTHER_TOKEN" },
+    #     '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/AUTH_TOKEN" },
+    #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
     #   }
     # }
     # expect(binding_commands.fetch('current_plan')).to eq('5-servers') # see let(:plan_id)
