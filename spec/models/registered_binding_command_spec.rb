@@ -6,7 +6,7 @@ class DummyBindingCommandAction
   def perform; end
 end
 
-describe BindingCommand do
+describe RegisteredBindingCommand do
   let(:service)               { instance_double('Service') }
   let(:service_instance)      { instance_double('ServiceInstance') }
   let(:service_binding)       { instance_double('ServiceBinding') }
@@ -18,7 +18,7 @@ describe BindingCommand do
 
   describe "lifecycle" do
     it do
-      command = BindingCommand.new({
+      command = RegisteredBindingCommand.new({
         service_instance_id: service_instance_id,
         service_binding_id: service_binding_id,
         auth_token: auth_token,
@@ -36,7 +36,7 @@ describe BindingCommand do
         'attributes' => { 'some_attribute' => 'somevalue' }
       })
 
-      loaded_command = BindingCommand.find_by_auth_token(auth_token)
+      loaded_command = RegisteredBindingCommand.find_by_auth_token(auth_token)
       expect(loaded_command.to_json).to eq(command.to_json)
 
       loaded_command.perform

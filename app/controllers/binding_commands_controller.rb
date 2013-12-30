@@ -1,17 +1,24 @@
 class BindingCommandsController < ApplicationController
-  before_filter :load_binding_command_from_auth_token
-
-  attr_reader :binding_command
+  def show
+    perform("GET")
+  end
 
   def update
-    binding_command.perform
-    render :nothing => true
+    perform("PUT")
   end
 
   protected
-  def load_binding_command_from_auth_token
+  def perform(allowed_http_method)
     auth_token = params.fetch(:binding_auth_token)
-    unless @binding_command = BindingCommand.find_by_auth_token(auth_token)
+    if @binding_command = RegisteredBindingCommand.find_by_auth_token(auth_token)
+      if @binding_command.http_method == allowed_http_method
+        @binding_command.perform
+        result = @binding_command.binding_command_action
+        render json: result.to_json, status: 200
+      else
+        render nothing: true, status: 405
+      end
+    else
       render nothing: true, status: :unauthorized
     end
   end
