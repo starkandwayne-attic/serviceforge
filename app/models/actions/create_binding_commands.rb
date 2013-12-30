@@ -23,8 +23,7 @@ class Actions::CreateBindingCommands
 
     commands.merge!(command_hash(label, http_method, auth_token))
     
-    service_binding.credentials["binding_commands"] = {
-      'current_plan' => current_plan_label,
+    service_binding.credentials['binding_commands'] = {
       'commands' => commands
     }
     
@@ -50,9 +49,5 @@ class Actions::CreateBindingCommands
 
   def command_hash(label, http_method, auth_token)
     { label => { 'method' => http_method, 'url' => command_url(auth_token) } }
-  end
-
-  def current_plan_label
-    '5-servers'
   end
 end

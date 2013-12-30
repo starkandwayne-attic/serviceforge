@@ -15,7 +15,6 @@ describe Actions::CreateBindingCommands do
   let(:request_host)          { 'http://broker-address' }
   let(:expected_binding_commands) {
     {
-      'current_plan' => '5-servers',
       'commands' => {
         'vms-state' => { 'method' => 'GET', 'url' => "http://broker-address/binding_commands/#{vms_state_uuid}" }
         # '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/#{scale_1_server_uuid}" },
