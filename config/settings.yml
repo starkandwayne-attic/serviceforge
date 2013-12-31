@@ -95,8 +95,8 @@ defaults: &defaults
         name: "Stark & Wayne LLC"
       listing:
         imageUrl: ~
-        blurb: A highly-available key value store for shared configuration and service discovery.
-        long_description: A highly-available key value store for shared configuration and service discovery. High-availablity clusters are available.
+        blurb: An advanced key-value store, can contain strings, hashes, lists, sets and sorted sets.
+        long_description: Redis is an open source, BSD licensed, advanced key-value store. It is often referred to as a data structure server since keys can contain strings, hashes, lists, sets and sorted sets. High-availablity clusters are available.
     default_credentials:
       port: 6379
     detect_credentials:
