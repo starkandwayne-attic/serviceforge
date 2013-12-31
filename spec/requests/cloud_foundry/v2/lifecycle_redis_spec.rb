@@ -1,18 +1,18 @@
 require 'spec_helper'
 
-describe 'the service lifecycle' do
+describe 'redis service - lifecycle' do
   let(:seed)                { RSpec.configuration.seed }
-  let(:service_id)          { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated-bosh-lite
+  let(:service_id)          { '1683fe81-b492-4e92-8282-0cdca7c316e1' } # redis-dedicated-bosh-lite
   let(:service)             { Service.find_by_id(service_id) }
-  let(:three_server_plan_id) { '1a448d0e-bc54-4a16-8d2f-ab701be20c40' }
-  let(:five_server_plan_id) { '5cfa57fc-1474-4eb9-9afb' }
-  let(:service_plan_id)     { five_server_plan_id }
+  let(:two_server_plan_id)  { 'e23b4ad6-d33f-4764-803b-d507bb0b95d1' }
+  let(:three_server_plan_id) { '1a6ee012-a591-4d7f-99ae-7ff4af1e240a' }
+  let(:service_plan_id)     { three_server_plan_id }
   let(:service_instance_id) { "instance-#{seed}" }
   let(:service_binding_id)  { "binding-#{seed}" }
   let(:app_guid)            { "app-guid-#{seed}" }
-  let(:deployment_name)     { "test-etcd-#{service_instance_id}" }
+  let(:deployment_name)     { "test-redis-#{service_instance_id}" }
 
-  def cleanup_etcd_service_instances
+  def cleanup_redis_service_instances
     $etcd.delete("/service_instances", recursive: true)
   rescue Net::HTTPServerException
   end
@@ -31,12 +31,12 @@ describe 'the service lifecycle' do
   end
 
   before do
-    cleanup_etcd_service_instances
+    cleanup_redis_service_instances
     cleanup_bosh_deployments
   end
 
   after do
-    cleanup_etcd_service_instances
+    cleanup_redis_service_instances
     cleanup_bosh_deployments
   end
 
@@ -54,13 +54,13 @@ describe 'the service lifecycle' do
     expect(service_instance).to eq({})
 
     ##
-    ## Test the etcd /service_instances entry
+    ## Test the redis /service_instances entry
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
     expect(data).to eq({
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
-      'service_plan_id' => five_server_plan_id,
+      'service_plan_id' => three_server_plan_id,
       'deployment_name' => deployment_name
     })
 
@@ -71,7 +71,7 @@ describe 'the service lifecycle' do
     expect(deployment_exists).to_not be_nil
 
     vms = service.bosh.list_vms(deployment_name)
-    expect(vms.size).to eq(5)
+    expect(vms.size).to eq(3)
 
     ##
     ## Cloud Controller binds the service instance to an app
@@ -88,7 +88,7 @@ describe 'the service lifecycle' do
     instance = JSON.parse(response.body)
 
     ##
-    ## Test the etcd /service_bindings entry
+    ## Test the redis /service_bindings entry
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model").value)
 
@@ -131,7 +131,7 @@ describe 'the service lifecycle' do
     get URI.parse(vms_state_cmd['url']).path
     expect(response.status).to eq(200)
     vms_state = JSON.parse(response.body)
-    expect(vms_state.size).to eq(5) # one for each VM in 5-servers cluster
+    expect(vms_state.size).to eq(3) # one for each VM in 5-servers cluster
 
     # 'binding_commands' => {
     #   'current_plan' => current_plan_label,
@@ -155,13 +155,13 @@ describe 'the service lifecycle' do
     # expect(response.status).to eq(200)
 
     ##
-    ## Test the etcd /service_instances entry
+    ## Test the redis /service_instances entry
     ##
     # data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
     # expect(data).to eq({
     #   'service_instance_id' => service_instance_id,
     #   'service_id' => service_id,
-    #   'service_plan_id' => three_server_plan_id,
+    #   'service_plan_id' => two_server_plan_id,
     #   'deployment_name' => deployment_name
     # })
 
@@ -178,7 +178,7 @@ describe 'the service lifecycle' do
     expect(response.status).to eq(200)
 
     ##
-    ## Test that etcd entries no longer exist
+    ## Test that redis entries no longer exist
     ##
     expect{ $etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model") }.to raise_error(Net::HTTPServerException)
     expect{ $etcd.get("/service_instances/#{service_instance_id}/model") }.to raise_error(Net::HTTPServerException)
