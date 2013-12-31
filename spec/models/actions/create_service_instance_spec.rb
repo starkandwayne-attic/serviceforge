@@ -25,12 +25,11 @@ describe Actions::CreateServiceInstance do
   end
 
 
-  it "has lifecycle" do
-    action = Actions::CreateServiceInstance.new(service_id: service_id, service_instance_id: service_instance_id)
+  it "generates deployment manifest and deploys it" do
     service_klass = class_double('Service').as_stubbed_const
     expect(service_klass).to receive(:find_by_id).and_return(service)
     expect(service).to receive(:deployment_name_prefix).and_return(deployment_name_prefix)
-    action.save
+    action = Actions::CreateServiceInstance.create(service_id: service_id, service_instance_id: service_instance_id)
 
     ##
     ## Test the etcd entry
