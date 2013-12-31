@@ -10,26 +10,9 @@ class Actions::CreateBindingCommands
       # '3-servers' => { 'method' => 'PUT', 'url' => "#{request_base_url}/binding_commands/#{generate_binding_command_uuid}" },
     }
 
-    auth_token = generate_binding_command_uuid
-    label = 'vms-state'
-    http_method = 'GET'
+    register_vms_state_command(commands)
 
-    command = RegisteredBindingCommand.create(service_instance_id: service_instance_id,
-      service_binding_id: service_binding_id,
-      auth_token: auth_token,
-      label: label,
-      http_method: http_method,
-      klass: 'BindingCommandActions::Bosh::DeploymentVmState',
-      attributes: {deployment_name: deployment_name, service_id: service_id})
-
-    commands.merge!(command_hash(label, http_method, auth_token))
-    
-    service_binding.credentials['binding_commands'] = {
-      'current_plan' => current_plan.name,
-      'commands' => commands
-    }
-    
-    service_binding.save
+    save_commands_to_service_binding(commands)
   end
 
   private
@@ -55,5 +38,29 @@ class Actions::CreateBindingCommands
 
   def command_hash(label, http_method, auth_token)
     { label => { 'method' => http_method, 'url' => command_url(auth_token) } }
+  end
+
+  def register_vms_state_command(commands)
+    auth_token = generate_binding_command_uuid
+    label = 'vms-state'
+    http_method = 'GET'
+
+    command = RegisteredBindingCommand.create(service_instance_id: service_instance_id,
+      service_binding_id: service_binding_id,
+      auth_token: auth_token,
+      label: label,
+      http_method: http_method,
+      klass: 'BindingCommandActions::Bosh::DeploymentVmState',
+      attributes: {deployment_name: deployment_name, service_id: service_id})
+
+    commands.merge!(command_hash(label, http_method, auth_token))
+  end
+
+  def save_commands_to_service_binding(commands)
+    service_binding.credentials['binding_commands'] = {
+      'current_plan' => current_plan.name,
+      'commands' => commands
+    }
+    service_binding.save
   end
 end
