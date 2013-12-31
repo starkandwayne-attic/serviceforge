@@ -133,14 +133,20 @@ describe 'redis service - lifecycle' do
     vms_state = JSON.parse(response.body)
     expect(vms_state.size).to eq(2) # one for each VM in 5-servers cluster
 
+    ##
+    ## Changing plans via Binding Commands
+    ##
     # 'binding_commands' => {
-    #   'current_plan' => current_plan_label,
+    #   'current_plan' => '2-servers',
     #   'commands' => {
     #     '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/AUTH_TOKEN" },
-    #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
+    #     '2-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
     #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
     #   }
     # }
+
+    expect(binding_commands.fetch('current_plan')).to eq('2-servers')
+
     # expect(binding_commands.fetch('current_plan')).to eq('2-servers') # see let(:plan_id)
     # commands = binding_commands.fetch('commands')
     # expect(commands).to be_instance_of(Hash)

@@ -25,6 +25,7 @@ class Actions::CreateBindingCommands
     commands.merge!(command_hash(label, http_method, auth_token))
     
     service_binding.credentials['binding_commands'] = {
+      'current_plan' => current_plan.name,
       'commands' => commands
     }
     
@@ -38,6 +39,14 @@ class Actions::CreateBindingCommands
 
   def uuid
     @uuid ||= UUID.new
+  end
+
+  def service_plan_id
+    service_instance.service_plan_id
+  end
+
+  def current_plan
+    service.find_plan_by_id(service_plan_id)
   end
 
   def command_url(auth_token)
