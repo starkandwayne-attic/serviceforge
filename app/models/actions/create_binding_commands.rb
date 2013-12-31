@@ -11,6 +11,9 @@ class Actions::CreateBindingCommands
     }
 
     register_vms_state_command(commands)
+    service.plans.each do |plan|
+      register_change_plan(commands, plan)
+    end
 
     save_commands_to_service_binding(commands)
   end
@@ -52,6 +55,22 @@ class Actions::CreateBindingCommands
       http_method: http_method,
       klass: 'BindingCommandActions::Bosh::DeploymentVmState',
       attributes: {deployment_name: deployment_name, service_id: service_id})
+
+    commands.merge!(command_hash(label, http_method, auth_token))
+  end
+
+  def register_change_plan(commands, plan)
+    auth_token = generate_binding_command_uuid
+    label = plan.name
+    http_method = 'PUT'
+
+    command = RegisteredBindingCommand.create(service_instance_id: service_instance_id,
+      service_binding_id: service_binding_id,
+      auth_token: auth_token,
+      label: label,
+      http_method: http_method,
+      klass: 'BindingCommandActions::Bosh::ChangeServicePlan',
+      attributes: {deployment_name: deployment_name, service_id: service_id, service_plan_id: plan.id})
 
     commands.merge!(command_hash(label, http_method, auth_token))
   end

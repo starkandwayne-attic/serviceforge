@@ -14,15 +14,17 @@ describe Actions::CreateBindingCommands do
   let(:uuid)                  { instance_double('UUID') }
   let(:vms_state_uuid)        { 'vms_state_uuid' }
   let(:scale_1_server_uuid)   { 'scale_1_server_uuid' }
+  let(:scale_2_servers_uuid)  { 'scale_2_servers_uuid' }
   let(:scale_3_servers_uuid)  { 'scale_3_servers_uuid' }
   let(:request_base_url)      { 'http://broker-address' }
   let(:expected_binding_commands) {
     {
       'current_plan' => '2-servers', 
       'commands' => {
-        'vms-state' => { 'method' => 'GET', 'url' => "http://broker-address/binding_commands/#{vms_state_uuid}" }
-        # '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/#{scale_1_server_uuid}" },
-        # '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/#{scale_3_servers_uuid}" },
+        'vms-state' => { 'method' => 'GET', 'url' => "http://broker-address/binding_commands/#{vms_state_uuid}" },
+        '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/#{scale_1_server_uuid}" },
+        '2-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/#{scale_2_servers_uuid}" },
+        '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/#{scale_3_servers_uuid}" },
       }
     }
   }
@@ -53,8 +55,9 @@ describe Actions::CreateBindingCommands do
 
   it {
     expect(uuid).to receive(:generate).and_return(vms_state_uuid)
-    # expect(subject).to receive(:generate_binding_command_uuid).and_return(scale_1_server_uuid)
-    # expect(subject).to receive(:generate_binding_command_uuid).and_return(scale_3_servers_uuid)
+    expect(uuid).to receive(:generate).and_return(scale_1_server_uuid)
+    expect(uuid).to receive(:generate).and_return(scale_2_servers_uuid)
+    expect(uuid).to receive(:generate).and_return(scale_3_servers_uuid)
     subject.perform
   }
 end
