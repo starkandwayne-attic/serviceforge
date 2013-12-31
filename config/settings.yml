@@ -44,7 +44,7 @@ defaults: &defaults
         version: 3
         url: ~
       release_templates:
-        base_path: <%= Rails.root %>/templates
+        base_path: <%= Rails.root %>/releases/etcd/templates
         templates:
          - etcd-deployment.yml
          - etcd-jobs.yml

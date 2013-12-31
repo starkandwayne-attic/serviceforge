@@ -4,7 +4,7 @@ describe Bosh::ReleaseTemplates do
   describe "#build" do
     subject {
       Bosh::ReleaseTemplates.build({
-        "base_path" => File.join(Rails.root, "templates"),
+        "base_path" => File.join(Rails.root, "releases", "etcd", "templates"),
         "templates" => [
           "etcd-deployment.yml",
           "etcd-jobs.yml",
