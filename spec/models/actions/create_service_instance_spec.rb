@@ -51,8 +51,8 @@ describe Actions::CreateServiceInstance do
     service_plan.should_receive(:deployment_stub).and_return(service_plan_stub)
 
     gds_klass = class_double('Generators::GenerateDeploymentStub').as_stubbed_const
-    gds_klass.should_receive(:new).with({bosh_director_uuid: director_uuid, deployment_name: deployment_name}).and_return(stub_generator)
-    stub_generator.should_receive(:generate_stub).and_return(deployment_stub)
+    gds_klass.should_receive(:new).with({service: service, deployment_name: deployment_name}).and_return(stub_generator)
+    expect(stub_generator).to receive(:generate).and_return(deployment_stub)
 
     gdm_klass = class_double("Generators::GenerateDeploymentManifest").as_stubbed_const
     gdm_klass.should_receive(:new).with({
@@ -62,9 +62,8 @@ describe Actions::CreateServiceInstance do
     }).and_return(manifest_generator)
     manifest_generator.should_receive(:generate_manifest).and_return(deployment_manifest)
 
-    action.should_receive(:bosh_director_client).exactly(3).times.and_return(bosh_director_client)
+    action.should_receive(:bosh_director_client).exactly(2).times.and_return(bosh_director_client)
     bosh_director_client.should_receive(:deploy).with(deployment_manifest).and_return([:running, bosh_deploy_task_id])
-    bosh_director_client.should_receive(:director_uuid).and_return(director_uuid)
     bosh_director_client.should_receive(:track_task).with(bosh_deploy_task_id).and_return("done")
 
     action.perform
