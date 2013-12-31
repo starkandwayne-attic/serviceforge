@@ -5,12 +5,10 @@ class Actions::CreateBindingCommands
   attr_accessor :request_base_url
 
   def perform
-    commands = {
-      # '1-server'  => { 'method' => 'PUT', 'url' => "#{request_base_url}/binding_commands/#{generate_binding_command_uuid}" },
-      # '3-servers' => { 'method' => 'PUT', 'url' => "#{request_base_url}/binding_commands/#{generate_binding_command_uuid}" },
-    }
+    commands = {}
 
     register_vms_state_command(commands)
+
     service.plans.each do |plan|
       register_change_plan(commands, plan)
     end
@@ -62,6 +60,7 @@ class Actions::CreateBindingCommands
   def register_change_plan(commands, plan)
     auth_token = generate_binding_command_uuid
     label = plan.name
+    service_plan_id = plan.id
     http_method = 'PUT'
 
     command = RegisteredBindingCommand.create(service_instance_id: service_instance_id,
@@ -70,7 +69,7 @@ class Actions::CreateBindingCommands
       label: label,
       http_method: http_method,
       klass: 'BindingCommandActions::Bosh::ChangeServicePlan',
-      attributes: {deployment_name: deployment_name, service_id: service_id, service_plan_id: plan.id})
+      attributes: {deployment_name: deployment_name, service_id: service_id, service_plan_id: service_plan_id})
 
     commands.merge!(command_hash(label, http_method, auth_token))
   end
