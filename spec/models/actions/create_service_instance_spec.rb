@@ -28,8 +28,8 @@ describe Actions::CreateServiceInstance do
   it "has lifecycle" do
     action = Actions::CreateServiceInstance.new(service_id: service_id, service_instance_id: service_instance_id)
     service_klass = class_double('Service').as_stubbed_const
-    service_klass.should_receive(:find_by_id).and_return(service)
-    service.should_receive(:deployment_name_prefix).and_return(deployment_name_prefix)
+    expect(service_klass).to receive(:find_by_id).and_return(service)
+    expect(service).to receive(:deployment_name_prefix).and_return(deployment_name_prefix)
     action.save
 
     ##
@@ -46,25 +46,25 @@ describe Actions::CreateServiceInstance do
     ##
     ## Generate deployment manifest
     ##
-    service.should_receive(:find_plan_by_id).and_return(service_plan)
-    service.should_receive(:bosh_service_stub_paths).and_return(service_stub_paths)
-    service_plan.should_receive(:deployment_stub).and_return(service_plan_stub)
+    expect(service).to receive(:find_plan_by_id).and_return(service_plan)
+    expect(service).to receive(:bosh_service_stub_paths).and_return(service_stub_paths)
+    expect(service_plan).to receive(:deployment_stub).and_return(service_plan_stub)
 
     gds_klass = class_double('Generators::GenerateDeploymentStub').as_stubbed_const
-    gds_klass.should_receive(:new).with({service: service, deployment_name: deployment_name}).and_return(stub_generator)
+    expect(gds_klass).to receive(:new).with({service: service, deployment_name: deployment_name}).and_return(stub_generator)
     expect(stub_generator).to receive(:generate).and_return(deployment_stub)
 
     gdm_klass = class_double("Generators::GenerateDeploymentManifest").as_stubbed_const
-    gdm_klass.should_receive(:new).with({
+    expect(gdm_klass).to receive(:new).with({
       service_stub_paths: service_stub_paths,
       deployment_stub: deployment_stub,
       service_plan_stub: service_plan_stub
     }).and_return(manifest_generator)
-    manifest_generator.should_receive(:generate_manifest).and_return(deployment_manifest)
+    expect(manifest_generator).to receive(:generate_manifest).and_return(deployment_manifest)
 
-    action.should_receive(:bosh_director_client).exactly(2).times.and_return(bosh_director_client)
-    bosh_director_client.should_receive(:deploy).with(deployment_manifest).and_return([:running, bosh_deploy_task_id])
-    bosh_director_client.should_receive(:track_task).with(bosh_deploy_task_id).and_return("done")
+    expect(action).to receive(:bosh_director_client).exactly(2).times.and_return(bosh_director_client)
+    expect(bosh_director_client).to receive(:deploy).with(deployment_manifest).and_return([:running, bosh_deploy_task_id])
+    expect(bosh_director_client).to receive(:track_task).with(bosh_deploy_task_id).and_return("done")
 
     action.perform
 

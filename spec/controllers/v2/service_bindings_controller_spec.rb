@@ -31,7 +31,7 @@ describe V2::ServiceBindingsController do
         with(service_instance_id, service_binding_id).
         and_return(service_binding)
 
-      prepare_klass.should_receive(:new).with({
+      expect(prepare_klass).to receive(:new).with({
         service_id: service_id,
         service_instance_id: service_instance_id,
         service_binding_id: service_binding_id,
@@ -39,7 +39,7 @@ describe V2::ServiceBindingsController do
       }).and_return(prepare)
       expect(prepare).to receive(:perform)
 
-      cbc_klass.should_receive(:new).with({
+      expect(cbc_klass).to receive(:new).with({
         service_id: service_id,
         service_instance_id: service_instance_id,
         service_binding_id: service_binding_id,

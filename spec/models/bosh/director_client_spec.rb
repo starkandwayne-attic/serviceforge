@@ -21,7 +21,7 @@ describe Bosh::DirectorClient do
 
   describe "#director_uuid cached on connection" do
     it do
-      subject.api.should_receive(:get_status).and_return({"name"=>"Bosh Lite Director", "uuid"=>"UUID"})
+      expect(subject.api).to receive(:get_status).and_return({"name"=>"Bosh Lite Director", "uuid"=>"UUID"})
       expect(subject.director_uuid).to eq("UUID")
     end
   end
@@ -29,7 +29,7 @@ describe Bosh::DirectorClient do
   describe "#deploy(manifest)" do
     before {
       deploy_manifest = "--- {}"
-      subject.api.should_receive(:deploy).with(deploy_manifest).and_return([:running, 123])
+      expect(subject.api).to receive(:deploy).with(deploy_manifest).and_return([:running, 123])
       @status, @task_id = subject.deploy(deploy_manifest)
     }
     it { expect(@status).to eq(:running) }
@@ -39,7 +39,7 @@ describe Bosh::DirectorClient do
   describe "#delete(deployment_name)" do
     before {
       deployment_name = "foobar"
-      subject.api.should_receive(:delete_deployment).with(deployment_name, force: true).and_return([:running, 123])
+      expect(subject.api).to receive(:delete_deployment).with(deployment_name, force: true).and_return([:running, 123])
       @status, @task_id = subject.delete(deployment_name)
     }
     it { expect(@status).to eq(:running) }
@@ -48,7 +48,7 @@ describe Bosh::DirectorClient do
 
   describe "#list_deployments" do
     it {
-      subject.api.should_receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
+      expect(subject.api).to receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
       result = subject.list_deployments
       expect(result).to eq([{"name"=>"cf-warden"}])
     }
@@ -56,14 +56,14 @@ describe Bosh::DirectorClient do
 
   describe "#deployment_exists?(deployment_name)" do
     it "returns deployment object if api.list_deployments includes name" do
-      subject.api.should_receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
+      expect(subject.api).to receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
       result = subject.deployment_exists?("cf-warden")
       expect(result).to be_instance_of(Hash)
       expect(result["name"]).to eq("cf-warden")
     end
 
     it "returns false if api.list_deployments does not include name" do
-      subject.api.should_receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
+      expect(subject.api).to receive(:list_deployments).and_return([{"name"=>"cf-warden"}])
       result = subject.deployment_exists?("deployment-xxx")
       expect(result).to be_false
     end
@@ -72,7 +72,7 @@ describe Bosh::DirectorClient do
   describe "#list_vms" do
     let(:vms) { [{"job"=>"etcd_leader_z1", "index"=>0}, {"job"=>"etcd_z1", "index"=>0}, {"job"=>"etcd_z1", "index"=>1}] }
     it {
-      subject.api.should_receive(:list_vms).with("name").and_return(vms)
+      expect(subject.api).to receive(:list_vms).with("name").and_return(vms)
       result = subject.list_vms("name")
       expect(result).to eq(vms)
     }
@@ -92,8 +92,8 @@ describe Bosh::DirectorClient do
     let(:deployment_name) { "deployment-name"}
     let(:task_id) { 1234 }
     it {
-      subject.api_with_tracking.should_receive(:request_and_track).with(:get, "/deployments/#{deployment_name}/vms?format=full", {}).and_return(["done", task_id])
-      subject.api.should_receive(:get_task_result_log).with(task_id).and_return(vms_state_log)
+      expect(subject.api_with_tracking).to receive(:request_and_track).with(:get, "/deployments/#{deployment_name}/vms?format=full", {}).and_return(["done", task_id])
+      expect(subject.api).to receive(:get_task_result_log).with(task_id).and_return(vms_state_log)
       result, result_task_id = subject.fetch_vm_state(deployment_name)
       expect(result).to eq(vms_state)
       expect(result_task_id).to eq(task_id)
@@ -105,19 +105,19 @@ describe Bosh::DirectorClient do
     let(:task_id) { 123 }
     let(:task_tracker) { instance_double('Bosh::Cli::TaskTracker') }
     it "tracks a task until completed" do
-      subject.should_receive(:api).and_return(director)
+      expect(subject).to receive(:api).and_return(director)
       tracker_klass = class_double('Bosh::Cli::TaskTracker').as_stubbed_const
-      tracker_klass.should_receive(:new).with(director, task_id).and_return(task_tracker)
-      task_tracker.should_receive(:track)
+      expect(tracker_klass).to receive(:new).with(director, task_id).and_return(task_tracker)
+      expect(task_tracker).to receive(:track)
       subject.track_task(123)
     end
   end
 
   describe "#wait_for_tasks_to_complete(task_ids)" do
     it "waits for each task to stop running then returns" do
-      subject.api.should_receive(:get_task_state).with(1).and_return("done")
-      subject.api.should_receive(:get_task_state).with(2).and_return("running")
-      subject.api.should_receive(:get_task_state).with(2).and_return("done")
+      expect(subject.api).to receive(:get_task_state).with(1).and_return("done")
+      expect(subject.api).to receive(:get_task_state).with(2).and_return("running")
+      expect(subject.api).to receive(:get_task_state).with(2).and_return("done")
       subject.wait_for_tasks_to_complete([1,2])
     end
   end
