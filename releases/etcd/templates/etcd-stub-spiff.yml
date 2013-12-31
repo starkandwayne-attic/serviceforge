@@ -6,6 +6,6 @@ meta:
 director_uuid: PLACEHOLDER-DIRECTOR-UUID
 releases:
   - name: etcd
-    version: latest
+    version: 3
 properties:
   etcd: {}

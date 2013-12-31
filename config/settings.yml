@@ -45,6 +45,7 @@ defaults: &defaults
         url: ~
       release_templates:
         base_path: <%= Rails.root %>/releases/etcd/templates
+        stub: etcd-stub-spiff.yml
         templates:
          - etcd-deployment.yml
          - etcd-jobs.yml
@@ -81,6 +82,79 @@ defaults: &defaults
         - content: Etcd servers
         - content: 3 small servers
         - content: High availability, leader election
+
+  - name: redis-dedicated-bosh-lite
+    deployment_name_prefix: redis
+    id: 1683fe81-b492-4e92-8282-0cdca7c316e1
+    description: "redis: A highly-available key value store for shared configuration and service discovery"
+    tags:
+      - redis
+      - nosql
+    metadata:
+      provider:
+        name: "Stark & Wayne LLC"
+      listing:
+        imageUrl: ~
+        blurb: A highly-available key value store for shared configuration and service discovery.
+        long_description: A highly-available key value store for shared configuration and service discovery. High-availablity clusters are available.
+    default_credentials:
+      port: 6379
+    detect_credentials:
+      - name: host
+        class: BindingAttributes::JobIpAddress
+        attributes:
+          job_name: redis_leader_z1
+    bosh:
+      target: https://192.168.50.4:25555
+      username: admin
+      password: admin
+      dns_root: ~
+      infrastructure: warden
+      # director_uuid: - calculated after login
+      # cpi: - cpi calculated after login (warden, openstack)
+      releases:
+      - name: redis
+        version: 3
+        url: ~
+      release_templates:
+        base_path: <%= Rails.root %>/releases/redis/templates
+        stub: redis-stub-spiff.yml
+        templates:
+         - redis-deployment.yml
+         - redis-jobs.yml
+         - redis-properties.yml
+         - redis-infrastructure-warden.yml
+    plans:
+    - name: 1-server
+      id: f643f60d-7e5e-4fbf-934f-c089ed2f2720
+      description: Redis running on a single dedicated server
+      metadata:
+        cluster_size: 1
+        cost: 100
+        bullets:
+        - content: Redis server
+        - content: Single small server
+        - content: Development-only, no high-availability
+    - name: 2-servers
+      id: e23b4ad6-d33f-4764-803b-d507bb0b95d1
+      description: Redis running across twp dedicated servers
+      metadata:
+        cluster_size: 2
+        cost: 300
+        bullets:
+        - content: Redis servers
+        - content: 2 small servers
+        - content: High availability, master-slave
+    - name: 3-servers
+      id: 1a6ee012-a591-4d7f-99ae-7ff4af1e240a
+      description: Redis running across three dedicated servers
+      metadata:
+        cluster_size: 3
+        cost: 300
+        bullets:
+        - content: Redis servers
+        - content: 3 small servers
+        - content: High availability, master-slave
 
 development:
   auth_password: 'secret'

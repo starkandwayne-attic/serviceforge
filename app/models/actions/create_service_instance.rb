@@ -53,7 +53,8 @@ class Actions::CreateServiceInstance
   end
 
   def generate_deployment_stub
-    Generators::GenerateDeploymentStub.new(bosh_director_uuid: director_uuid, deployment_name: deployment_name).generate_stub
+    Generators::GenerateDeploymentStub.new(
+      service: service, deployment_name: deployment_name).generate
   end
 
   def generate_deployment_manifest(deployment_stub)
@@ -80,10 +81,6 @@ class Actions::CreateServiceInstance
 
   def service_plan
     @service_plan || service.find_plan_by_id(service_plan_id)
-  end
-
-  def director_uuid
-    bosh_director_client.director_uuid
   end
 
   def deployment_name_prefix

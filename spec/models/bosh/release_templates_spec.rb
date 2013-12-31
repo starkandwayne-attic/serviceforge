@@ -10,7 +10,8 @@ describe Bosh::ReleaseTemplates do
           "etcd-jobs.yml",
           "etcd-properties.yml",
           "etcd-infrastructure-warden.yml"
-        ]
+        ],
+        "stub" => "etcd-stub-spiff.yml"
       })
     }
 
@@ -21,5 +22,7 @@ describe Bosh::ReleaseTemplates do
       first_template_path = subject.template_paths.first
       expect(File.exists?(first_template_path)).to be_true
     end
+
+    it { expect(File.exists?(subject.stub_path)).to be_true }
   end
 end
