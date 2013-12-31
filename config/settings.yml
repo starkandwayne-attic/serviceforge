@@ -150,7 +150,7 @@ defaults: &defaults
             instances: 0
     - name: 2-servers
       id: e23b4ad6-d33f-4764-803b-d507bb0b95d1
-      description: Redis running across twp dedicated servers
+      description: Redis running across two dedicated servers
       metadata:
         cluster_size: 2
         cost: 200
