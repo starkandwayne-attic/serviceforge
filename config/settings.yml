@@ -86,7 +86,7 @@ defaults: &defaults
   - name: redis-dedicated-bosh-lite
     deployment_name_prefix: redis
     id: 1683fe81-b492-4e92-8282-0cdca7c316e1
-    description: "redis: A highly-available key value store for shared configuration and service discovery"
+    description: "redis: An advanced key-value store, can contain strings, hashes, lists, sets and sorted sets."
     tags:
       - redis
       - nosql
