@@ -76,7 +76,7 @@ class Actions::CreateServiceInstance
   end
 
   def service_plan_stub
-    service_plan.deployment_stub
+    service_plan.bosh_deployment_stub_yaml
   end
 
   def service_plan

@@ -48,7 +48,7 @@ describe Actions::CreateServiceInstance do
     ##
     expect(service).to receive(:find_plan_by_id).and_return(service_plan)
     expect(service).to receive(:bosh_service_stub_paths).and_return(service_stub_paths)
-    expect(service_plan).to receive(:deployment_stub).and_return(service_plan_stub)
+    expect(service_plan).to receive(:bosh_deployment_stub_yaml).and_return(service_plan_stub)
 
     gds_klass = class_double('Generators::GenerateDeploymentStub').as_stubbed_const
     expect(gds_klass).to receive(:new).with({service: service, deployment_name: deployment_name}).and_return(stub_generator)

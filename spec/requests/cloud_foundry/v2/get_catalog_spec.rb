@@ -8,7 +8,7 @@ describe 'GET /v2/catalog' do
     catalog = JSON.parse(response.body)
 
     services = catalog.fetch('services')
-    expect(services).to have(1).service
+    expect(services).to have(2).service
 
     service = services.first
     expect(service.fetch('name')).to eq('etcd-dedicated-bosh-lite')
@@ -31,16 +31,13 @@ describe 'GET /v2/catalog' do
     plan = plans.first
     expect(plan.fetch('name')).to eq('1-server')
     expect(plan.fetch('description')).to eq('Etcd running on a single dedicated server')
-    expect(plan.fetch('metadata')).to eq(
-      {
-        'cluster_size' => 1,
-        'cost' => 100,
-        'bullets' => [
-          { 'content' => 'Etcd server' },
-          { 'content' => 'Single small server' },
-          { 'content' => 'Development-only, no high-availability' },
-        ]
-      }
-    )
+    expect(plan.fetch('metadata')).to eq({
+      'cost' => 100,
+      'bullets' => [
+        { 'content' => 'Etcd server' },
+        { 'content' => 'Single small server' },
+        { 'content' => 'Development-only, no high-availability' },
+      ]
+    })
   end
 end

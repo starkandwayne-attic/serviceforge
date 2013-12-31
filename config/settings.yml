@@ -56,32 +56,41 @@ defaults: &defaults
       id: 6e8ece8c-4fe6-4d58-9aeb-497d6aeba113
       description: Etcd running on a single dedicated server
       metadata:
-        cluster_size: 1
         cost: 100
         bullets:
         - content: Etcd server
         - content: Single small server
         - content: Development-only, no high-availability
+      bosh_deployment_stub:
+        jobs:
+          - name: etcd_z1
+            instances: 0
     - name: 3-servers
       id: 1a448d0e-bc54-4a16-8d2f-ab701be20c40
       description: Etcd running across three dedicated servers
       metadata:
-        cluster_size: 3
         cost: 300
         bullets:
         - content: Etcd servers
         - content: 3 small servers
         - content: High availability, leader election
+      bosh_deployment_stub:
+        jobs:
+          - name: etcd_z1
+            instances: 2
     - name: 5-servers
       id: 5cfa57fc-1474-4eb9-9afb
       description: Etcd running across five dedicated servers
       metadata:
-        cluster_size: 5
         cost: 500
         bullets:
         - content: Etcd servers
         - content: 3 small servers
         - content: High availability, leader election
+      bosh_deployment_stub:
+        jobs:
+          - name: etcd_z1
+            instances: 4
 
   - name: redis-dedicated-bosh-lite
     deployment_name_prefix: redis
@@ -135,16 +144,24 @@ defaults: &defaults
         - content: Redis server
         - content: Single small server
         - content: Development-only, no high-availability
+      bosh_deployment_stub:
+        jobs:
+          - name: redis_z1
+            instances: 0
     - name: 2-servers
       id: e23b4ad6-d33f-4764-803b-d507bb0b95d1
       description: Redis running across twp dedicated servers
       metadata:
         cluster_size: 2
-        cost: 300
+        cost: 200
         bullets:
         - content: Redis servers
         - content: 2 small servers
         - content: High availability, master-slave
+      bosh_deployment_stub:
+        jobs:
+          - name: redis_z1
+            instances: 1
     - name: 3-servers
       id: 1a6ee012-a591-4d7f-99ae-7ff4af1e240a
       description: Redis running across three dedicated servers
@@ -155,6 +172,10 @@ defaults: &defaults
         - content: Redis servers
         - content: 3 small servers
         - content: High availability, master-slave
+      bosh_deployment_stub:
+        jobs:
+          - name: redis_z1
+            instances: 2
 
 development:
   auth_password: 'secret'

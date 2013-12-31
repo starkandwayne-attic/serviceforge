@@ -6,7 +6,7 @@ describe 'redis service - lifecycle' do
   let(:service)             { Service.find_by_id(service_id) }
   let(:two_server_plan_id)  { 'e23b4ad6-d33f-4764-803b-d507bb0b95d1' }
   let(:three_server_plan_id) { '1a6ee012-a591-4d7f-99ae-7ff4af1e240a' }
-  let(:service_plan_id)     { three_server_plan_id }
+  let(:service_plan_id)     { two_server_plan_id }
   let(:service_instance_id) { "instance-#{seed}" }
   let(:service_binding_id)  { "binding-#{seed}" }
   let(:app_guid)            { "app-guid-#{seed}" }
@@ -60,7 +60,7 @@ describe 'redis service - lifecycle' do
     expect(data).to eq({
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
-      'service_plan_id' => three_server_plan_id,
+      'service_plan_id' => two_server_plan_id,
       'deployment_name' => deployment_name
     })
 
@@ -71,7 +71,7 @@ describe 'redis service - lifecycle' do
     expect(deployment_exists).to_not be_nil
 
     vms = service.bosh.list_vms(deployment_name)
-    expect(vms.size).to eq(3)
+    expect(vms.size).to eq(2)
 
     ##
     ## Cloud Controller binds the service instance to an app
@@ -100,7 +100,7 @@ describe 'redis service - lifecycle' do
       'service_instance_id' => service_instance_id,
       'credentials' => {
         'host' => '10.244.2.6',
-        'port' => 4001
+        'port' => 6379
       }
     })
 
@@ -110,7 +110,7 @@ describe 'redis service - lifecycle' do
     binding_commands = credentials.delete('binding_commands')
     expect(credentials).to eq({
       'host' => '10.244.2.6',
-      'port' => 4001
+      'port' => 6379
     })
 
     # 'binding_commands' => {
@@ -131,23 +131,24 @@ describe 'redis service - lifecycle' do
     get URI.parse(vms_state_cmd['url']).path
     expect(response.status).to eq(200)
     vms_state = JSON.parse(response.body)
-    expect(vms_state.size).to eq(3) # one for each VM in 5-servers cluster
+    expect(vms_state.size).to eq(2) # one for each VM in 5-servers cluster
 
     # 'binding_commands' => {
     #   'current_plan' => current_plan_label,
     #   'commands' => {
     #     '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/AUTH_TOKEN" },
     #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
+    #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
     #   }
     # }
-    # expect(binding_commands.fetch('current_plan')).to eq('5-servers') # see let(:plan_id)
+    # expect(binding_commands.fetch('current_plan')).to eq('2-servers') # see let(:plan_id)
     # commands = binding_commands.fetch('commands')
     # expect(commands).to be_instance_of(Hash)
     # 
     # three_server_plan_url = commands.fetch('3-servers').fetch('url')
     # three_server_plan_method = commands.fetch('3-servers').fetch('method')
     # 
-    # # Trigger downgrade to 1-server plan
+    # # Trigger upgrade to 3-server plan
     # expect(three_server_plan_method).to eq('PUT')
     # put URI.parse(three_server_plan_url).path, {}
 
