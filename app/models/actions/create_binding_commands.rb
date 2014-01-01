@@ -70,7 +70,9 @@ class Actions::CreateBindingCommands
       label: label,
       http_method: http_method,
       klass: 'BindingCommandActions::Bosh::ChangeServicePlan',
-      attributes: {deployment_name: deployment_name, service_id: service_id, service_plan_id: service_plan_id})
+      attributes: {
+        deployment_name: deployment_name, service_id: service_id, service_instance_id: service_instance_id, service_plan_id: service_plan_id
+      })
 
     commands.merge!(command_hash(label, http_method, auth_token))
   end
