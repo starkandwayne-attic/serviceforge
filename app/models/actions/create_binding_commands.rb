@@ -1,7 +1,8 @@
 class Actions::CreateBindingCommands
   include EtcdModel
 
-  attr_accessor :service_id, :service_instance_id, :service_binding_id, :deployment_name
+  attr_accessor :service_id
+  attr_accessor :service_instance_id, :service_binding_id, :deployment_name
   attr_accessor :request_base_url
 
   def perform

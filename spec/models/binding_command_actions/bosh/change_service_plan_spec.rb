@@ -18,6 +18,7 @@ describe BindingCommandActions::Bosh::ChangeServicePlan do
     expect(class_double('Actions::ChangeServiceInstance').as_stubbed_const).to receive(:create).
       with(service_id: service_id, service_plan_id: service_plan_id, service_instance_id: service_instance_id, deployment_name: deployment_name).
       and_return(action)
+    expect(action).to receive(:perform)
     subject.perform
   end
 end

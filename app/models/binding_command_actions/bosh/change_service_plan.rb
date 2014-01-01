@@ -8,8 +8,12 @@ class BindingCommandActions::Bosh::ChangeServicePlan
 
   def perform
     action = Actions::ChangeServiceInstance.create(
-      service_id: service_id, service_plan_id: service_plan_id, service_instance_id: service_instance_id, deployment_name: deployment_name
+      service_id: service_id,
+      service_plan_id: service_plan_id,
+      service_instance_id: service_instance_id,
+      deployment_name: deployment_name
     )
+    action.perform
   end
 
   def to_json(*)

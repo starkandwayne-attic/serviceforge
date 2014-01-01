@@ -5,6 +5,7 @@ describe Actions::CreateServiceInstance do
   let(:manifest_generator)    { instance_double("Generators::GenerateDeploymentManifest") }
   let(:service)               { instance_double("Service") }
   let(:service_id)            { 'service-id-1' }
+  let(:service_plan_id)       { 'service-plan-id-1' }
   let(:service_plan)          { instance_double("Plan") }
   let(:service_instance_id)   { 'service-instance-id-1' }
   let(:service_stub_paths)    { %w[/path/to/file1.yml /path/to/file2.yml] }
@@ -28,7 +29,7 @@ describe Actions::CreateServiceInstance do
   it "generates deployment manifest and deploys it" do
     expect(class_double('Service').as_stubbed_const).to receive(:find_by_id).and_return(service)
     expect(service).to receive(:deployment_name_prefix).and_return(deployment_name_prefix)
-    action = Actions::CreateServiceInstance.create(service_id: service_id, service_instance_id: service_instance_id)
+    action = Actions::CreateServiceInstance.create(service_id: service_id, service_plan_id: service_plan_id, service_instance_id: service_instance_id)
 
     ##
     ## Test the etcd entry
@@ -36,6 +37,7 @@ describe Actions::CreateServiceInstance do
     data = JSON.parse($etcd.get("/actions/create_service_instances/#{service_instance_id}").value)
     expect(data).to eq({
       'service_id' => service_id,
+      'service_plan_id' => service_plan_id,
       'service_instance_id' => service_instance_id,
       'deployment_name' => deployment_name,
       'bosh_task_id' => nil
@@ -72,6 +74,7 @@ describe Actions::CreateServiceInstance do
     data = JSON.parse($etcd.get("/actions/create_service_instances/#{service_instance_id}").value)
     expect(data).to eq({
       'service_id' => service_id,
+      'service_plan_id' => service_plan_id,
       'service_instance_id' => service_instance_id,
       'deployment_name' => deployment_name,
       'bosh_task_id' => bosh_deploy_task_id

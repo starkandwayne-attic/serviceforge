@@ -32,18 +32,17 @@ class Actions::CreateServiceInstance
   def perform
     deployment_stub = generate_deployment_stub
     deployment_manifest = generate_deployment_manifest(deployment_stub)
-
     perform_bosh_deploy_and_save_task_id(deployment_manifest)
-
-    bosh_director_client.track_task(bosh_task_id)
+    track_task
   end
 
   def to_json(*)
     {
-      "service_id" => service_id,
-      "service_instance_id" => service_instance_id,
-      "deployment_name" => deployment_name,
-      "bosh_task_id" => bosh_task_id
+      'service_id' => service_id,
+      'service_plan_id' => service_plan_id,
+      'service_instance_id' => service_instance_id,
+      'deployment_name' => deployment_name,
+      'bosh_task_id' => bosh_task_id
     }.to_json
   end
 
@@ -71,16 +70,12 @@ class Actions::CreateServiceInstance
     save
   end
 
-  def service_instance
-    @service_instance ||= ServiceInstance.find_by_id(service_instance_id)
+  def track_task
+    bosh_director_client.track_task(bosh_task_id)
   end
 
   def service_plan_stub
     service_plan.bosh_deployment_stub_yaml
-  end
-
-  def service_plan
-    @service_plan || service.find_plan_by_id(service_plan_id)
   end
 
   def deployment_name_prefix
