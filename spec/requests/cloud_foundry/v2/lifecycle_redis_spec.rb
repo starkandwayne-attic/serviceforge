@@ -119,52 +119,53 @@ describe 'redis service - lifecycle' do
     #   }
     # }
 
-    vms_state_cmd = binding_commands.fetch('commands').fetch('vms-state')
-    expect(vms_state_cmd).to_not be_nil
-    expect(vms_state_cmd['method']).to eq('GET')
+    cmd = binding_commands.fetch('commands').fetch('vms-state')
+    expect(cmd).to_not be_nil
+    expect(cmd['method']).to eq('GET')
 
     # GET is required for this binding_command, so PUT should fail with 405
-    put URI.parse(vms_state_cmd['url']).path
+    put URI.parse(cmd['url']).path
     expect(response.status).to eq(405)
 
     # Now try GET as required...
-    get URI.parse(vms_state_cmd['url']).path
+    vms_state_url = cmd['url']
+    get URI.parse(vms_state_url).path
     expect(response.status).to eq(200)
     vms_state = JSON.parse(response.body)
-    expect(vms_state.size).to eq(2) # one for each VM in 5-servers cluster
+    expect(vms_state.size).to eq(2) # one for each VM in 2-servers cluster
 
+    ##
+    ## Changing plans via Binding Commands
+    ##
     # 'binding_commands' => {
-    #   'current_plan' => current_plan_label,
+    #   'current_plan' => '2-servers',
     #   'commands' => {
     #     '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/AUTH_TOKEN" },
-    #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
+    #     '2-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
     #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
     #   }
     # }
-    # expect(binding_commands.fetch('current_plan')).to eq('2-servers') # see let(:plan_id)
-    # commands = binding_commands.fetch('commands')
-    # expect(commands).to be_instance_of(Hash)
-    # 
-    # three_server_plan_url = commands.fetch('3-servers').fetch('url')
-    # three_server_plan_method = commands.fetch('3-servers').fetch('method')
-    # 
-    # # Trigger upgrade to 3-server plan
-    # expect(three_server_plan_method).to eq('PUT')
-    # put URI.parse(three_server_plan_url).path, {}
 
-    # TODO implement creation & invocation of BindingCommands
-    # expect(response.status).to eq(200)
+    expect(binding_commands.fetch('current_plan')).to eq('2-servers')
 
-    ##
-    ## Test the redis /service_instances entry
-    ##
-    # data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
-    # expect(data).to eq({
-    #   'service_instance_id' => service_instance_id,
-    #   'service_id' => service_id,
-    #   'service_plan_id' => two_server_plan_id,
-    #   'deployment_name' => deployment_name
-    # })
+    # Let's upgrade to 3-servers...
+    cmd = binding_commands.fetch('commands').fetch('3-servers')
+    expect(cmd).to_not be_nil
+    expect(cmd['method']).to eq('PUT')
+
+    # PUT is required for this binding_command, so GET should fail with 405
+    get URI.parse(cmd['url']).path
+    expect(response.status).to eq(405)
+
+    # Now try PUT as required...
+    put URI.parse(cmd['url']).path
+    expect(response.status).to eq(200)
+
+    # Now confirm we have 3 servers instead of 2...
+    get URI.parse(vms_state_url).path
+    vms_state = JSON.parse(response.body)
+    expect(vms_state.size).to eq(3) # previously was 2, now 3, yeah yeah
+
 
     ##
     ## Unbind

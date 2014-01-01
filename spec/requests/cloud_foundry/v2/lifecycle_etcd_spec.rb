@@ -133,38 +133,6 @@ describe 'etcd service - lifecycle' do
     vms_state = JSON.parse(response.body)
     expect(vms_state.size).to eq(5) # one for each VM in 5-servers cluster
 
-    # 'binding_commands' => {
-    #   'current_plan' => current_plan_label,
-    #   'commands' => {
-    #     '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/AUTH_TOKEN" },
-    #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
-    #   }
-    # }
-    # expect(binding_commands.fetch('current_plan')).to eq('5-servers') # see let(:plan_id)
-    # commands = binding_commands.fetch('commands')
-    # expect(commands).to be_instance_of(Hash)
-    # 
-    # three_server_plan_url = commands.fetch('3-servers').fetch('url')
-    # three_server_plan_method = commands.fetch('3-servers').fetch('method')
-    # 
-    # # Trigger downgrade to 1-server plan
-    # expect(three_server_plan_method).to eq('PUT')
-    # put URI.parse(three_server_plan_url).path, {}
-
-    # TODO implement creation & invocation of BindingCommands
-    # expect(response.status).to eq(200)
-
-    ##
-    ## Test the etcd /service_instances entry
-    ##
-    # data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
-    # expect(data).to eq({
-    #   'service_instance_id' => service_instance_id,
-    #   'service_id' => service_id,
-    #   'service_plan_id' => three_server_plan_id,
-    #   'deployment_name' => deployment_name
-    # })
-
     ##
     ## Unbind
     ##
