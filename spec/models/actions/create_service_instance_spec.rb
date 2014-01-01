@@ -26,8 +26,7 @@ describe Actions::CreateServiceInstance do
 
 
   it "generates deployment manifest and deploys it" do
-    service_klass = class_double('Service').as_stubbed_const
-    expect(service_klass).to receive(:find_by_id).and_return(service)
+    expect(class_double('Service').as_stubbed_const).to receive(:find_by_id).and_return(service)
     expect(service).to receive(:deployment_name_prefix).and_return(deployment_name_prefix)
     action = Actions::CreateServiceInstance.create(service_id: service_id, service_instance_id: service_instance_id)
 
