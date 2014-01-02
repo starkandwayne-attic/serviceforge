@@ -3,6 +3,16 @@
 # a working auth_token then they are authorized to invoke to command, and
 # also authenticated as a specific service instance & service binding.
 #
+# FIXME - there is some confusion between the parent record and the child records 
+# and the associated Ruby models that could benefit from refactoring.
+#
+# When a ServiceBinding is created the following Etcd records are created
+# * /binding_commands/TOKEN/model => via RegisteredBindingCommand via CreateBindingCommands
+# * /registered_binding_commands/SERVICE_BINDING_ID => via CreateBindingCommands directly
+#
+# The second record allows the first group of records to be found and deleted when
+# a ServiceBinding is deleted.
+# It probably should be a model of its own with #save and #destroy methods.
 class RegisteredBindingCommand
   include EtcdModel
 
