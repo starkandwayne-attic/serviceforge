@@ -12,8 +12,10 @@ describe 'etcd service - lifecycle' do
   let(:app_guid)            { "app-guid-#{seed}" }
   let(:deployment_name)     { "test-etcd-#{service_instance_id}" }
 
-  def cleanup_etcd_service_instances
+  def cleanup_etcd
     $etcd.delete("/service_instances", recursive: true)
+    $etcd.delete("/binding_commands", recursive: true)
+    $etcd.delete("/registered_binding_commands", recursive: true)
   rescue Net::HTTPServerException
   end
 
@@ -31,12 +33,12 @@ describe 'etcd service - lifecycle' do
   end
 
   before do
-    cleanup_etcd_service_instances
+    cleanup_etcd
     cleanup_bosh_deployments
   end
 
   after do
-    cleanup_etcd_service_instances
+    cleanup_etcd
     cleanup_bosh_deployments
   end
 
@@ -138,6 +140,12 @@ describe 'etcd service - lifecycle' do
     ##
     delete "/v2/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}"
     expect(response.status).to eq(204)
+
+    ##
+    ## Test that registered BindingCommands have been removed
+    ##
+    expect($etcd.get("/binding_commands").value).to be_nil
+    expect($etcd.get("/registered_binding_commands").value).to be_nil
 
     ##
     ## Deprovision

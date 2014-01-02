@@ -46,9 +46,9 @@ class V2::ServiceBindingsController < V2::BaseController
     service_instance_id = params.fetch(:service_instance_id)
     service_binding_id = params.fetch(:id)
 
-    # action = Actions::DestroyBindingCommands.new(
-    # 
-    # )
+    action = Actions::DeleteBindingCommands.new(
+      service_binding_id: service_binding_id
+    )
 
     service_binding = ServiceBinding.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
     if service_binding

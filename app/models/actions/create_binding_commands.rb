@@ -5,16 +5,20 @@ class Actions::CreateBindingCommands
   attr_accessor :service_instance_id, :service_binding_id, :deployment_name
   attr_accessor :request_base_url
 
-  def perform
-    commands = {}
+  attr_reader :commands, :command_auth_tokens
 
-    register_vms_state_command(commands)
+  def perform
+    @commands = {}
+    @command_auth_tokens = []
+
+    register_vms_state_command
 
     service.plans.each do |plan|
-      register_change_plan(commands, plan)
+      register_change_plan(plan)
     end
 
-    save_commands_to_service_binding(commands)
+    save_registered_binding_commands
+    save_commands_to_service_binding
   end
 
   private
@@ -42,7 +46,7 @@ class Actions::CreateBindingCommands
     { label => { 'method' => http_method, 'url' => command_url(auth_token) } }
   end
 
-  def register_vms_state_command(commands)
+  def register_vms_state_command
     auth_token = generate_binding_command_uuid
     label = 'vms-state'
     http_method = 'GET'
@@ -56,9 +60,10 @@ class Actions::CreateBindingCommands
       attributes: {deployment_name: deployment_name, service_id: service_id})
 
     commands.merge!(command_hash(label, http_method, auth_token))
+    command_auth_tokens << auth_token
   end
 
-  def register_change_plan(commands, plan)
+  def register_change_plan(plan)
     auth_token = generate_binding_command_uuid
     label = plan.name
     service_plan_id = plan.id
@@ -75,9 +80,16 @@ class Actions::CreateBindingCommands
       })
 
     commands.merge!(command_hash(label, http_method, auth_token))
+    command_auth_tokens << auth_token
   end
 
-  def save_commands_to_service_binding(commands)
+  # To allow the Binding Commands be discovered and deleted later,
+  # store them all in /registered_binding_commands/:service_binding_id
+  def save_registered_binding_commands
+    $etcd.set("/registered_binding_commands/#{service_binding_id}", command_auth_tokens.to_json)
+  end
+
+  def save_commands_to_service_binding
     service_binding.credentials['binding_commands'] = {
       'current_plan' => current_plan.name,
       'commands' => commands

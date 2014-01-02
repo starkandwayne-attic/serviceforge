@@ -59,5 +59,9 @@ describe Actions::CreateBindingCommands do
     expect(uuid).to receive(:generate).and_return(scale_2_servers_uuid)
     expect(uuid).to receive(:generate).and_return(scale_3_servers_uuid)
     subject.perform
+
+    expect($etcd.get("/registered_binding_commands/#{service_binding_id}").value).to eq([
+      vms_state_uuid, scale_1_server_uuid, scale_2_servers_uuid, scale_3_servers_uuid
+    ].to_json)
   }
 end
