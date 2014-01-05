@@ -20,13 +20,13 @@ describe 'redis service - lifecycle' do
   def cleanup_bosh_deployments
     Service.all.each do |service|
       delete_task_ids = []
-      service.bosh.list_deployments.each do |deployment|
+      service.director_client.list_deployments.each do |deployment|
         if deployment["name"] =~ /^#{service.deployment_name_prefix}\-/
-          _, bosh_task_id = service.bosh.delete(deployment["name"])
+          _, bosh_task_id = service.director_client.delete(deployment["name"])
           delete_task_ids << bosh_task_id
         end
       end
-      service.bosh.wait_for_tasks_to_complete(delete_task_ids)
+      service.director_client.wait_for_tasks_to_complete(delete_task_ids)
     end
   end
 
@@ -67,10 +67,10 @@ describe 'redis service - lifecycle' do
     ##
     ## Test bosh for deployment entry
     ##
-    deployment_exists = service.bosh.deployment_exists?(deployment_name)
+    deployment_exists = service.director_client.deployment_exists?(deployment_name)
     expect(deployment_exists).to_not be_nil
 
-    vms = service.bosh.list_vms(deployment_name)
+    vms = service.director_client.list_vms(deployment_name)
     expect(vms.size).to eq(2)
 
     ##
@@ -188,7 +188,7 @@ describe 'redis service - lifecycle' do
     ##
     ## Test deployment entry no longer exists
     ##
-    deployment_exists = service.bosh.deployment_exists?(deployment_name)
+    deployment_exists = service.director_client.deployment_exists?(deployment_name)
     expect(deployment_exists).to be_false
 
   end
