@@ -1,22 +1,55 @@
 require 'spec_helper'
 
 describe Bosh::DirectorClient do
+  let(:available_boshes) do
+    [{"target"=>"https://192.168.50.4:25555",
+      "username"=>"admin",
+      "password"=>"admin",
+      "dns_root"=>nil,
+      "infrastructure"=>"warden",
+      "available_infrastructure"=>
+       [{"ip_range_start"=>"10.244.2.0",
+         "template"=>File.join(Rails.root, "/infrastructure_pools/warden/10.244.2.0.yml")},
+        {"ip_range_start"=>"10.244.2.40",
+         "template"=>File.join(Rails.root, "/infrastructure_pools/warden/10.244.2.40.yml")},
+        {"ip_range_start"=>"10.244.2.80",
+         "template"=>File.join(Rails.root, "/infrastructure_pools/warden/10.244.2.80.yml")}]}]
+  end
+
   subject { Bosh::DirectorClient.build({
       'target' => 'https://192.168.50.4:25555',
       'username' => 'admin',
       'password' => 'admin',
-      'release_templates' => {
-        'base_path' => '/path/to/templates',
-        'templates' => ['file1.yml', 'file2.yml']
-      }
     })
   }
-  describe "#api" do
-    it { expect(subject.api).to be_instance_of(Bosh::Cli::Client::Director) }
+
+  describe ".available_director_clients from Settings" do
+    before { expect(Settings).to receive(:available_boshes).at_most(:once).and_return(available_boshes) }
+    subject { Bosh::DirectorClient.available_director_clients }
+    it { expect(subject.size).to eq(1) }
+    it { expect(subject.first).to be_instance_of(Bosh::DirectorClient) }
+    it { expect(subject.first.username).to eq("admin") }
   end
 
-  describe "#release_templates builds Bosh::ReleaseTemplates" do
-    it { expect(subject.release_templates).to be_instance_of(Bosh::ReleaseTemplates) }
+  describe ".find_by_bosh_target from .available_director_clients" do
+    before { expect(Settings).to receive(:available_boshes).at_most(:once).and_return(available_boshes) }
+    let(:findable_target) { "https://192.168.50.4:25555" }
+    let(:unknown_target) { "https://1.2.3.4:25555" }
+
+    it "finds a DirectorClient" do
+      client = Bosh::DirectorClient.find_by_bosh_target(findable_target)
+      expect(client).to be_instance_of(Bosh::DirectorClient)
+      expect(client.username).to eq("admin")
+    end
+
+    it "cannot find DirectorClient; returns nil" do
+      client = Bosh::DirectorClient.find_by_bosh_target(unknown_target)
+      expect(client).to be_nil
+    end
+  end
+
+  describe "#api" do
+    it { expect(subject.api).to be_instance_of(Bosh::Cli::Client::Director) }
   end
 
   describe "#director_uuid cached on connection" do
