@@ -101,7 +101,7 @@ describe 'etcd service - lifecycle' do
       'service_binding_id' => service_binding_id,
       'service_instance_id' => service_instance_id,
       'credentials' => {
-        'host' => '10.244.2.6',
+        'host' => '10.244.2.2',
         'port' => 4001
       }
     })
@@ -111,7 +111,7 @@ describe 'etcd service - lifecycle' do
     credentials = instance.fetch('credentials')
     binding_commands = credentials.delete('binding_commands')
     expect(credentials).to eq({
-      'host' => '10.244.2.6',
+      'host' => '10.244.2.2',
       'port' => 4001
     })
 
