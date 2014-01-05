@@ -5,7 +5,7 @@ describe 'etcd service - lifecycle' do
   let(:service_id)          { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated-bosh-lite
   let(:service)             { Service.find_by_id(service_id) }
   let(:three_server_plan_id) { '1a448d0e-bc54-4a16-8d2f-ab701be20c40' }
-  let(:five_server_plan_id) { '5cfa57fc-1474-4eb9-9afb' }
+  let(:five_server_plan_id)  { '5cfa57fc-1474-4eb9-9afb' }
   let(:service_plan_id)     { five_server_plan_id }
   let(:service_instance_id) { "instance-#{seed}" }
   let(:service_binding_id)  { "binding-#{seed}" }

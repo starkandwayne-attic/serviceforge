@@ -27,7 +27,7 @@ properties:
        {'job_name'=>'other_job', 'index'=>0, 'ips'=>['10.244.2.254']}]
     }
     let(:bosh_director_client)  { instance_double("Bosh::DirectorClient") }
-    let(:service)               { instance_double("Service", bosh: bosh_director_client) }
+    let(:service)               { instance_double("Service", director_client: bosh_director_client) }
     
     before {
       expect(class_double('Service').as_stubbed_const).to receive(:find_by_id).with(service_id).and_return(service)

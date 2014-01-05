@@ -2,7 +2,7 @@ class Service
   attr_reader :id, :name, :description, :tags, :metadata, :plans
   attr_reader :deployment_name_prefix
 
-  attr_reader :bosh_target, :bosh_releases
+  attr_reader :bosh_target, :bosh_release
   attr_reader :default_credentials, :detect_credentials
 
   class UnknownBoshTarget < StandardError; end
@@ -18,7 +18,10 @@ class Service
   def self.build(attrs)
     plan_attrs = attrs['plans'] || []
     plans      = plan_attrs.map { |attr| Plan.build(attr) }
-    new(attrs.merge('plans' => plans))
+    if bosh_release = attrs.delete("bosh_release")
+      bosh_release = Bosh::ServiceBoshRelease.build(bosh_release)
+    end
+    new(attrs.merge('plans' => plans, 'bosh_release' => bosh_release))
   end
 
   def initialize(attrs)
@@ -36,7 +39,7 @@ class Service
     @default_credentials    = attrs.fetch('default_credentials', {})
     @detect_credentials     = attrs.fetch('detect_credentials', [])
     @bosh_target            = attrs.fetch('bosh_target', nil)
-    @bosh_release           = attrs.fetch('bosh_releases', nil)
+    @bosh_release           = attrs.fetch('bosh_release', nil)
   end
 
   def bindable?

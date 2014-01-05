@@ -15,8 +15,12 @@ class Generators::GenerateDeploymentStub
     File.read(bosh_release_templates.stub_path)
   end
 
+  def bosh_release
+    service.bosh_release
+  end
+
   def bosh_release_templates
-    bosh_director_client.release_templates
+    bosh_release.release_templates
   end
 
   def bosh_director_uuid

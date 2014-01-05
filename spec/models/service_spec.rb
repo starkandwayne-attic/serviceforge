@@ -268,10 +268,12 @@ describe Service do
         )
       }
       context "Settings.available_boshes includes targets" do
-        before { expect(Settings).to receive(:available_boshes).and_return([{ 'target' => 'https://192.168.50.4:25555' }]) }
+        let(:director) { instance_double('Bosh::DirectorClient', target: 'https://192.168.50.4:25555') }
+        before do
+          expect(Bosh::DirectorClient).to receive(:available_director_clients).and_return([director])
+        end
         it "returns first target" do
-          expect(subject.director_client).to be_instance_of(Bosh::DirectorClient)
-          expect(subject.director_client.target).to eq('https://192.168.50.4:25555')
+          expect(subject.director_client).to eq(director)
         end
       end
     end
@@ -283,13 +285,13 @@ describe Service do
         'id'          => 'my-id',
         'name'        => 'my-name',
         'description' => 'my-desc',
-        'bosh_releases' => {
+        'bosh_release' => {
           'releases' => {
             'name' => 'redis',
             'version' => 3
           },
           'release_templates' => {
-            'base_path' => '/path/to/templates',
+            'base_path' => '/path/to',
             'templates' => ['file1.yml', 'file2.yml']
           }
         }

@@ -55,6 +55,8 @@ class Actions::ChangeServiceInstance
 
   def track_task
     bosh_director_client.track_task(bosh_task_id)
+    # TODO get final task status and save it
+    # TODO handle error if task status isn't :done
   end
 
   def service_instance

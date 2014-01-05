@@ -35,69 +35,73 @@ resource_pools:
     cloud_properties:
       name: random
 
+# Assume that no service plan for any service requires more than
+# 5 VMs, including 1 static and 4 dynamic.
+# Plus 5 (double the size) unused IPs, due to BOSH bug/quirk.
 networks:
 - name: etcd1
   subnets:
   - cloud_properties:
       name: random
-    range: 10.244.2.0/30
+    range: 10.244.2.40/30
     reserved:
-    - 10.244.2.1
+    - 10.244.2.41
     static:
-    - 10.244.2.2
+    - 10.244.2.42
 
   - cloud_properties:
       name: random
-    range: 10.244.3.28/30
+    range: 10.244.2.44/30
     reserved:
-    - 10.244.3.29
+    - 10.244.2.45
     static: []
   - cloud_properties:
       name: random
-    range: 10.244.3.32/30
+    range: 10.244.2.48/30
     reserved:
-    - 10.244.3.33
+    - 10.244.2.49
     static: []
   - cloud_properties:
       name: random
-    range: 10.244.3.36/30
+    range: 10.244.2.52/30
     reserved:
-    - 10.244.3.37
+    - 10.244.2.55
     static: []
   - cloud_properties:
       name: random
-    range: 10.244.3.40/30
+    range: 10.244.2.56/30
     reserved:
-    - 10.244.3.41
+    - 10.244.2.57
     static: []
 
+  # Bonus double-sized network required due to BOSH oddity
   - cloud_properties:
       name: random
-    range: 10.244.3.44/30
+    range: 10.244.2.60/30
     reserved:
-    - 10.244.3.45
+    - 10.244.2.61
     static: []
   - cloud_properties:
       name: random
-    range: 10.244.3.48/30
+    range: 10.244.2.64/30
     reserved:
-    - 10.244.3.49
+    - 10.244.2.65
     static: []
   - cloud_properties:
       name: random
-    range: 10.244.3.52/30
+    range: 10.244.2.68/30
     reserved:
-    - 10.244.3.53
+    - 10.244.2.69
     static: []
   - cloud_properties:
       name: random
-    range: 10.244.3.56/30
+    range: 10.244.2.72/30
     reserved:
-    - 10.244.3.57
+    - 10.244.2.73
     static: []
   - cloud_properties:
       name: random
-    range: 10.244.3.60/30
+    range: 10.244.2.76/30
     reserved:
-    - 10.244.3.61
+    - 10.244.2.77
     static: []
