@@ -50,7 +50,7 @@ defaults: &defaults
          - etcd-deployment.yml
          - etcd-jobs.yml
          - etcd-properties.yml
-         - etcd-infrastructure-warden.yml
+         - infrastructure/warden/10.244.2.0.yml
     plans:
     - name: 1-server
       id: 6e8ece8c-4fe6-4d58-9aeb-497d6aeba113
