@@ -94,17 +94,42 @@ You can now provision a service:
 $ gcf create-service etcd-dedicated-bosh-lite 5-servers my-5-pack
 ```
 
-### Updating ngrok
+### Custom ngrok subdomain to allow restarts
 
 If you stop/restart your ngrok tunnel, you will be given a new URL and you will need to update the `broker_url` for your Cloud Controller Service Broker.
 
-Run the first command to find your service broker's URL; the second command to update the `broker_url` field to the new ngrok URL.
+Instead, use a custom subdomain. For this, create a free Ngrok account and on the dashboard, register a subdomain such as "servaas-USERNAME":
+
+![register-subdomain](https://www.evernote.com/shard/s3/sh/37aea898-fa01-46fb-9d38-f3bfcff9372f/4ac10117d828f5e8e8686df4306c3b34/deep/0/ngrok---secure-introspectable-tunnels-to-localhost.png)
+
+There is an example ngrok configuration file. Clone it:
 
 ```
-cf curl GET /v2/service_brokers
-cf curl PUT /v2/service_brokers/e1e0a07e-7530-4552-b99b-08f34739ea22 -b '{"broker_url": "http://ee81a54.ngrok.com"}'
+$ cp config/environments/development/ngrok.conf.example config/environments/development/ngrok.conf
 ```
 
+Now edit to add your subdomain, and your Ngrok auth token (from the dashboard).
+
+``` yaml
+auth_token: MY_TOKEN
+tunnels:
+  broker:
+    subdomain: servaas-USERNAME
+    proto:
+      http: 5000
+```
+
+You can now run Ngrok with your custom domain and credentials:
+
+```
+$ ngrok -config config/environments/development/ngrok.conf start broker
+Tunnel Status                 online                                                                                                                                              
+Version                       1.6/1.5                                                                                                                                             
+Forwarding                    http://servaas-drnic.ngrok.com -> 127.0.0.1:5000                                                                                                          
+Web Interface                 127.0.0.1:4040                                                                                                                                      
+# Conn                        0                                                                                                                                                   
+Avg Conn Time                 0.00ms
+```
 
 ## Running Tests
 
