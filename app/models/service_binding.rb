@@ -23,6 +23,6 @@ class ServiceBinding
   end
 
   def destroy
-    $etcd.delete("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model")
+    $etcd.delete("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}", recursive: true)
   end
 end

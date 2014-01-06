@@ -40,7 +40,7 @@ class RegisteredBindingCommand
   end
 
   def destroy
-    $etcd.delete("/binding_commands/#{auth_token}/model")
+    $etcd.delete("/binding_commands/#{auth_token}", recursive: true)
   end
 
   def perform

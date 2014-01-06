@@ -36,7 +36,7 @@ class ServiceInstance
   end
 
   def destroy
-    $etcd.delete("/service_instances/#{service_instance_id}/model")
+    $etcd.delete("/service_instances/#{service_instance_id}", recursive: true)
   end
 
   def to_json(*)
