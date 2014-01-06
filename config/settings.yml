@@ -9,6 +9,22 @@ defaults: &defaults
   bin_paths:
     - <%= Rails.root %>/vendor/bundle/bin
 
+  available_boshes:
+    - target: https://192.168.50.4:25555
+      username: admin
+      password: admin
+      dns_root: ~
+      cpi_infrastructure: warden
+      # director_uuid: - calculated after login
+      # cpi: - cpi calculated after login (warden, openstack)
+      infrastructure_networks:
+        - ip_range_start: 10.244.2.0
+          template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.0.yml
+        - ip_range_start: 10.244.2.40
+          template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.40.yml
+        - ip_range_start: 10.244.2.80
+          template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.80.yml
+
   services:
   - name: etcd-dedicated-bosh-lite
     deployment_name_prefix: etcd
@@ -31,26 +47,20 @@ defaults: &defaults
         class: BindingAttributes::JobIpAddress
         attributes:
           job_name: etcd_leader_z1
-    bosh:
-      target: https://192.168.50.4:25555
-      username: admin
-      password: admin
-      dns_root: ~
-      infrastructure: warden
-      # director_uuid: - calculated after login
-      # cpi: - cpi calculated after login (warden, openstack)
+    bosh_target: https://192.168.50.4:25555
+    bosh_release:
       releases:
       - name: etcd
         version: 3
         url: ~
       release_templates:
         base_path: <%= Rails.root %>/releases/etcd/templates
-        stub: etcd-stub-spiff.yml
+        deployment_stub: etcd-stub-spiff.yml
+        infrastructure_stub: etcd-stub-infrastructure-warden.yml
         templates:
          - etcd-deployment.yml
          - etcd-jobs.yml
          - etcd-properties.yml
-         - etcd-infrastructure-warden.yml
     plans:
     - name: 1-server
       id: 6e8ece8c-4fe6-4d58-9aeb-497d6aeba113
@@ -113,26 +123,20 @@ defaults: &defaults
         class: BindingAttributes::JobIpAddress
         attributes:
           job_name: redis_leader_z1
-    bosh:
-      target: https://192.168.50.4:25555
-      username: admin
-      password: admin
-      dns_root: ~
-      infrastructure: warden
-      # director_uuid: - calculated after login
-      # cpi: - cpi calculated after login (warden, openstack)
+    bosh_target: https://192.168.50.4:25555
+    bosh_release:
       releases:
       - name: redis
         version: 3
         url: ~
       release_templates:
         base_path: <%= Rails.root %>/releases/redis/templates
-        stub: redis-stub-spiff.yml
+        deployment_stub: redis-stub-spiff.yml
+        infrastructure_stub: redis-stub-infrastructure-warden.yml
         templates:
          - redis-deployment.yml
          - redis-jobs.yml
          - redis-properties.yml
-         - redis-infrastructure-warden.yml
     plans:
     - name: 1-server
       id: f643f60d-7e5e-4fbf-934f-c089ed2f2720

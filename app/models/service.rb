@@ -2,8 +2,10 @@ class Service
   attr_reader :id, :name, :description, :tags, :metadata, :plans
   attr_reader :deployment_name_prefix
 
-  attr_reader :bosh, :release_templates
+  attr_reader :bosh_target, :bosh_release
   attr_reader :default_credentials, :detect_credentials
+
+  class UnknownBoshTarget < StandardError; end
 
   def self.all
     @all ||= (Settings['services'] || []).map {|attrs| Service.build(attrs)}
@@ -16,10 +18,10 @@ class Service
   def self.build(attrs)
     plan_attrs = attrs['plans'] || []
     plans      = plan_attrs.map { |attr| Plan.build(attr) }
-    if bosh_attrs = attrs.delete('bosh')
-      bosh = Bosh::DirectorClient.build(bosh_attrs)
+    if bosh_release = attrs.delete("bosh_release")
+      bosh_release = Bosh::ServiceBoshRelease.build(bosh_release)
     end
-    new(attrs.merge('plans' => plans, 'bosh' => bosh))
+    new(attrs.merge('plans' => plans, 'bosh_release' => bosh_release))
   end
 
   def initialize(attrs)
@@ -36,12 +38,16 @@ class Service
 
     @default_credentials    = attrs.fetch('default_credentials', {})
     @detect_credentials     = attrs.fetch('detect_credentials', [])
-    @bosh                   = attrs.fetch('bosh', nil)
-    @release_templates      = attrs.fetch('release_templates', nil)
+    @bosh_target            = attrs.fetch('bosh_target', nil)
+    @bosh_release           = attrs.fetch('bosh_release', nil)
   end
 
   def bindable?
     true
+  end
+
+  def director_client
+    @director_client ||= find_bosh_director_client_or_default_to_first(@bosh_target)
   end
 
   def to_hash
@@ -61,7 +67,20 @@ class Service
   end
 
   def bosh_service_stub_paths
-    bosh.release_templates.template_paths
+    bosh_release.release_templates.template_paths
+  end
+
+  private
+  def find_bosh_director_client_or_default_to_first(bosh_target)
+    director_client = unless bosh_target
+      Bosh::DirectorClient.available_director_clients.first
+    else
+      Bosh::DirectorClient.find_by_bosh_target(bosh_target)
+    end
+    unless director_client
+      raise Service::UnknownBoshTarget, "Service #{name} bosh_target #{bosh_target.inspect} is unknown"
+    end
+    director_client
   end
 
 end

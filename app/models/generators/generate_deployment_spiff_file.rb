@@ -1,4 +1,4 @@
-class Generators::GenerateDeploymentStub
+class Generators::GenerateDeploymentSpiffFile
   include ActiveModel::Model
   include ServiceAccessor
 
@@ -12,11 +12,15 @@ class Generators::GenerateDeploymentStub
 
   private
   def base_stub
-    File.read(bosh_release_templates.stub_path)
+    File.read(bosh_release_templates.deployment_stub_path)
+  end
+
+  def bosh_release
+    service.bosh_release
   end
 
   def bosh_release_templates
-    bosh_director_client.release_templates
+    bosh_release.release_templates
   end
 
   def bosh_director_uuid

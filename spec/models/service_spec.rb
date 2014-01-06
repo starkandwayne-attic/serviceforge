@@ -228,36 +228,71 @@ describe Service do
 
   end
 
-  describe '#bosh builds Bosh::DirectorClient (a wrapper of Bosh::Cli::Client::Director)' do
-    subject {
-      Service.build(
-        'id'          => 'my-id',
-        'name'        => 'my-name',
-        'description' => 'my-desc',
-        'bosh' => {
-          'target' => 'https://192.168.50.4:25555',
-          'username' => 'admin',
-          'password' => 'admin'
-        }
-      )
-    }
-    it { expect(subject.bosh).to be_instance_of(Bosh::DirectorClient) }
-    it { expect(subject.bosh.target).to eq('https://192.168.50.4:25555') }
+  describe '#director_client references Bosh::DirectorClient (a wrapper of Bosh::Cli::Client::Director)' do
+    context "bosh_target specified" do
+      subject {
+        Service.build(
+          'id'          => 'my-id',
+          'name'        => 'my-name',
+          'description' => 'my-desc',
+          'bosh_target' => 'https://192.168.50.4:25555',
+        )
+      }
+
+      it { expect(subject.bosh_target).to eq('https://192.168.50.4:25555') }
+
+      context "Settings.available_boshes doesn't include target" do
+        before do
+          expect(Bosh::DirectorClient).to receive(:available_director_clients).and_return([
+            instance_double('Bosh::DirectorClient', target: 'https://1.2.3.4:25555')
+          ])
+        end
+        it { expect { subject.director_client }.to raise_error(Service::UnknownBoshTarget) }
+      end
+
+      context "Settings.available_boshes does include target" do
+        let(:director) { instance_double('Bosh::DirectorClient', target: 'https://192.168.50.4:25555') }
+        before do
+          expect(Bosh::DirectorClient).to receive(:available_director_clients).and_return([director])
+        end
+        it { expect(subject.director_client).to eq(director) }
+      end
+    end
+
+    context "no bosh_target specified" do
+      subject {
+        Service.build(
+          'id'          => 'my-id',
+          'name'        => 'my-name',
+          'description' => 'my-desc',
+        )
+      }
+      context "Settings.available_boshes includes targets" do
+        let(:director) { instance_double('Bosh::DirectorClient', target: 'https://192.168.50.4:25555') }
+        before do
+          expect(Bosh::DirectorClient).to receive(:available_director_clients).and_return([director])
+        end
+        it "returns first target" do
+          expect(subject.director_client).to eq(director)
+        end
+      end
+    end
   end
 
-  describe "bosh helpers" do
+  describe "bosh releases" do
     subject {
       Service.build(
         'id'          => 'my-id',
         'name'        => 'my-name',
         'description' => 'my-desc',
-        'bosh' => {
-          'target' => 'https://192.168.50.4:25555',
-          'username' => 'admin',
-          'password' => 'admin',
+        'bosh_release' => {
+          'releases' => {
+            'name' => 'redis',
+            'version' => 3
+          },
           'release_templates' => {
             'base_path' => '/path/to',
-            'templates' => %w[file1.yml file2.yml]
+            'templates' => ['file1.yml', 'file2.yml']
           }
         }
       )

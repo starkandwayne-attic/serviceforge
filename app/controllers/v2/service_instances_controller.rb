@@ -16,6 +16,8 @@ class V2::ServiceInstancesController < V2::BaseController
       action.save
       action.perform
 
+      # Need to reload 'instance' as it was modified by CreateServiceInstance action
+      instance = ServiceInstance.find_by_id(instance.service_instance_id)
       instance.deployment_name = action.deployment_name
       instance.save
 

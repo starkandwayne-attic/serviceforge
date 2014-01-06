@@ -1,13 +1,17 @@
 require 'spec_helper'
 
 describe Actions::ChangeServiceInstance do
-  let(:stub_generator)        { instance_double("Generators::GenerateDeploymentStub") }
+  let(:deployment_spiff_file_generator) { instance_double('Generators::GenerateDeploymentSpiffFile') }
+  let(:infrastructure_spiff_file_generator) { instance_double('Generators::GenerateInfrastructureSpiffFile') }
   let(:manifest_generator)    { instance_double("Generators::GenerateDeploymentManifest") }
   let(:service)               { instance_double("Service") }
   let(:service_id)            { 'service-id-1' }
   let(:service_plan_id)       { 'service-plan-id-1' }
   let(:service_plan)          { instance_double("Plan") }
   let(:service_instance_id)   { 'service-instance-id-1' }
+  let(:service_instance)      { instance_double('ServiceInstance') }
+  let(:infrastructure_network){ instance_double("Bosh::InfrastructureNetwork") }
+  let(:infrastructure_stub)   { "---\nnetworks: something" }
   let(:service_stub_paths)    { %w[/path/to/file1.yml /path/to/file2.yml] }
   let(:deployment_stub)       { "---\nname: something" }
   let(:service_plan_stub)     { "---\njobs:\n  - name: etc\n  - instances: 2" }
@@ -50,13 +54,21 @@ describe Actions::ChangeServiceInstance do
     expect(service).to receive(:bosh_service_stub_paths).and_return(service_stub_paths)
     expect(service_plan).to receive(:bosh_deployment_stub_yaml).and_return(service_plan_stub)
 
-    gds_klass = class_double('Generators::GenerateDeploymentStub').as_stubbed_const
-    expect(gds_klass).to receive(:new).with({service: service, deployment_name: deployment_name}).and_return(stub_generator)
-    expect(stub_generator).to receive(:generate).and_return(deployment_stub)
+    expect(class_double('ServiceInstance').as_stubbed_const).to receive(:find_by_id).with(service_instance_id).and_return(service_instance)
+    expect(service_instance).to receive(:infrastructure_network).and_return(infrastructure_network)
+
+    gds_klass = class_double('Generators::GenerateDeploymentSpiffFile').as_stubbed_const
+    expect(gds_klass).to receive(:new).with({service: service, deployment_name: deployment_name}).and_return(deployment_spiff_file_generator)
+    expect(deployment_spiff_file_generator).to receive(:generate).and_return(deployment_stub)
+
+    gis_klass = class_double('Generators::GenerateInfrastructureSpiffFile').as_stubbed_const
+    expect(gis_klass).to receive(:new).with({service: service, infrastructure_network: infrastructure_network}).and_return(infrastructure_spiff_file_generator)
+    expect(infrastructure_spiff_file_generator).to receive(:generate).and_return(infrastructure_stub)
 
     gdm_klass = class_double("Generators::GenerateDeploymentManifest").as_stubbed_const
     expect(gdm_klass).to receive(:new).with({
       service_stub_paths: service_stub_paths,
+      infrastructure_stub: infrastructure_stub,
       deployment_stub: deployment_stub,
       service_plan_stub: service_plan_stub
     }).and_return(manifest_generator)

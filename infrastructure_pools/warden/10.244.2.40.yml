@@ -1,0 +1,68 @@
+  # Assume that no service plan for any service requires more than
+  # 5 VMs, including 1 static and 4 dynamic.
+  # Plus 5 (double the size) unused IPs, due to BOSH bug/quirk.
+  subnets:
+  - cloud_properties:
+      name: random
+    range: 10.244.2.40/30
+    reserved:
+    - 10.244.2.41
+    static:
+    - 10.244.2.42
+
+  - cloud_properties:
+      name: random
+    range: 10.244.2.44/30
+    reserved:
+    - 10.244.2.45
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.48/30
+    reserved:
+    - 10.244.2.49
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.52/30
+    reserved:
+    - 10.244.2.53
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.56/30
+    reserved:
+    - 10.244.2.57
+    static: []
+
+  # Bonus double-sized network required due to BOSH oddity
+  - cloud_properties:
+      name: random
+    range: 10.244.2.60/30
+    reserved:
+    - 10.244.2.61
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.64/30
+    reserved:
+    - 10.244.2.65
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.68/30
+    reserved:
+    - 10.244.2.69
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.72/30
+    reserved:
+    - 10.244.2.73
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.76/30
+    reserved:
+    - 10.244.2.77
+    static: []

@@ -19,7 +19,7 @@ module ServiceAccessor
     end
 
     def bosh_director_client
-      service.bosh
+      service.director_client
     end
   end
 end

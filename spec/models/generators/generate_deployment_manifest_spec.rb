@@ -6,13 +6,15 @@ describe Generators::GenerateDeploymentManifest do
     subject { Generators::GenerateDeploymentManifest.new(service_stub_paths: service_stub_paths) }
 
     it "merges service plan & deployment stubs" do
+      subject.infrastructure_stub = "--- {}"
       subject.service_plan_stub = "--- {}"
       subject.deployment_stub = "--- {}"
-      expect(subject).to receive(:tempfile).with('service_plan_stub', "--- {}").and_return(double(path: "temp1"))
-      expect(subject).to receive(:tempfile).with('deployment_stub', "--- {}").and_return(double(path: "temp2"))
+      expect(subject).to receive(:tempfile).with('infrastructure_stub', "--- {}").and_return(double(path: "temp1"))
+      expect(subject).to receive(:tempfile).with('service_plan_stub', "--- {}").and_return(double(path: "temp2"))
+      expect(subject).to receive(:tempfile).with('deployment_stub', "--- {}").and_return(double(path: "temp3"))
       output_file = double(path: "output.yml", rewind: true, close: true, read: "OUTPUT")
       expect(subject).to receive(:tempfile).with('output').and_return(output_file)
-      expect(subject).to receive(:spiff_merge).with(%w[file1.yml file2.yml temp1 temp2], "output.yml")
+      expect(subject).to receive(:spiff_merge).with(%w[file1.yml file2.yml temp1 temp2 temp3], "output.yml")
       manifest = subject.generate_manifest
       expect(manifest).to eq("OUTPUT")
     end
