@@ -63,7 +63,8 @@ describe 'etcd service - lifecycle' do
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
       'service_plan_id' => five_server_plan_id,
-      'deployment_name' => deployment_name
+      'deployment_name' => deployment_name,
+      'infrastructure_network' => nil
     })
 
     ##

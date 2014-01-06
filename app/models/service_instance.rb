@@ -6,6 +6,8 @@ class ServiceInstance
   attr_accessor :service_plan_id
   attr_accessor :deployment_name
 
+  attr_accessor :infrastructure_network
+
   def self.find_by_id(service_instance_id)
     if node = $etcd.get("/service_instances/#{service_instance_id}/model")
       attributes = JSON.parse(node.value)
@@ -19,6 +21,14 @@ class ServiceInstance
     object = new(attributes)
     object.save
     object
+  end
+
+  def initialize(attrs={})
+    infrastructure_network_attrs = attrs.delete('infrastructure_network')
+    super(attrs)
+    if infrastructure_network_attrs
+      self.infrastructure_network = Bosh::InfrastructureNetwork.build(infrastructure_network_attrs)
+    end
   end
 
   def save
@@ -38,7 +48,8 @@ class ServiceInstance
       'service_id' => service_id,
       'service_instance_id' => service_instance_id,
       'service_plan_id' => service_plan_id,
-      'deployment_name' => deployment_name
+      'deployment_name' => deployment_name,
+      'infrastructure_network' => infrastructure_network.try(:attributes)
     }
   end
 end

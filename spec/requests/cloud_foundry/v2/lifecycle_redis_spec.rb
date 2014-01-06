@@ -57,11 +57,13 @@ describe 'redis service - lifecycle' do
     ## Test the redis /service_instances entry
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
+    data['infrastructure_network'].delete('template') # different for each machine
     expect(data).to eq({
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
       'service_plan_id' => two_server_plan_id,
-      'deployment_name' => deployment_name
+      'deployment_name' => deployment_name,
+      'infrastructure_network' => { 'ip_range_start' => '10.244.2.0' }
     })
 
     ##
@@ -99,7 +101,7 @@ describe 'redis service - lifecycle' do
       'service_binding_id' => service_binding_id,
       'service_instance_id' => service_instance_id,
       'credentials' => {
-        'host' => '10.244.2.6',
+        'host' => '10.244.2.2',
         'port' => 6379
       }
     })
@@ -109,7 +111,7 @@ describe 'redis service - lifecycle' do
     credentials = instance.fetch('credentials')
     binding_commands = credentials.delete('binding_commands')
     expect(credentials).to eq({
-      'host' => '10.244.2.6',
+      'host' => '10.244.2.2',
       'port' => 6379
     })
 

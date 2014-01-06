@@ -6,8 +6,8 @@ describe Bosh::DirectorClient do
       "username"=>"admin",
       "password"=>"admin",
       "dns_root"=>nil,
-      "infrastructure"=>"warden",
-      "available_infrastructure"=>
+      "cpi_infrastructure"=>"warden",
+      "infrastructure_networks"=>
        [{"ip_range_start"=>"10.244.2.0",
          "template"=>File.join(Rails.root, "/infrastructure_pools/warden/10.244.2.0.yml")},
         {"ip_range_start"=>"10.244.2.40",
@@ -20,6 +20,14 @@ describe Bosh::DirectorClient do
       'target' => 'https://192.168.50.4:25555',
       'username' => 'admin',
       'password' => 'admin',
+      "cpi_infrastructure"=>"warden",
+      "infrastructure_networks"=>
+       [{"ip_range_start"=>"10.244.2.0",
+         "template"=>File.join(Rails.root, "/infrastructure_pools/warden/10.244.2.0.yml")},
+        {"ip_range_start"=>"10.244.2.40",
+         "template"=>File.join(Rails.root, "/infrastructure_pools/warden/10.244.2.40.yml")},
+        {"ip_range_start"=>"10.244.2.80",
+         "template"=>File.join(Rails.root, "/infrastructure_pools/warden/10.244.2.80.yml")}]
     })
   }
 
@@ -45,6 +53,20 @@ describe Bosh::DirectorClient do
     it "cannot find DirectorClient; returns nil" do
       client = Bosh::DirectorClient.find_by_bosh_target(unknown_target)
       expect(client).to be_nil
+    end
+  end
+
+  describe ".infrastructure_networks" do
+    it { expect(subject.infrastructure_networks.first).to be_instance_of(Bosh::InfrastructureNetwork) }
+  end
+
+  describe "#allocate_infrastructure_network to manage available InfrastructureNetworks" do
+    it "allocates the 3 available infrastructures then returns nil" do
+      expect(subject.allocate_infrastructure_network).to be_instance_of(Bosh::InfrastructureNetwork)
+      expect(subject.allocate_infrastructure_network).to be_instance_of(Bosh::InfrastructureNetwork)
+      expect(subject.allocate_infrastructure_network).to be_instance_of(Bosh::InfrastructureNetwork)
+      expect(subject.allocate_infrastructure_network).to be_nil
+      expect(subject.allocate_infrastructure_network).to be_nil
     end
   end
 

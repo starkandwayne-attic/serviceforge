@@ -8,6 +8,8 @@ describe Bosh::ServiceBoshRelease do
       },
       'release_templates' => {
         'base_path' => '/path/to/templates',
+        'deployment_stub' => 'stub-spiff.yml',
+        'infrastructure_stub' => 'stub-infrastructure-warden.yml',
         'templates' => ['file1.yml', 'file2.yml']
       }
     })

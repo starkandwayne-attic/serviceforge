@@ -8,14 +8,16 @@ class Generators::GenerateDeploymentManifest
   attr_accessor :service_stub_paths
 
   # YAML strings
-  attr_accessor :service_plan_stub, :deployment_stub
+  attr_accessor :infrastructure_stub, :service_plan_stub, :deployment_stub
 
   def generate_manifest
-    service_plan_stub_file = tempfile('service_plan_stub', service_plan_stub)
-    deployment_stub_file   = tempfile('deployment_stub', deployment_stub)
-    output_file            = tempfile('output')
+    infrastructure_stub_file  = tempfile('infrastructure_stub', infrastructure_stub)
+    service_plan_stub_file    = tempfile('service_plan_stub', service_plan_stub)
+    deployment_stub_file      = tempfile('deployment_stub', deployment_stub)
+    output_file               = tempfile('output')
 
     input_file_paths = service_stub_paths + [
+      infrastructure_stub_file.try(:path),
       service_plan_stub_file.try(:path),
       deployment_stub_file.try(:path)
     ].compact
@@ -42,6 +44,10 @@ class Generators::GenerateDeploymentManifest
   # Need to invoke #close when finished
   def tempfile(name, contents=nil)
     file = Tempfile.new(name)
+    # puts "-------"
+    # puts name
+    # puts contents
+    # puts "-------\n\n\n"
     file.write(contents) unless contents.blank?
     file.rewind
     file

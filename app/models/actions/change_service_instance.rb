@@ -13,8 +13,9 @@ class Actions::ChangeServiceInstance
   end
 
   def perform
-    deployment_stub = generate_deployment_stub
-    deployment_manifest = generate_deployment_manifest(deployment_stub)
+    deployment_spiff_file = generate_deployment_spiff_file
+    infrastructure_spiff_file = generate_infrastructure_spiff_file
+    deployment_manifest = generate_deployment_manifest(deployment_spiff_file, infrastructure_spiff_file)
     perform_bosh_deploy_and_save_task_id(deployment_manifest)
     track_task
   end
@@ -34,15 +35,21 @@ class Actions::ChangeServiceInstance
     service.bosh_service_stub_paths
   end
 
-  def generate_deployment_stub
-    Generators::GenerateDeploymentStub.new(
+  def generate_deployment_spiff_file
+    Generators::GenerateDeploymentSpiffFile.new(
       service: service, deployment_name: deployment_name).generate
   end
 
-  def generate_deployment_manifest(deployment_stub)
+  def generate_infrastructure_spiff_file
+    Generators::GenerateInfrastructureSpiffFile.new(
+      service: service, infrastructure_network: infrastructure_network).generate
+  end
+
+  def generate_deployment_manifest(deployment_stub, infrastructure_stub)
     # TODO how pass through binding information? (not required for etcd or redis)
     Generators::GenerateDeploymentManifest.new({
       service_stub_paths: service_stub_paths,
+      infrastructure_stub: infrastructure_stub,
       deployment_stub: deployment_stub,
       service_plan_stub: service_plan_stub
     }).generate_manifest
@@ -61,6 +68,10 @@ class Actions::ChangeServiceInstance
 
   def service_instance
     @service_instance ||= ServiceInstance.find_by_id(service_instance_id)
+  end
+
+  def infrastructure_network
+    service_instance.infrastructure_network
   end
 
   def service_plan_stub

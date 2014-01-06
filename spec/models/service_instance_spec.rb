@@ -20,7 +20,8 @@ describe ServiceInstance do
         'service_instance_id' => service_instance_id,
         'service_id' => nil,
         'service_plan_id' => nil,
-        'deployment_name' => 'foo'
+        'deployment_name' => 'foo',
+        'infrastructure_network' => nil
       })
     end
   end
@@ -34,7 +35,8 @@ describe ServiceInstance do
         'service_instance_id' => service_instance_id,
         'service_id' => nil,
         'service_plan_id' => nil,
-        'deployment_name' => nil
+        'deployment_name' => nil,
+        'infrastructure_network' => nil
       })
     end
   end
@@ -66,6 +68,22 @@ describe ServiceInstance do
     it "returns nil if not found in etcd" do
       service_instance = ServiceInstance.find_by_id('xxxx')
       expect(service_instance).to be_nil
+    end
+  end
+
+  describe "infrastructure_network" do
+    let(:template_file) { File.join(Rails.root, '/infrastructure_pools/warden/10.244.2.0.yml') }
+    let(:infrastructure_network) { Bosh::InfrastructureNetwork.build({
+        'ip_range_start' => '10.244.2.0',
+        'template' => template_file
+      })
+    }
+    it "initialize, saves and find_by_id" do
+      subject.infrastructure_network = infrastructure_network
+      subject.save
+      reloaded = ServiceInstance.find_by_id(subject.service_instance_id)
+
+      expect(reloaded.infrastructure_network.ip_range_start).to eq(infrastructure_network.ip_range_start)
     end
   end
 

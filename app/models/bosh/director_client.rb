@@ -6,15 +6,18 @@ class Bosh::DirectorClient
   include ActiveModel::Model
 
   attr_accessor :target, :username, :password, :api_options
-  attr_accessor :infrastructure
-  attr_accessor :available_infrastructure
+  attr_accessor :cpi_infrastructure
+  attr_accessor :infrastructure_networks
 
   # attributes looked up from director
   attr_accessor :dns_root, :cpi
 
   def self.build(attrs)
     attrs['api_options'] ||= {no_track: true}
-    new(attrs)
+    if infrastructure_networks = attrs.delete('infrastructure_networks')
+      infrastructure_networks.map! { |infra| Bosh::InfrastructureNetwork.build(infra) }
+    end
+    new(attrs.merge('infrastructure_networks' => infrastructure_networks))
   end
 
   def self.find_by_bosh_target(bosh_target)
@@ -29,6 +32,20 @@ class Bosh::DirectorClient
         build(bosh_config)
       end
     end
+  end
+
+  # FIXME should store these two in Etcd
+  def available_infrastructure_networks
+    @available_infrastructure_networks ||= infrastructure_networks.clone
+  end
+  def allocated_infrastructure_networks
+    @allocated_infrastructure_networks ||= []
+  end
+
+  def allocate_infrastructure_network
+    infra_network = available_infrastructure_networks.shift
+    allocated_infrastructure_networks.push(infra_network)
+    infra_network
   end
 
   def api
