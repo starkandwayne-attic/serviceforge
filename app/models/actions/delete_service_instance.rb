@@ -17,6 +17,8 @@ class Actions::DeleteServiceInstance
   # set during usage
   attr_accessor :bosh_task_id
 
+  class FailedDeleteServiceInstance < StandardError; end
+
   def save
     $etcd.set("/actions/delete_service_instances/#{service_instance_id}", to_json)
   end
@@ -24,7 +26,12 @@ class Actions::DeleteServiceInstance
   def perform
     perform_bosh_delete_and_save_task_id(deployment_name)
 
-    bosh_director_client.track_task(bosh_task_id)
+    task_status = bosh_director_client.track_task(bosh_task_id)
+    if task_status.to_sym == :done
+      bosh_director_client.release_infrastructure_network(infrastructure_network)
+    else
+      raise FailedDeleteServiceInstance, "BOSH task #{bosh_task_id} completed with status #{task_status}"
+    end
   end
 
   def to_json(*)
@@ -40,6 +47,10 @@ class Actions::DeleteServiceInstance
   def perform_bosh_delete_and_save_task_id(deployment_name)
     status, self.bosh_task_id = bosh_director_client.delete(deployment_name)
     save
+  end
+
+  def infrastructure_network
+    service_instance.infrastructure_network
   end
 
 end

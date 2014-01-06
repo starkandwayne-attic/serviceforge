@@ -20,15 +20,16 @@ describe 'etcd service - lifecycle' do
   end
 
   def cleanup_bosh_deployments
-    Service.all.each do |service|
+    Bosh::DirectorClient.available_director_clients.each do |director_client|
       delete_task_ids = []
-      service.director_client.list_deployments.each do |deployment|
+      director_client.list_deployments.each do |deployment|
         if deployment["name"] =~ /^#{service.deployment_name_prefix}\-/
           _, bosh_task_id = service.director_client.delete(deployment["name"])
           delete_task_ids << bosh_task_id
         end
       end
-      service.director_client.wait_for_tasks_to_complete(delete_task_ids)
+      director_client.wait_for_tasks_to_complete(delete_task_ids)
+      director_client.reset_infrastructure_network_for_testing
     end
   end
 
@@ -59,12 +60,13 @@ describe 'etcd service - lifecycle' do
     ## Test the etcd /service_instances entry
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
+    data['infrastructure_network'].delete('template') # different for each machine
     expect(data).to eq({
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
       'service_plan_id' => five_server_plan_id,
       'deployment_name' => deployment_name,
-      'infrastructure_network' => nil
+      'infrastructure_network' => {"ip_range_start"=>"10.244.2.0"}
     })
 
     ##

@@ -66,10 +66,6 @@ class Actions::ChangeServiceInstance
     # TODO handle error if task status isn't :done
   end
 
-  def service_instance
-    @service_instance ||= ServiceInstance.find_by_id(service_instance_id)
-  end
-
   def infrastructure_network
     service_instance.infrastructure_network
   end

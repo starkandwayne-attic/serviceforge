@@ -56,17 +56,51 @@ describe Bosh::DirectorClient do
     end
   end
 
-  describe ".infrastructure_networks" do
+  describe "#infrastructure_networks" do
     it { expect(subject.infrastructure_networks.first).to be_instance_of(Bosh::InfrastructureNetwork) }
   end
 
+  describe "#available_infrastructure_networks" do
+    it { expect(subject.available_infrastructure_networks).to eq(subject.infrastructure_networks) }
+  end
+
+  describe "#allocated_infrastructure_networks" do
+    it { expect(subject.allocated_infrastructure_networks).to eq([]) }
+  end
+
   describe "#allocate_infrastructure_network to manage available InfrastructureNetworks" do
+    context "updates lists" do
+      before { @network = subject.allocate_infrastructure_network }
+      it { expect(@network.ip_range_start).to eq('10.244.2.0') }
+      it { expect(subject.available_infrastructure_networks.map(&:ip_range_start)).to eq(%w[10.244.2.40 10.244.2.80]) }
+      it { expect(subject.allocated_infrastructure_networks.map(&:ip_range_start)).to eq(%w[10.244.2.0]) }
+    end
+
     it "allocates the 3 available infrastructures then returns nil" do
       expect(subject.allocate_infrastructure_network).to be_instance_of(Bosh::InfrastructureNetwork)
       expect(subject.allocate_infrastructure_network).to be_instance_of(Bosh::InfrastructureNetwork)
       expect(subject.allocate_infrastructure_network).to be_instance_of(Bosh::InfrastructureNetwork)
       expect(subject.allocate_infrastructure_network).to be_nil
       expect(subject.allocate_infrastructure_network).to be_nil
+    end
+  end
+
+  describe "#release_infrastructure_network" do
+    context "does nothing if not already allocated" do
+      before {
+        subject.release_infrastructure_network(Bosh::InfrastructureNetwork.new('ip_range_start' => '10.244.2.0'))
+      }
+      it { expect(subject.available_infrastructure_networks).to eq(subject.infrastructure_networks) }
+      it { expect(subject.allocated_infrastructure_networks).to eq([]) }
+    end
+
+    context "deletes from allocate_infrastructure_networks & adds back to available_infrastructure_networks" do
+      before {
+        network = subject.allocate_infrastructure_network
+        subject.release_infrastructure_network(network)
+      }
+      it { expect(subject.available_infrastructure_networks.map(&:ip_range_start)).to eq(%w[10.244.2.40 10.244.2.80 10.244.2.0]) }
+      it { expect(subject.allocated_infrastructure_networks).to eq([]) }
     end
   end
 

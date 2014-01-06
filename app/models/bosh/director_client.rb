@@ -42,10 +42,22 @@ class Bosh::DirectorClient
     @allocated_infrastructure_networks ||= []
   end
 
+  # FIXME Temporary method only required until above two lists stored in DB and can be cleaned out before tests
+  def reset_infrastructure_network_for_testing
+    @available_infrastructure_networks = infrastructure_networks.clone
+    @allocated_infrastructure_networks = []
+  end
+
   def allocate_infrastructure_network
     infra_network = available_infrastructure_networks.shift
     allocated_infrastructure_networks.push(infra_network)
     infra_network
+  end
+
+  def release_infrastructure_network(infrastructure_network)
+    if network = allocated_infrastructure_networks.delete(infrastructure_network)
+      available_infrastructure_networks.push(network)
+    end
   end
 
   def api
@@ -108,6 +120,7 @@ class Bosh::DirectorClient
     api.get_task_state(task_id)
   end
 
+  # returns BOSH status symbol (:done, :failed)
   def track_task(task_id)
     tracker = Bosh::Cli::TaskTracker.new(api, task_id)
     status  = tracker.track

@@ -2,14 +2,16 @@ require 'spec_helper'
 
 describe Actions::DeleteServiceInstance do
   describe "delete a bosh-backed service instance" do
-    let(:service)               { instance_double("Service") }
+    let(:service)               { instance_double('Service') }
     let(:service_id)            { 'service-id-1' }
     let(:service_instance_id)   { 'service-instance-id-1' }
+    let(:service_instance)      { instance_double('ServiceInstance') }
     let(:deployment_name_prefix) { 'etcd' }
     let(:deployment_uuid)       { "deployment-uuid" }
     let(:deployment_name)       { "#{deployment_name_prefix}-#{deployment_uuid}" }
-    let(:bosh_director_client)  { instance_double("Bosh::DirectorClient") }
+    let(:bosh_director_client)  { instance_double('Bosh::DirectorClient') }
     let(:bosh_delete_task_id)   { 124 }
+    let(:infrastructure_network){ instance_double('Bosh::InfrastructureNetwork') }
 
     before do
       begin
@@ -32,9 +34,13 @@ describe Actions::DeleteServiceInstance do
         'bosh_task_id' => nil
       })
 
-      expect(action).to receive(:bosh_director_client).exactly(2).times.and_return(bosh_director_client)
+      expect(class_double('ServiceInstance').as_stubbed_const).to receive(:find_by_id).with(service_instance_id).and_return(service_instance)
+      expect(service_instance).to receive(:infrastructure_network).and_return(infrastructure_network)
+
+      expect(action).to receive(:bosh_director_client).exactly(3).times.and_return(bosh_director_client)
       expect(bosh_director_client).to receive(:delete).with(deployment_name).and_return([:running, bosh_delete_task_id])
       expect(bosh_director_client).to receive(:track_task).with(bosh_delete_task_id).and_return("done")
+      expect(bosh_director_client).to receive(:release_infrastructure_network).with(infrastructure_network)
       action.perform
 
       ##

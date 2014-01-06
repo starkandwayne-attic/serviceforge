@@ -18,15 +18,16 @@ describe 'redis service - lifecycle' do
   end
 
   def cleanup_bosh_deployments
-    Service.all.each do |service|
+    Bosh::DirectorClient.available_director_clients.each do |director_client|
       delete_task_ids = []
-      service.director_client.list_deployments.each do |deployment|
+      director_client.list_deployments.each do |deployment|
         if deployment["name"] =~ /^#{service.deployment_name_prefix}\-/
           _, bosh_task_id = service.director_client.delete(deployment["name"])
           delete_task_ids << bosh_task_id
         end
       end
-      service.director_client.wait_for_tasks_to_complete(delete_task_ids)
+      director_client.wait_for_tasks_to_complete(delete_task_ids)
+      director_client.reset_infrastructure_network_for_testing
     end
   end
 

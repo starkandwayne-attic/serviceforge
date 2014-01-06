@@ -17,4 +17,13 @@ class Bosh::InfrastructureNetwork
       "template" => template
     }
   end
+
+  # Comparison with Bosh::InfrastructureNetwork#ip_range_start
+  def ==(object)
+    if object.is_a?(self.class)
+      object.ip_range_start == ip_range_start
+    else
+      false
+    end
+  end
 end
