@@ -26,7 +26,7 @@
       name: random
     range: 10.244.2.92/30
     reserved:
-    - 10.244.2.95
+    - 10.244.2.93
     static: []
   - cloud_properties:
       name: random
