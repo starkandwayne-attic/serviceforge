@@ -24,7 +24,22 @@ defaults: &defaults
           template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.40.yml
         - ip_range_start: 10.244.2.80
           template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.80.yml
-
+<% if ENV['BOSH_AWS_EC2_TARGET'] %>
+    - target: <%= ENV['BOSH_AWS_EC2_TARGET'] %>
+      username: admin
+      password: admin
+      dns_root: ~
+      cpi_infrastructure: aws-ec2
+      # director_uuid: - calculated after login
+      # cpi: - cpi calculated after login (warden, openstack)
+      infrastructure_networks:
+        - ip_range_start: 10.244.2.0
+          template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.0.yml
+        - ip_range_start: 10.244.2.40
+          template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.40.yml
+        - ip_range_start: 10.244.2.80
+          template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.80.yml
+<% end %>
   services:
   - name: etcd-dedicated-bosh-lite
     deployment_name_prefix: etcd
@@ -182,6 +197,85 @@ defaults: &defaults
         jobs:
           - name: redis_z1
             instances: 2
+
+<% if ENV['BOSH_AWS_EC2_TARGET'] %>
+  - name: etcd-dedicated-aws-ec2
+    deployment_name_prefix: etcd
+    id: d12daff6-6a2d-4d38-86cd-9ba5125f576d
+    description: "etcd: A highly-available key value store for shared configuration and service discovery, running on AWS EC2"
+    tags:
+      - etcd
+      - nosql
+    metadata:
+      provider:
+        name: "Stark & Wayne LLC"
+      listing:
+        imageUrl: ~
+        blurb: A highly-available key value store for shared configuration and service discovery.
+        long_description: A highly-available key value store for shared configuration and service discovery. High-availablity clusters are available.
+    default_credentials:
+      port: 4001
+    detect_credentials:
+      - name: host
+        class: BindingAttributes::JobIpAddress
+        attributes:
+          job_name: etcd_leader_z1
+    bosh_target: <%= ENV['BOSH_AWS_EC2_TARGET'] %>
+    bosh_release:
+      releases:
+      - name: etcd
+        version: 3
+        url: ~
+      release_templates:
+        base_path: <%= Rails.root %>/releases/etcd/templates
+        deployment_stub: stub.yml
+        infrastructure_stub: infrastructure-aws-ec2.yml
+        templates:
+         - deployment.yml
+         - jobs.yml
+         - properties.yml
+         - infrastructure-aws-ec2.yml
+    plans:
+    - name: 1-server
+      id: db55e7ed-cb0f-4573-9111-4cd4833bb7e7
+      description: Etcd running on a single dedicated server
+      metadata:
+        cost: 100
+        bullets:
+        - content: Etcd server
+        - content: Single small server
+        - content: Development-only, no high-availability
+      bosh_deployment_stub:
+        jobs:
+          - name: etcd_z1
+            instances: 0
+    - name: 3-servers
+      id: 38ee66f4-5d95-42ed-992b-50181a77f481
+      description: Etcd running across three dedicated servers
+      metadata:
+        cost: 300
+        bullets:
+        - content: Etcd servers
+        - content: 3 small servers
+        - content: High availability, leader election
+      bosh_deployment_stub:
+        jobs:
+          - name: etcd_z1
+            instances: 2
+    - name: 5-servers
+      id: bfdd7042-ca2b-43b5-af1c-e252c10dce9d
+      description: Etcd running across five dedicated servers
+      metadata:
+        cost: 500
+        bullets:
+        - content: Etcd servers
+        - content: 3 small servers
+        - content: High availability, leader election
+      bosh_deployment_stub:
+        jobs:
+          - name: etcd_z1
+            instances: 4
+<% end %>
 
 development:
   auth_password: 'secret'
