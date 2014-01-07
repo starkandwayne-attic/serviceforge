@@ -48,6 +48,11 @@ group :development do
   gem 'guard-rspec'
 end
 
+group :development do
+  gem 'cf'     # for 'cf curl' command; to allow marking service plans public
+  gem 'jazor'
+end
+
 gem "settingslogic"
 gem "etcd"
 

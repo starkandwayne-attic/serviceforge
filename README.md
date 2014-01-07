@@ -65,19 +65,7 @@ Note: this uses the old `cf` gem to get the `cf curl` command.
 
 ```
 $ gem install cf jazor
-$ cf curl get "/v2/services?inline-relations-depth=1" | jazor "resources[0].entity.service_plans.map {|sp| sp.metadata.url }"
-[
-  "/v2/service_plans/d7cd19cc-8949-4ad5-bf9a-9e2dc8a857dc",
-  "/v2/service_plans/9b8bf544-eca7-4233-b814-37031b7502ac",
-  "/v2/service_plans/c4dc469e-724b-4cc4-b696-3d085953f0b2"
-]
-```
-
-Now, for each result change them to public:
-
-```
-$ service_plan="d7cd19cc-8949-4ad5-bf9a-9e2dc8a857dc"
-$ cf curl PUT /v2/service_plans/$service_plan -b '{"public":'true'}'
+$ ./bin/mark_all_public
 ```
 
 The service plans are now visible:
