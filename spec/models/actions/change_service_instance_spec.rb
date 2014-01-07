@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Actions::ChangeServiceInstance do
   let(:deployment_spiff_file_generator) { instance_double('Generators::GenerateDeploymentSpiffFile') }
-  let(:infrastructure_spiff_file_generator) { instance_double('Generators::GenerateInfrastructureSpiffFile') }
   let(:manifest_generator)    { instance_double("Generators::GenerateDeploymentManifest") }
   let(:service)               { instance_double("Service") }
   let(:service_id)            { 'service-id-1' }
@@ -61,9 +60,7 @@ describe Actions::ChangeServiceInstance do
     expect(gds_klass).to receive(:new).with({service: service, deployment_name: deployment_name}).and_return(deployment_spiff_file_generator)
     expect(deployment_spiff_file_generator).to receive(:generate).and_return(deployment_stub)
 
-    gis_klass = class_double('Generators::GenerateInfrastructureSpiffFile').as_stubbed_const
-    expect(gis_klass).to receive(:new).with({service: service, infrastructure_network: infrastructure_network}).and_return(infrastructure_spiff_file_generator)
-    expect(infrastructure_spiff_file_generator).to receive(:generate).and_return(infrastructure_stub)
+    expect(infrastructure_network).to receive(:deployment_stub).and_return(infrastructure_stub)
 
     gdm_klass = class_double("Generators::GenerateDeploymentManifest").as_stubbed_const
     expect(gdm_klass).to receive(:new).with({

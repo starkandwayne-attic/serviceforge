@@ -59,8 +59,7 @@ class Actions::CreateServiceInstance
   end
 
   def generate_infrastructure_spiff_file
-    Generators::GenerateInfrastructureSpiffFile.new(
-      service: service, infrastructure_network: infrastructure_network).generate
+    infrastructure_network.deployment_stub
   end
 
   def generate_deployment_manifest(deployment_stub, infrastructure_stub)
