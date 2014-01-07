@@ -1,9 +1,10 @@
 meta:
   environment: redis-warden
+  network_name: (( merge ))
 
   stemcell:
-    name: bosh-stemcell
-    version: 993
+    name: bosh-warden-boshlite-ubuntu
+    version: 24
 
 update:
   canaries: 1
@@ -15,12 +16,12 @@ jobs:
   - name: redis_leader_z1
     instances: 1
     networks:
-      - name: redis1
+      - name: (( meta.network_name ))
         static_ips: (( static_ips(0) ))
   - name: redis_z1
     instances: 2
     networks:
-      - name: redis1
+      - name: (( meta.network_name ))
         static_ips: ~
     properties:
       redis:
@@ -35,6 +36,4 @@ resource_pools:
     cloud_properties:
       name: random
 
-networks:
-- name: redis1
-NETWORK
+networks: (( merge ))

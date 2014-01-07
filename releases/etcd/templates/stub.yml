@@ -1,11 +1,13 @@
 ---
 meta:
   environment: NAME
+  dns_root: microbosh
+  network_name: etcd1
   security_groups:
-    - default
+    - etcd
+
 director_uuid: PLACEHOLDER-DIRECTOR-UUID
+
 releases:
-  - name: redis
-    version: 2
-properties:
-  redis: {}
+  - name: etcd
+    version: 3

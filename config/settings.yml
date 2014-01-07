@@ -55,12 +55,13 @@ defaults: &defaults
         url: ~
       release_templates:
         base_path: <%= Rails.root %>/releases/etcd/templates
-        deployment_stub: etcd-stub-spiff.yml
-        infrastructure_stub: etcd-stub-infrastructure-warden.yml
+        deployment_stub: stub.yml
+        infrastructure_stub: infrastructure-warden.yml
         templates:
-         - etcd-deployment.yml
-         - etcd-jobs.yml
-         - etcd-properties.yml
+         - deployment.yml
+         - jobs.yml
+         - properties.yml
+         - infrastructure-warden.yml
     plans:
     - name: 1-server
       id: 6e8ece8c-4fe6-4d58-9aeb-497d6aeba113
@@ -131,12 +132,13 @@ defaults: &defaults
         url: ~
       release_templates:
         base_path: <%= Rails.root %>/releases/redis/templates
-        deployment_stub: redis-stub-spiff.yml
-        infrastructure_stub: redis-stub-infrastructure-warden.yml
+        deployment_stub: stub.yml
+        infrastructure_stub: infrastructure-warden.yml
         templates:
-         - redis-deployment.yml
-         - redis-jobs.yml
-         - redis-properties.yml
+         - deployment.yml
+         - jobs.yml
+         - properties.yml
+         - infrastructure-warden.yml
     plans:
     - name: 1-server
       id: f643f60d-7e5e-4fbf-934f-c089ed2f2720

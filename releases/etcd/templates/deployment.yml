@@ -1,13 +1,6 @@
 meta:
-  # override this in your stub to set the environment name,
-  # which is used for the deployment name
-  #
-  # i.e. my-release-production
-  environment: ~
-
-  stemcell:
-    name: bosh-aws-xen-ubuntu
-    version: latest
+  environment: (( merge ))
+  stemcell: (( merge ))
 
 name: (( meta.environment ))
 
@@ -23,7 +16,7 @@ properties: (( merge ))
 
 compilation:
   workers: 6
-  network: redis1
+  network: etcd1
   reuse_compilation_vms: true
   cloud_properties: (( merge ))
 
@@ -35,7 +28,7 @@ update:
 
 resource_pools:
   - name: small_z1
-    network: redis1
+    network: etcd1
     size: (( auto ))
     stemcell: (( meta.stemcell ))
     cloud_properties: (( merge ))

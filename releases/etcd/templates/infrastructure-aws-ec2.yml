@@ -1,30 +1,25 @@
 meta:
-  environment: etcd-aws
+  environment: (( merge ))
+  dns_root: (( merge ))
+  security_groups: (( merge ))
+  network_name: (( merge ))
 
   stemcell:
     name: bosh-aws-xen-ubuntu
     version: latest
 
-update:
-  canaries: 1
-  max_in_flight: 50
-  canary_watch_time: 1000-30000
-  update_watch_time: 1000-30000
-
 jobs:
   - name: etcd_leader_z1
     instances: 1
     networks:
-      - name: etcd1
-        static_ips: ~
+      - name: (( meta.network_name ))
   - name: etcd_z1
     instances: 2
     networks:
-      - name: etcd1
-        static_ips: ~
+      - name: (( meta.network_name ))
     properties:
       etcd:
-        leader_address: (( "0.etcd-leader-z1.etcd1." meta.environment ".microbosh" ))
+        leader_address: (( "0.etcd-leader-z1.etcd1." meta.environment "." meta.dns_root ))
 
 compilation:
   cloud_properties:
@@ -39,8 +34,7 @@ networks:
   - name: floating
     type: vip
     cloud_properties: {}
-  - name: etcd1
+  - name: (( meta.network_name ))
     type: dynamic
     cloud_properties:
-      security_groups:
-        - default
+      security_groups: (( meta.security_groups ))

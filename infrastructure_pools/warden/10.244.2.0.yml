@@ -1,3 +1,8 @@
+meta:
+  network_name: (( merge ))
+
+networks:
+- name: (( meta.network_name ))
   # Assume that no service plan for any service requires more than
   # 5 VMs, including 1 static and 4 dynamic.
   # Plus 5 (double the size) unused IPs, due to BOSH bug/quirk.
