@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ServiceInstance do
   let(:service_instance_id) { 'instance-id' }
-  let(:service_instance) { ServiceInstance.new(service_instance_id: service_instance_id) }
+  let(:service_instance) { ServiceInstance.create(service_instance_id: service_instance_id, deployment_name: 'foo') }
 
   before do
     begin
@@ -12,9 +12,8 @@ describe ServiceInstance do
   end
 
   describe "#create" do
+    before { service_instance }  # trigger creation
     it 'stores in etcd' do
-      ServiceInstance.create(service_instance_id: service_instance_id, deployment_name: 'foo')
-
       data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
       expect(data).to eq({
         'service_instance_id' => service_instance_id,
@@ -26,24 +25,8 @@ describe ServiceInstance do
     end
   end
 
-  describe '#save' do
-    it 'stores in etcd' do
-      service_instance.save
-
-      data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
-      expect(data).to eq({
-        'service_instance_id' => service_instance_id,
-        'service_id' => nil,
-        'service_plan_id' => nil,
-        'deployment_name' => nil,
-        'infrastructure_network' => nil
-      })
-    end
-  end
-
   describe '#destroy' do
     it 'removes etcd entry' do
-      service_instance.save
       service_instance.destroy
 
       expect{ $etcd.get("/service_instances/#{service_instance_id}/model") }.to raise_error(Net::HTTPServerException)
