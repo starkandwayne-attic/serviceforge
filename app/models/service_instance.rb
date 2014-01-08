@@ -6,7 +6,11 @@ class ServiceInstance
   attr_accessor :service_plan_id
   attr_accessor :deployment_name
 
+  # Allocated InfrastructureNetwork if required for target BOSH
   attr_accessor :infrastructure_network
+
+  # Internal state
+  attr_accessor :state
 
   def self.find_by_id(service_instance_id)
     if node = $etcd.get("/service_instances/#{service_instance_id}/model")
@@ -31,6 +35,18 @@ class ServiceInstance
     end
   end
 
+  state_machine :state, :initial => :initialized do
+    event :deploying do
+      transition [:initialized, :running] => :deploying
+    end
+    event :deployment_successful do
+      transition [:deploying] => :running
+    end
+    event :destroying do
+      transition [:running] => :destroying
+    end
+  end
+
   def save
     $etcd.set("/service_instances/#{service_instance_id}/model", attributes.to_json)
   end
@@ -49,7 +65,8 @@ class ServiceInstance
       'service_instance_id' => service_instance_id,
       'service_plan_id' => service_plan_id,
       'deployment_name' => deployment_name,
-      'infrastructure_network' => infrastructure_network.try(:attributes)
+      'infrastructure_network' => infrastructure_network.try(:attributes),
+      'state' => state
     }
   end
 end

@@ -53,6 +53,7 @@ group :development do
   gem 'jazor'
 end
 
+gem "state_machine"
 gem "settingslogic"
 gem "etcd"
 

@@ -20,7 +20,8 @@ describe ServiceInstance do
         'service_id' => nil,
         'service_plan_id' => nil,
         'deployment_name' => 'foo',
-        'infrastructure_network' => nil
+        'infrastructure_network' => nil,
+        'state' => 'initialized'
       })
     end
   end
@@ -70,4 +71,33 @@ describe ServiceInstance do
     end
   end
 
+  describe "state machine" do
+    context "initialized" do
+      it { expect(service_instance.initialized?).to be_true }
+      it do
+        service_instance.deploying!
+        expect(service_instance.deploying?).to be_true
+      end
+    end
+    context "deploying" do
+      before { service_instance.state = "deploying" }
+      it { expect(service_instance.initialized?).to be_false }
+      it { expect(service_instance.deploying?).to be_true }
+      it do
+        service_instance.deployment_successful!
+        expect(service_instance.running?).to be_true
+      end
+    end
+    context "running" do
+      before { service_instance.state = "running" }
+      it do
+        service_instance.destroying!
+        expect(service_instance.destroying?).to be_true
+      end
+      it do
+        service_instance.deploying!
+        expect(service_instance.deploying?).to be_true
+      end
+    end
+  end
 end
