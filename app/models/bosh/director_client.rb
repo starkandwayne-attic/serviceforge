@@ -59,6 +59,7 @@ class Bosh::DirectorClient
   end
 
   def release_infrastructure_network(infrastructure_network)
+    return unless infrastructure_network
     if network = allocated_infrastructure_networks.delete(infrastructure_network)
       available_infrastructure_networks.push(network)
     end

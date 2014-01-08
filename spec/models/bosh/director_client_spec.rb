@@ -128,7 +128,7 @@ describe Bosh::DirectorClient do
     it { expect(subject.available_infrastructure_networks).to be_nil }
     it { expect(subject.allocated_infrastructure_networks).to be_nil }
     it { expect(subject.allocate_infrastructure_network).to be_nil }
-
+    it { expect(subject.release_infrastructure_network(nil)).to be_nil }
   end
 
   describe "#api" do
