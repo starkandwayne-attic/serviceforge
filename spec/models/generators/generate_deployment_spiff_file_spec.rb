@@ -16,14 +16,16 @@ describe Generators::GenerateDeploymentSpiffFile do
 ---
 meta:
   environment: #{deployment_name}
+  dns_root: microbosh
+  network_name: redis1
   security_groups:
-    - default
+    - redis
+
 director_uuid: #{director_uuid}
+
 releases:
   - name: redis
     version: 2
-properties:
-  redis: {}
     YAML
   end
 end
