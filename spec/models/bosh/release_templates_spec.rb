@@ -6,10 +6,10 @@ describe Bosh::ReleaseTemplates do
       Bosh::ReleaseTemplates.build({
         'base_path' => File.join(Rails.root, 'releases', 'etcd', 'templates'),
         'templates' => [
-          'etcd-deployment.yml',
-          'etcd-jobs.yml',
-          'etcd-properties.yml',
-          'etcd-infrastructure-warden.yml'
+          'deployment.yml',
+          'jobs.yml',
+          'properties.yml',
+          'infrastructure-warden.yml'
         ],
         'deployment_stub' => 'stub.yml',
         'infrastructure_stub' => 'infrastructure-warden.yml'
