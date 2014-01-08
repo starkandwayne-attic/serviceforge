@@ -61,13 +61,32 @@ describe 'etcd service - lifecycle on warden' do
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
     data['infrastructure_network'].delete('template') # different for each machine
+    latest_bosh_deployment_task_id = data.delete('latest_bosh_deployment_task_id') # different for each test
     expect(data).to eq({
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
       'service_plan_id' => five_server_plan_id,
       'deployment_name' => deployment_name,
-      'infrastructure_network' => {"ip_range_start"=>"10.244.2.0"}
+      'infrastructure_network' => {"ip_range_start"=>"10.244.2.0"},
+      'state' => 'deploying'
     })
+
+    ##
+    ## Cloud Controller binds the service instance to an app
+    ##
+    ## "wait_til_ready" => true is useful for testing; is not part of CF API
+    ##
+    put "/v2/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}", {
+      "plan_id" => service_plan_id,
+      "service_id" => service_id,
+      "app_guid" => app_guid,
+      "instance_id" => service_instance_id,
+      "id" => service_binding_id,
+      "wait_til_ready" => true
+    }
+
+    expect(response.status).to eq(201)
+    instance = JSON.parse(response.body)
 
     ##
     ## Test bosh for deployment entry
@@ -77,20 +96,6 @@ describe 'etcd service - lifecycle on warden' do
 
     vms = service.director_client.list_vms(deployment_name)
     expect(vms.size).to eq(5)
-
-    ##
-    ## Cloud Controller binds the service instance to an app
-    ##
-    put "/v2/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}", {
-      "plan_id" => service_plan_id,
-      "service_id" => service_id,
-      "app_guid" => app_guid,
-      "instance_id" => service_instance_id,
-      "id" => service_binding_id
-    }
-
-    expect(response.status).to eq(201)
-    instance = JSON.parse(response.body)
 
     ##
     ## Test the etcd /service_bindings entry

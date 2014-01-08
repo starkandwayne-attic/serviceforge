@@ -1,4 +1,5 @@
 class V2::ServiceBindingsController < V2::BaseController
+  class ServiceInstanceNotReadyForBinding < StandardError; end
 
   # Following params provided by Rails routing:
   # * id                  - service_binding_id
@@ -10,12 +11,23 @@ class V2::ServiceBindingsController < V2::BaseController
   # * app_guid       - not used currently
   def update
     service_instance_id = params.fetch(:service_instance_id)
-    service_binding_id = params.fetch(:id)
     service_instance = ServiceInstance.find_by_id(service_instance_id)
-    service_binding = ServiceBinding.create(service_binding_id: service_binding_id, service_instance_id: service_instance_id)
 
     service_id = service_instance.service_id
-    service = Service.find_by_id(service_id)
+
+    p service_instance
+    unless service_instance.running?
+      Actions::UpdateServiceInstanceState.new(
+        service_id: service_id,
+        service_instance_id: service_instance_id
+      ).perform
+      unless service_instance.running?
+        raise ServiceInstanceNotReadyForBinding
+      end
+    end
+
+    service_binding_id = params.fetch(:id)
+    service_binding = ServiceBinding.create(service_binding_id: service_binding_id, service_instance_id: service_instance_id)
 
     # Constructs the service binding credentials
     # from the Service configuration:
@@ -40,6 +52,8 @@ class V2::ServiceBindingsController < V2::BaseController
     # reload after saves
     service_binding = ServiceBinding.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
     render status: 201, json: service_binding
+  rescue ServiceInstanceNotReadyForBinding
+    render status: 403, json: '{}'
   end
 
   def destroy

@@ -16,8 +16,7 @@ class Actions::ChangeServiceInstance
     deployment_spiff_file = generate_deployment_spiff_file
     infrastructure_spiff_file = generate_infrastructure_spiff_file
     deployment_manifest = generate_deployment_manifest(deployment_spiff_file, infrastructure_spiff_file)
-    perform_bosh_deploy_and_save_task_id(deployment_manifest)
-    track_task
+    perform_bosh_deploy_and_update_service_instance(deployment_manifest)
   end
 
   def to_json(*)
@@ -54,15 +53,15 @@ class Actions::ChangeServiceInstance
     }).generate_manifest
   end
 
-  def perform_bosh_deploy_and_save_task_id(deployment_manifest)
+  def perform_bosh_deploy_and_update_service_instance(deployment_manifest)
     status, self.bosh_task_id = bosh_director_client.deploy(deployment_manifest)
     save
-  end
-
-  def track_task
-    bosh_director_client.track_task(bosh_task_id)
-    # TODO get final task status and save it
-    # TODO handle error if task status isn't :done
+    if status == :running
+      service_instance.latest_bosh_deployment_task_id = bosh_task_id
+      service_instance.deploying!
+    else
+      service_instance.failed_deployment!
+    end
   end
 
   def infrastructure_network

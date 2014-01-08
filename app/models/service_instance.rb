@@ -11,6 +11,9 @@ class ServiceInstance
 
   # Internal state
   attr_accessor :state
+  attr_accessor :latest_bosh_deployment_task_id
+
+  class BadInternalState < StandardError; end
 
   def self.find_by_id(service_instance_id)
     if node = $etcd.get("/service_instances/#{service_instance_id}/model")
@@ -36,8 +39,14 @@ class ServiceInstance
   end
 
   state_machine :state, :initial => :initialized do
+    after_transition any => any, do: :save
+
     event :deploying do
-      transition [:initialized, :running] => :deploying
+      transition [:initialized, :running, :deploying] => :deploying
+    end
+    event :failed_deployment do
+      transition [:initialized] => :failed_creation
+      transition [:deploying] => :failed_deployment
     end
     event :deployment_successful do
       transition [:deploying] => :running
@@ -66,7 +75,8 @@ class ServiceInstance
       'service_plan_id' => service_plan_id,
       'deployment_name' => deployment_name,
       'infrastructure_network' => infrastructure_network.try(:attributes),
-      'state' => state
+      'state' => state,
+      'latest_bosh_deployment_task_id' => latest_bosh_deployment_task_id
     }
   end
 end

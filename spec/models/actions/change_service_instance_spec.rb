@@ -71,9 +71,11 @@ describe Actions::ChangeServiceInstance do
     }).and_return(manifest_generator)
     expect(manifest_generator).to receive(:generate_manifest).and_return(deployment_manifest)
 
-    expect(action).to receive(:bosh_director_client).exactly(2).times.and_return(bosh_director_client)
+    expect(action).to receive(:bosh_director_client).and_return(bosh_director_client)
     expect(bosh_director_client).to receive(:deploy).with(deployment_manifest).and_return([:running, bosh_deploy_task_id])
-    expect(bosh_director_client).to receive(:track_task).with(bosh_deploy_task_id).and_return("done")
+
+    expect(service_instance).to receive(:deploying!)
+    expect(service_instance).to receive(:latest_bosh_deployment_task_id=).with(bosh_deploy_task_id)
 
     action.perform
 

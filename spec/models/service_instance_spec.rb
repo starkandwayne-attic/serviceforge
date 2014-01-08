@@ -21,7 +21,8 @@ describe ServiceInstance do
         'service_plan_id' => nil,
         'deployment_name' => 'foo',
         'infrastructure_network' => nil,
-        'state' => 'initialized'
+        'state' => 'initialized',
+        'latest_bosh_deployment_task_id' => nil
       })
     end
   end
@@ -78,14 +79,26 @@ describe ServiceInstance do
         service_instance.deploying!
         expect(service_instance.deploying?).to be_true
       end
+      it do
+        service_instance.failed_deployment!
+        expect(service_instance.failed_creation?).to be_true
+      end
     end
     context "deploying" do
       before { service_instance.state = "deploying" }
       it { expect(service_instance.initialized?).to be_false }
       it { expect(service_instance.deploying?).to be_true }
       it do
+        service_instance.deploying!
+        expect(service_instance.deploying?).to be_true
+      end
+      it do
         service_instance.deployment_successful!
         expect(service_instance.running?).to be_true
+      end
+      it do
+        service_instance.failed_deployment!
+        expect(service_instance.failed_deployment?).to be_true
       end
     end
     context "running" do

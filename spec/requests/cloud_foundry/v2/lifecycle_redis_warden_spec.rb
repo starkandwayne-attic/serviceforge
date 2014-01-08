@@ -4,9 +4,10 @@ describe 'redis service - lifecycle on warden' do
   let(:seed)                { RSpec.configuration.seed }
   let(:service_id)          { '1683fe81-b492-4e92-8282-0cdca7c316e1' } # redis-dedicated-bosh-lite
   let(:service)             { Service.find_by_id(service_id) }
+  let(:one_server_plan_id)  { 'f643f60d-7e5e-4fbf-934f-c089ed2f2720' }
   let(:two_server_plan_id)  { 'e23b4ad6-d33f-4764-803b-d507bb0b95d1' }
   let(:three_server_plan_id) { '1a6ee012-a591-4d7f-99ae-7ff4af1e240a' }
-  let(:service_plan_id)     { two_server_plan_id }
+  let(:service_plan_id)     { one_server_plan_id }
   let(:service_instance_id) { "instance-#{seed}" }
   let(:service_binding_id)  { "binding-#{seed}" }
   let(:app_guid)            { "app-guid-#{seed}" }
@@ -56,6 +57,7 @@ describe 'redis service - lifecycle on warden' do
 
     ##
     ## Test the redis /service_instances entry
+    ## Note: state = deploying
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
     data['infrastructure_network'].delete('template') # different for each machine
@@ -64,20 +66,13 @@ describe 'redis service - lifecycle on warden' do
       'service_id' => service_id,
       'service_plan_id' => two_server_plan_id,
       'deployment_name' => deployment_name,
-      'infrastructure_network' => { 'ip_range_start' => '10.244.2.0' }
+      'infrastructure_network' => { 'ip_range_start' => '10.244.2.0' },
+      'state' => 'deploying'
     })
 
     ##
-    ## Test bosh for deployment entry
-    ##
-    deployment_exists = service.director_client.deployment_exists?(deployment_name)
-    expect(deployment_exists).to_not be_nil
-
-    vms = service.director_client.list_vms(deployment_name)
-    expect(vms.size).to eq(2)
-
-    ##
     ## Cloud Controller binds the service instance to an app
+    ## BUT the deployment is still going so binding fails
     ##
     put "/v2/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}", {
       "plan_id" => service_plan_id,
@@ -87,8 +82,49 @@ describe 'redis service - lifecycle on warden' do
       "id" => service_binding_id
     }
 
+    expect(response.status).to eq(403) # Forbidden because its not ready
+
+    ##
+    ## Cloud Controller binds the service instance to an app, with
+    ## blocking until service instance is ready for binding
+    ##
+    ## "wait_til_ready" => true is useful for testing; is not part of CF API
+    ##
+    put "/v2/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}", {
+      "plan_id" => service_plan_id,
+      "service_id" => service_id,
+      "app_guid" => app_guid,
+      "instance_id" => service_instance_id,
+      "id" => service_binding_id,
+      "wait_til_ready" => true
+    }
+
     expect(response.status).to eq(201)
     instance = JSON.parse(response.body)
+
+    ##
+    ## Test bosh for deployment entry
+    ##
+    deployment_exists = service.director_client.deployment_exists?(deployment_name)
+    expect(deployment_exists).to_not be_nil
+
+    vms = service.director_client.list_vms(deployment_name)
+    expect(vms.size).to eq(1)
+
+    ##
+    ## Test the redis /service_instances entry
+    ## Note: state = running
+    ##
+    data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
+    data['infrastructure_network'].delete('template') # different for each machine
+    expect(data).to eq({
+      'service_instance_id' => service_instance_id, 
+      'service_id' => service_id,
+      'service_plan_id' => two_server_plan_id,
+      'deployment_name' => deployment_name,
+      'infrastructure_network' => { 'ip_range_start' => '10.244.2.0' },
+      'state' => 'running'
+    })
 
     ##
     ## Test the redis /service_bindings entry
