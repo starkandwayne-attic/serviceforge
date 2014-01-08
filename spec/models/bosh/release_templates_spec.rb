@@ -11,8 +11,8 @@ describe Bosh::ReleaseTemplates do
           'etcd-properties.yml',
           'etcd-infrastructure-warden.yml'
         ],
-        'deployment_stub' => 'etcd-stub-spiff.yml',
-        'infrastructure_stub' => 'etcd-stub-infrastructure-warden.yml'
+        'deployment_stub' => 'stub.yml',
+        'infrastructure_stub' => 'infrastructure-warden.yml'
       })
     }
 

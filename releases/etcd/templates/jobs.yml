@@ -1,25 +1,28 @@
-networks: (( merge ))
-
 meta:
   environment: ~
+
+update:
+  canaries: 1
+  max_in_flight: 50
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
 
 jobs:
   - name: etcd_leader_z1
     template: etcd
     instances: 0
     resource_pool: small_z1
-    networks:
-      - name: etcd1
-        static_ips: ~
+    networks: (( merge ))
   - name: etcd_z1
     template: etcd
     instances: 0
     resource_pool: small_z1
-    networks:
-      - name: etcd1
-        static_ips: ~
+    networks: (( merge ))
     update:
       canaries: 10
     properties:
       etcd:
         leader_address: (( merge ))
+
+networks: (( merge ))
+

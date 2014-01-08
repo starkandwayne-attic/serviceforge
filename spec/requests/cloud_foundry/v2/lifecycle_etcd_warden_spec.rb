@@ -1,19 +1,21 @@
 require 'spec_helper'
 
-describe 'redis service - lifecycle' do
+describe 'etcd service - lifecycle on warden' do
   let(:seed)                { RSpec.configuration.seed }
-  let(:service_id)          { '1683fe81-b492-4e92-8282-0cdca7c316e1' } # redis-dedicated-bosh-lite
+  let(:service_id)          { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated-bosh-lite
   let(:service)             { Service.find_by_id(service_id) }
-  let(:two_server_plan_id)  { 'e23b4ad6-d33f-4764-803b-d507bb0b95d1' }
-  let(:three_server_plan_id) { '1a6ee012-a591-4d7f-99ae-7ff4af1e240a' }
-  let(:service_plan_id)     { two_server_plan_id }
+  let(:three_server_plan_id) { '1a448d0e-bc54-4a16-8d2f-ab701be20c40' }
+  let(:five_server_plan_id)  { '5cfa57fc-1474-4eb9-9afb' }
+  let(:service_plan_id)     { five_server_plan_id }
   let(:service_instance_id) { "instance-#{seed}" }
   let(:service_binding_id)  { "binding-#{seed}" }
   let(:app_guid)            { "app-guid-#{seed}" }
-  let(:deployment_name)     { "test-redis-#{service_instance_id}" }
+  let(:deployment_name)     { "test-etcd-#{service_instance_id}" }
 
-  def cleanup_redis_service_instances
+  def cleanup_etcd
     $etcd.delete("/service_instances", recursive: true)
+    $etcd.delete("/binding_commands", recursive: true)
+    $etcd.delete("/registered_binding_commands", recursive: true)
   rescue Net::HTTPServerException
   end
 
@@ -32,12 +34,12 @@ describe 'redis service - lifecycle' do
   end
 
   before do
-    cleanup_redis_service_instances
+    cleanup_etcd
     cleanup_bosh_deployments
   end
 
   after do
-    cleanup_redis_service_instances
+    cleanup_etcd
     cleanup_bosh_deployments
   end
 
@@ -55,16 +57,16 @@ describe 'redis service - lifecycle' do
     expect(service_instance).to eq({})
 
     ##
-    ## Test the redis /service_instances entry
+    ## Test the etcd /service_instances entry
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
     data['infrastructure_network'].delete('template') # different for each machine
     expect(data).to eq({
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
-      'service_plan_id' => two_server_plan_id,
+      'service_plan_id' => five_server_plan_id,
       'deployment_name' => deployment_name,
-      'infrastructure_network' => { 'ip_range_start' => '10.244.2.0' }
+      'infrastructure_network' => {"ip_range_start"=>"10.244.2.0"}
     })
 
     ##
@@ -74,7 +76,7 @@ describe 'redis service - lifecycle' do
     expect(deployment_exists).to_not be_nil
 
     vms = service.director_client.list_vms(deployment_name)
-    expect(vms.size).to eq(2)
+    expect(vms.size).to eq(5)
 
     ##
     ## Cloud Controller binds the service instance to an app
@@ -91,7 +93,7 @@ describe 'redis service - lifecycle' do
     instance = JSON.parse(response.body)
 
     ##
-    ## Test the redis /service_bindings entry
+    ## Test the etcd /service_bindings entry
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model").value)
 
@@ -103,7 +105,7 @@ describe 'redis service - lifecycle' do
       'service_instance_id' => service_instance_id,
       'credentials' => {
         'host' => '10.244.2.2',
-        'port' => 6379
+        'port' => 4001
       }
     })
 
@@ -113,7 +115,7 @@ describe 'redis service - lifecycle' do
     binding_commands = credentials.delete('binding_commands')
     expect(credentials).to eq({
       'host' => '10.244.2.2',
-      'port' => 6379
+      'port' => 4001
     })
 
     # 'binding_commands' => {
@@ -122,53 +124,19 @@ describe 'redis service - lifecycle' do
     #   }
     # }
 
-    cmd = binding_commands.fetch('commands').fetch('vms-state')
-    expect(cmd).to_not be_nil
-    expect(cmd['method']).to eq('GET')
+    vms_state_cmd = binding_commands.fetch('commands').fetch('vms-state')
+    expect(vms_state_cmd).to_not be_nil
+    expect(vms_state_cmd['method']).to eq('GET')
 
     # GET is required for this binding_command, so PUT should fail with 405
-    put URI.parse(cmd['url']).path
+    put URI.parse(vms_state_cmd['url']).path
     expect(response.status).to eq(405)
 
     # Now try GET as required...
-    vms_state_url = cmd['url']
-    get URI.parse(vms_state_url).path
+    get URI.parse(vms_state_cmd['url']).path
     expect(response.status).to eq(200)
     vms_state = JSON.parse(response.body)
-    expect(vms_state.size).to eq(2) # one for each VM in 2-servers cluster
-
-    ##
-    ## Changing plans via Binding Commands
-    ##
-    # 'binding_commands' => {
-    #   'current_plan' => '2-servers',
-    #   'commands' => {
-    #     '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/AUTH_TOKEN" },
-    #     '2-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
-    #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
-    #   }
-    # }
-
-    expect(binding_commands.fetch('current_plan')).to eq('2-servers')
-
-    # Let's upgrade to 3-servers...
-    cmd = binding_commands.fetch('commands').fetch('3-servers')
-    expect(cmd).to_not be_nil
-    expect(cmd['method']).to eq('PUT')
-
-    # PUT is required for this binding_command, so GET should fail with 405
-    get URI.parse(cmd['url']).path
-    expect(response.status).to eq(405)
-
-    # Now try PUT as required...
-    put URI.parse(cmd['url']).path
-    expect(response.status).to eq(200)
-
-    # Now confirm we have 3 servers instead of 2...
-    get URI.parse(vms_state_url).path
-    vms_state = JSON.parse(response.body)
-    expect(vms_state.size).to eq(3) # previously was 2, now 3, yeah yeah
-
+    expect(vms_state.size).to eq(5) # one for each VM in 5-servers cluster
 
     ##
     ## Unbind
@@ -177,13 +145,19 @@ describe 'redis service - lifecycle' do
     expect(response.status).to eq(204)
 
     ##
+    ## Test that registered BindingCommands have been removed
+    ##
+    expect($etcd.get("/binding_commands").value).to be_nil
+    expect($etcd.get("/registered_binding_commands").value).to be_nil
+
+    ##
     ## Deprovision
     ##
     delete "/v2/service_instances/#{service_instance_id}"
     expect(response.status).to eq(200)
 
     ##
-    ## Test that redis entries no longer exist
+    ## Test that etcd entries no longer exist
     ##
     expect{ $etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model") }.to raise_error(Net::HTTPServerException)
     expect{ $etcd.get("/service_instances/#{service_instance_id}/model") }.to raise_error(Net::HTTPServerException)

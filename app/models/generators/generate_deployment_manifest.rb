@@ -11,9 +11,9 @@ class Generators::GenerateDeploymentManifest
   attr_accessor :infrastructure_stub, :service_plan_stub, :deployment_stub
 
   def generate_manifest
-    infrastructure_stub_file  = tempfile('infrastructure_stub', infrastructure_stub)
-    service_plan_stub_file    = tempfile('service_plan_stub', service_plan_stub)
-    deployment_stub_file      = tempfile('deployment_stub', deployment_stub)
+    infrastructure_stub_file  = tempfile('infrastructure_stub', infrastructure_stub) unless infrastructure_stub.blank?
+    service_plan_stub_file    = tempfile('service_plan_stub', service_plan_stub) unless service_plan_stub.blank?
+    deployment_stub_file      = tempfile('deployment_stub', deployment_stub) unless deployment_stub.blank?
     output_file               = tempfile('output')
 
     input_file_paths = service_stub_paths + [
