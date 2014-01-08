@@ -18,6 +18,18 @@ describe Generators::GenerateDeploymentManifest do
       manifest = subject.generate_manifest
       expect(manifest).to eq("OUTPUT")
     end
+
+    it "is ok to receive blank stubs and ignores them" do
+      subject.infrastructure_stub = ""    # blank
+      subject.service_plan_stub = nil     # nil
+      subject.deployment_stub = "--- {}"  # content
+      expect(subject).to receive(:tempfile).with('deployment_stub', "--- {}").and_return(double(path: "temp3"))
+      output_file = double(path: "output.yml", rewind: true, close: true, read: "OUTPUT")
+      expect(subject).to receive(:tempfile).with('output').and_return(output_file)
+      expect(subject).to receive(:spiff_merge).with(%w[file1.yml file2.yml temp3], "output.yml")
+      manifest = subject.generate_manifest
+      expect(manifest).to eq("OUTPUT")
+    end
   end
 
   describe "#spiff_merge" do

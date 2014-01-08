@@ -36,19 +36,23 @@ class Bosh::DirectorClient
 
   # FIXME should store these two in Etcd
   def available_infrastructure_networks
+    return nil unless infrastructure_networks
     @available_infrastructure_networks ||= infrastructure_networks.clone
   end
   def allocated_infrastructure_networks
+    return nil unless infrastructure_networks
     @allocated_infrastructure_networks ||= []
   end
 
   # FIXME Temporary method only required until above two lists stored in DB and can be cleaned out before tests
   def reset_infrastructure_network_for_testing
+    return nil unless infrastructure_networks
     @available_infrastructure_networks = infrastructure_networks.clone
     @allocated_infrastructure_networks = []
   end
 
   def allocate_infrastructure_network
+    return nil unless infrastructure_networks
     infra_network = available_infrastructure_networks.shift
     allocated_infrastructure_networks.push(infra_network)
     infra_network

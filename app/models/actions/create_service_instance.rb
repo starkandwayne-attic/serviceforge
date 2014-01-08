@@ -59,7 +59,7 @@ class Actions::CreateServiceInstance
   end
 
   def generate_infrastructure_spiff_file
-    infrastructure_network.deployment_stub
+    infrastructure_network.try(:deployment_stub)
   end
 
   def generate_deployment_manifest(deployment_stub, infrastructure_stub)
@@ -82,11 +82,16 @@ class Actions::CreateServiceInstance
     # TODO did it succeed for fail?
   end
 
+  # If the target BOSH is using a pool of InfrastructureNetworks to
+  # manually isolate each deployment's networking from the others,
+  # then ask it for an InfrastructureNetwork.
+  # Else do nothing.
   def allocate_infrastructure_to_service_instance
     unless service_instance.infrastructure_network
-      allocated_infrastructure = bosh_director_client.allocate_infrastructure_network
-      service_instance.infrastructure_network = allocated_infrastructure
-      service_instance.save
+      if allocated_infrastructure = bosh_director_client.allocate_infrastructure_network
+        service_instance.infrastructure_network = allocated_infrastructure
+        service_instance.save
+      end
     end
   end
 

@@ -32,14 +32,8 @@ defaults: &defaults
       cpi_infrastructure: aws-ec2
       # director_uuid: - calculated after login
       # cpi: - cpi calculated after login (warden, openstack)
-      infrastructure_networks:
-        - ip_range_start: 10.244.2.0
-          template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.0.yml
-        - ip_range_start: 10.244.2.40
-          template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.40.yml
-        - ip_range_start: 10.244.2.80
-          template: <%= Rails.root %>/infrastructure_pools/warden/10.244.2.80.yml
 <% end %>
+
   services:
   - name: etcd-dedicated-bosh-lite
     deployment_name_prefix: etcd
