@@ -120,6 +120,8 @@ class Bosh::DirectorClient
     [result, task_id]
   end
 
+  # Returns:
+  # * "done" if task completed successfully
   def task_state(task_id)
     api.get_task_state(task_id)
   end

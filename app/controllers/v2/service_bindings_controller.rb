@@ -15,12 +15,20 @@ class V2::ServiceBindingsController < V2::BaseController
 
     service_id = service_instance.service_id
 
-    p service_instance
     unless service_instance.running?
-      Actions::UpdateServiceInstanceState.new(
-        service_id: service_id,
-        service_instance_id: service_instance_id
-      ).perform
+      if wait_til_ready?
+        Actions::WaitForServiceInstanceDeployment.new(
+          service_id: service_id,
+          service_instance_id: service_instance_id
+        ).perform
+      else
+        Actions::UpdateServiceInstanceState.new(
+          service_id: service_id,
+          service_instance_id: service_instance_id
+        ).perform
+      end
+
+      service_instance = ServiceInstance.find_by_id(service_instance_id)
       unless service_instance.running?
         raise ServiceInstanceNotReadyForBinding
       end
@@ -78,5 +86,9 @@ class V2::ServiceBindingsController < V2::BaseController
   protected
   def request_base_url
     ENV['SERVAAS_BASE_URL'] || Settings.base_url || request.base_url
+  end
+
+  def wait_til_ready?
+    params[:wait_til_ready]
   end
 end
