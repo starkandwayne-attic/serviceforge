@@ -153,13 +153,23 @@ describe Bosh::DirectorClient do
   end
 
   describe "#delete(deployment_name)" do
-    before {
-      deployment_name = "foobar"
-      expect(subject.api).to receive(:delete_deployment).with(deployment_name, force: true).and_return([:running, 123])
-      @status, @task_id = subject.delete(deployment_name)
-    }
-    it { expect(@status).to eq(:running) }
-    it { expect(@task_id).to eq(123) }
+    let(:deployment_name) { 'deployment-name' }
+
+    context "successfully" do
+      before {
+        expect(subject.api).to receive(:delete_deployment).with(deployment_name, force: true).and_return([:running, 123])
+        @status, @task_id = subject.delete(deployment_name)
+      }
+      it { expect(@status).to eq(:running) }
+      it { expect(@task_id).to eq(123) }
+    end
+
+    context "deployment doesn't exist" do
+      it {
+        expect(subject.api).to receive(:delete_deployment).with(deployment_name, force: true).and_raise(Bosh::Cli::ResourceNotFound)
+        expect { subject.delete(deployment_name) }.to raise_error(Bosh::Errors::ResourceNotFound)
+      }
+    end
   end
 
   describe "#list_deployments" do

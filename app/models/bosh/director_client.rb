@@ -87,6 +87,8 @@ class Bosh::DirectorClient
   def delete(deployment_name)
     status, task_id = api.delete_deployment(deployment_name, force: true)
     [status, task_id]
+  rescue Bosh::Cli::ResourceNotFound => e
+    raise Bosh::Errors::ResourceNotFound, e.message
   end
 
   def list_deployments

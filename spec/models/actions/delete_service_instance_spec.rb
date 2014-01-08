@@ -41,6 +41,10 @@ describe Actions::DeleteServiceInstance do
       expect(bosh_director_client).to receive(:delete).with(deployment_name).and_return([:running, bosh_delete_task_id])
       expect(bosh_director_client).to receive(:track_task).with(bosh_delete_task_id).and_return("done")
       expect(bosh_director_client).to receive(:release_infrastructure_network).with(infrastructure_network)
+
+      expect(service_instance).to receive(:destroying!)
+      expect(service_instance).to receive(:destroyed!)
+
       action.perform
 
       ##
@@ -52,6 +56,32 @@ describe Actions::DeleteServiceInstance do
         'service_instance_id' => service_instance_id,
         'deployment_name' => deployment_name,
         'bosh_task_id' => bosh_delete_task_id
+      })
+    end
+
+    it "deletes an existing service but BOSH deployment already deleted" do
+      action = Actions::DeleteServiceInstance.create(service_id: service_id, service_instance_id: service_instance_id, deployment_name: deployment_name)
+
+      expect(class_double('ServiceInstance').as_stubbed_const).to receive(:find_by_id).with(service_instance_id).and_return(service_instance)
+      expect(service_instance).to receive(:infrastructure_network).and_return(infrastructure_network)
+
+      expect(action).to receive(:bosh_director_client).exactly(2).times.and_return(bosh_director_client)
+      expect(bosh_director_client).to receive(:delete).with(deployment_name).and_raise(Bosh::Errors::ResourceNotFound)
+      expect(bosh_director_client).to receive(:release_infrastructure_network).with(infrastructure_network)
+
+      expect(service_instance).to receive(:destroyed!)
+
+      action.perform
+
+      ##
+      ## Test the etcd entry
+      ##
+      data = JSON.parse($etcd.get("/actions/delete_service_instances/#{service_instance_id}").value)
+      expect(data).to eq({
+        'service_id' => service_id,
+        'service_instance_id' => service_instance_id,
+        'deployment_name' => deployment_name,
+        'bosh_task_id' => nil
       })
     end
   end

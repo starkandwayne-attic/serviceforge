@@ -54,6 +54,9 @@ class ServiceInstance
     event :destroying do
       transition [:running] => :destroying
     end
+    event :destroyed do
+      transition [:running, :destroying] => :destroyed
+    end
   end
 
   def save
