@@ -131,6 +131,7 @@ class Bosh::DirectorClient
 
   # returns BOSH status symbol (:done, :failed)
   def track_task(task_id)
+    raise Bosh::Errors::UnknownTaskId, task_id.inspect if task_id.blank?
     tracker = Bosh::Cli::TaskTracking::TaskTracker.new(api, task_id)
     status  = tracker.track
   end
