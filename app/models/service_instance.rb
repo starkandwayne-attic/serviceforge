@@ -41,6 +41,9 @@ class ServiceInstance
   state_machine :state, :initial => :initialized do
     after_transition any => any, do: :save
 
+    before_transition any => any, do: :debug_pre_state_change
+    after_transition any => any, do: :debug_post_state_change
+
     event :deploying do
       transition [:initialized, :running, :deploying] => :deploying
     end
@@ -81,5 +84,14 @@ class ServiceInstance
       'state' => state,
       'latest_bosh_deployment_task_id' => latest_bosh_deployment_task_id
     }
+  end
+
+  private
+  def debug_pre_state_change
+    puts "[pre:#{state}] #{self.inspect}"
+  end
+
+  def debug_post_state_change
+    puts "[post:#{state}] #{self.inspect}"
   end
 end

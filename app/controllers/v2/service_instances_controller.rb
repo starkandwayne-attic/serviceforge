@@ -30,7 +30,6 @@ class V2::ServiceInstancesController < V2::BaseController
 
   def destroy
     if instance = ServiceInstance.find_by_id(params.fetch(:id))
-
       action = Actions::DeleteServiceInstance.create({
         service_instance_id: instance.service_instance_id,
         service_id: instance.service_id,

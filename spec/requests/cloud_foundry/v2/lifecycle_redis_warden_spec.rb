@@ -27,6 +27,7 @@ describe 'redis service - lifecycle on warden' do
           delete_task_ids << bosh_task_id
         end
       end
+      # TODO queued tasks are being ignored; can they be cancelled or waited upon to finish?
       director_client.wait_for_tasks_to_complete(delete_task_ids)
       director_client.reset_infrastructure_network_for_testing
     end

@@ -12,7 +12,15 @@ class BindingCommandActions::Bosh::ChangeServicePlan
       deployment_name: deployment_name
     )
     action.perform
-    action.track_task
+    state = action.track_task
+    case state.to_sym
+      when :done
+        service_instance.deployment_successful!
+      when :running, :queued
+        service_instance.deploying!
+      else
+        service_instance.failed_deployment!
+    end
   end
 
   def to_json(*)
