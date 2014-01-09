@@ -229,10 +229,10 @@ describe Bosh::DirectorClient do
   describe "#track_task(task_id)" do
     let(:director) { instance_double('Bosh::Cli::Client::Director') }
     let(:task_id) { 123 }
-    let(:task_tracker) { instance_double('Bosh::Cli::TaskTracker') }
+    let(:task_tracker) { instance_double('Bosh::Cli::TaskTracking::TaskTracker') }
     it "tracks a task until completed" do
       expect(subject).to receive(:api).and_return(director)
-      tracker_klass = class_double('Bosh::Cli::TaskTracker').as_stubbed_const
+      tracker_klass = class_double('Bosh::Cli::TaskTracking::TaskTracker').as_stubbed_const
       expect(tracker_klass).to receive(:new).with(director, task_id).and_return(task_tracker)
       expect(task_tracker).to receive(:track)
       subject.track_task(123)
