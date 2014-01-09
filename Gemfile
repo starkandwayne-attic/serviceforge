@@ -57,6 +57,6 @@ gem "state_machine"
 gem "settingslogic"
 gem "etcd"
 
-gem "bosh_cli", "~> 1.5.0.pre"
+gem "bosh_cli", "~> 1.1750.0"
 
 gem "escape"
