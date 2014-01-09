@@ -56,7 +56,7 @@ class Actions::ChangeServiceInstance
   def perform_bosh_deploy_and_update_service_instance(deployment_manifest)
     status, self.bosh_task_id = bosh_director_client.deploy(deployment_manifest)
     save
-    if status == :running
+    if [:running, :queued].include?(status.to_sym)
       service_instance.latest_bosh_deployment_task_id = bosh_task_id
       service_instance.deploying!
     else

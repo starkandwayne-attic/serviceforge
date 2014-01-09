@@ -61,7 +61,7 @@ class V2::ServiceBindingsController < V2::BaseController
     service_binding = ServiceBinding.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
     render status: 201, json: service_binding
   rescue ServiceInstanceNotReadyForBinding
-    render status: 403, json: '{}'
+    render status: 403, json: { error: "Service Instance not ready for binding; state #{service_instance.state}" }.to_json
   end
 
   def destroy

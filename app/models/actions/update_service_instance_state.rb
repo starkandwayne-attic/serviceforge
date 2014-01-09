@@ -16,7 +16,7 @@ class Actions::UpdateServiceInstanceState
     case state.to_sym
       when :done
         service_instance.deployment_successful!
-      when :running
+      when :running, :queued
         service_instance.deploying!
       else
         service_instance.failed_deployment!
