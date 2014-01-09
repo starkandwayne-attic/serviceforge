@@ -8,6 +8,10 @@ Services as a Service. Service Broker for Cloud Foundry that is backed by BOSH.
      ___/ /  __/ /   | |/ / ___ |/ ___ |___/ / 
     /____/\___/_/    |___/_/  |_/_/  |_/____/  
 
+## Project Health
+
+[![Code Climate](https://codeclimate.com/repos/52cee12f69568028a6006386/badges/5b9bd68a2791fdb88339/gpa.png)](https://codeclimate.com/repos/52cee12f69568028a6006386/feed)
+
 ## Dependencies
 
 * ruby 1.9+
