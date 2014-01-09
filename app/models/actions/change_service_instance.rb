@@ -40,7 +40,7 @@ class Actions::ChangeServiceInstance
   end
 
   def generate_infrastructure_spiff_file
-    infrastructure_network.deployment_stub
+    infrastructure_network.try(:deployment_stub)
   end
 
   def generate_deployment_manifest(deployment_stub, infrastructure_stub)
