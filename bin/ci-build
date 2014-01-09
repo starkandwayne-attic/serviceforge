@@ -6,5 +6,6 @@ fi
 
 bundle install --local --binstubs vendor/bundle/bin
 export PATH=vendor/bundle/bin:$PATH
+export RAILS_ENV=test
 
 rspec -f documentation spec/models spec/controllers
