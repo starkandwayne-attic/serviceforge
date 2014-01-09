@@ -19,6 +19,7 @@ describe BindingCommandActions::Bosh::ChangeServicePlan do
       with(service_id: service_id, service_plan_id: service_plan_id, service_instance_id: service_instance_id, deployment_name: deployment_name).
       and_return(action)
     expect(action).to receive(:perform)
+    expect(action).to receive(:track_task)
     subject.perform
   end
 end

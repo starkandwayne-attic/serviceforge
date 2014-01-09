@@ -29,6 +29,10 @@ class Actions::ChangeServiceInstance
     }.to_json
   end
 
+  def track_task
+    bosh_director_client.track_task(bosh_task_id)
+  end
+
   private
   def service_stub_paths
     service.bosh_service_stub_paths
@@ -75,4 +79,5 @@ class Actions::ChangeServiceInstance
   def deployment_name_prefix
     service.deployment_name_prefix
   end
+
 end
