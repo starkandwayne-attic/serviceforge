@@ -1,0 +1,37 @@
+meta:
+  environment: (( merge ))
+  dns_root: (( merge ))
+  security_groups: (( merge ))
+  network_name: (( merge ))
+
+  stemcell:
+    name: bosh-google-kvm-centos
+    version: 1744
+
+jobs:
+  - name: etcd_leader_z1
+    instances: 1
+    networks:
+      - name: (( meta.network_name ))
+  - name: etcd_z1
+    instances: 2
+    networks:
+      - name: (( meta.network_name ))
+    properties:
+      etcd:
+        leader_address: (( "0.etcd-leader-z1.etcd1." meta.environment "." meta.dns_root ))
+
+compilation:
+  cloud_properties:
+    instance_type: n1-standard-1
+
+resource_pools:
+  - name: small_z1
+    cloud_properties:
+      instance_type: n1-standard-1
+
+networks:
+  - name: (( meta.network_name ))
+    type: dynamic
+    cloud_properties:
+      ephemeral_external_ip: true
