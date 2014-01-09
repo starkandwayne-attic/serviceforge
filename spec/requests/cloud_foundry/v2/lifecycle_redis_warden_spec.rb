@@ -61,10 +61,11 @@ describe 'redis service - lifecycle on warden' do
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
     data['infrastructure_network'].delete('template') # different for each machine
+    latest_bosh_deployment_task_id = data.delete('latest_bosh_deployment_task_id') # different for each test
     expect(data).to eq({
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
-      'service_plan_id' => two_server_plan_id,
+      'service_plan_id' => one_server_plan_id,
       'deployment_name' => deployment_name,
       'infrastructure_network' => { 'ip_range_start' => '10.244.2.0' },
       'state' => 'deploying'
@@ -117,10 +118,11 @@ describe 'redis service - lifecycle on warden' do
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
     data['infrastructure_network'].delete('template') # different for each machine
+    latest_bosh_deployment_task_id = data.delete('latest_bosh_deployment_task_id') # different for each test
     expect(data).to eq({
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
-      'service_plan_id' => two_server_plan_id,
+      'service_plan_id' => one_server_plan_id,
       'deployment_name' => deployment_name,
       'infrastructure_network' => { 'ip_range_start' => '10.244.2.0' },
       'state' => 'running'
@@ -171,7 +173,7 @@ describe 'redis service - lifecycle on warden' do
     get URI.parse(vms_state_url).path
     expect(response.status).to eq(200)
     vms_state = JSON.parse(response.body)
-    expect(vms_state.size).to eq(2) # one for each VM in 2-servers cluster
+    expect(vms_state.size).to eq(1) # one for each VM in 2-servers cluster
 
     ##
     ## Changing plans via Binding Commands
@@ -185,7 +187,7 @@ describe 'redis service - lifecycle on warden' do
     #   }
     # }
 
-    expect(binding_commands.fetch('current_plan')).to eq('2-servers')
+    expect(binding_commands.fetch('current_plan')).to eq('1-server')
 
     # Let's upgrade to 3-servers...
     cmd = binding_commands.fetch('commands').fetch('3-servers')

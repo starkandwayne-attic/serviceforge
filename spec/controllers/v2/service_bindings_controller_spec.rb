@@ -71,6 +71,7 @@ describe V2::ServiceBindingsController do
         expect(update).to receive(:perform)
 
         expect(service_instance).to receive(:running?).and_return(false)
+        expect(service_instance).to receive(:state).and_return("deploying")
 
         put :update, id: service_binding_id, service_instance_id: service_instance_id
 
