@@ -131,3 +131,30 @@ The integration tests require `etcd` to be running.
 $ foreman start -e config/environments/test/procfile.env
 $ guard
 ```
+
+## Demo
+
+Assumes you have an app, such as https://github.com/cloudfoundry-community/service-binding-proxy, already deployed.
+
+```
+$ git clone https://github.com/cloudfoundry-community/service-binding-proxy /tmp/service-binding-proxy
+$ cd /tmp/service-binding-proxy
+$ bundle
+$ gcf push service-binding-proxy
+$ export appname=service-binding-proxy
+```
+
+```
+$ gcf create-service-broker etcd-dev cc secret http://servaas.ngrok.com
+$ ./bin/mark_all_public
+$ gcf create-service redis-dedicated-bosh-lite 1-server redis-1
+$ gcf bind-service $appname redis-1
+$ gcf restart $appname
+$ curl http://service-binding-proxy.10.244.0.34.xip.io
+
+$ gem install jazor
+$ curl http://service-binding-proxy.10.244.0.34.xip.io | jazor
+
+$ gcf unbind-service $appname redis-1
+$ gcf delete-service redis-1
+```
