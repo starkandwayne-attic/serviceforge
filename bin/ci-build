@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+bundle install --local --binstubs vendor/bundle/bin
+export PATH=vendor/bundle/bin:$PATH
+
+rspec spec/models spec/controllers
