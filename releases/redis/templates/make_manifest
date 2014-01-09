@@ -9,7 +9,7 @@ shift
 if [ "$infrastructure" != "openstack-nova" ] && \
     [ "$infrastructure" != "aws-ec2" ] && \
     [ "$infrastructure" != "warden" ] ; then
-  echo "usage: ./make_manifest <openstack-nova|warden>"
+  echo "usage: ./make_manifest <aws-ec2|openstack-nova|warden>"
   exit 1
 fi
 
