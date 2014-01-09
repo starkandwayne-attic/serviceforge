@@ -202,10 +202,10 @@ describe 'redis service - lifecycle on warden' do
     put URI.parse(cmd['url']).path
     expect(response.status).to eq(200)
 
-    # Now confirm we have 3 servers instead of 2...
+    # Now confirm we have 3 servers instead of 1...
     get URI.parse(vms_state_url).path
     vms_state = JSON.parse(response.body)
-    expect(vms_state.size).to eq(3) # previously was 2, now 3, yeah yeah
+    expect(vms_state.size).to eq(3) # previously was 1, now 3, yeah yeah
 
 
     ##
