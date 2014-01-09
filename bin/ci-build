@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ -f ~/.rvm/environments/ruby-2.1.0 ]]; then
+  cat ~/.rvm/environments/ruby-2.1.0
   source ~/.rvm/environments/ruby-2.1.0
 fi
 
