@@ -51,6 +51,7 @@ class Actions::DeleteServiceInstance
   private
   def release_networking_and_mark_destroyed
     bosh_director_client.release_infrastructure_network(service_instance.infrastructure_network)
+    p service_instance
     service_instance.destroyed!
   end
 

@@ -123,5 +123,12 @@ describe ServiceInstance do
         expect(service_instance.destroyed?).to be_true
       end
     end
+    context "destroyed" do
+      before { service_instance.state = "destroyed" }
+      it do
+        service_instance.destroyed!
+        expect(service_instance.destroyed?).to be_true
+      end
+    end
   end
 end
