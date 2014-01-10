@@ -145,7 +145,7 @@ $ export appname=service-binding-proxy
 ```
 
 ```
-$ gcf create-service-broker etcd-dev cc secret http://servaas.ngrok.com
+$ gcf create-service-broker servaas-dev cc secret http://servaas.ngrok.com
 $ ./bin/mark_all_public
 $ gcf create-service redis-dedicated-bosh-lite 1-server redis-1
 $ gcf bind-service $appname redis-1
@@ -157,4 +157,10 @@ $ curl http://service-binding-proxy.10.244.0.34.xip.io | jazor
 
 $ gcf unbind-service $appname redis-1
 $ gcf delete-service redis-1
+```
+
+You can now remove the broker with:
+
+```
+$ gcf delete-service-broker servaas-dev
 ```
