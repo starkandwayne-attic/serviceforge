@@ -6,16 +6,10 @@
 # * cf
 # * jazor
 
-function mark_public {
-  service_plan_guid=$1
-  service_plan=$(cf curl PUT /v2/service_plans/$service_plan_guid -b '{"public":'true'}')
-  echo updated $(echo $service_plan | jazor entity.name)
-}
-
-
 cf login admin --password admin
 service_plans=$(cf curl get "/v2/services?inline-relations-depth=1" | jazor 'resources.map {|r| r.entity.service_plans.map {|sp| sp.metadata.guid }}.flatten.each {|id| puts id}; ""')
 
-for service_plan in ${service_plans[@]}; do
-  mark_public $service_plan
+for service_plan_guid in ${service_plans[@]}; do
+  service_plan=$(cf curl PUT /v2/service_plans/$service_plan_guid -b '{"public":'true'}')
+  echo updated $(echo $service_plan | jazor entity.name)
 done
