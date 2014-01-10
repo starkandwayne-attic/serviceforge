@@ -88,10 +88,10 @@ class ServiceInstance
 
   private
   def debug_pre_state_change
-    puts "[pre:#{state}] #{self.inspect}"
+    puts "[pre:#{state}:#{service_instance_id}]"
   end
 
   def debug_post_state_change
-    puts "[post:#{state}] #{self.inspect}"
+    puts "[post:#{state}:#{service_instance_id}]"
   end
 end
