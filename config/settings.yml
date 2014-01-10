@@ -4,6 +4,8 @@
 
 defaults: &defaults
   log_path: 'log/<%= Rails.env %>.log'
+  tmp_path: '<%= Rails.root %>/tmp'
+
   auth_username: cc
 
   bin_paths:

@@ -34,5 +34,6 @@ module Servaas
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
 
     config.paths.add 'log', with: Settings.log_path
+    config.paths.add 'tmp', with: Settings.tmp_path
   end
 end
