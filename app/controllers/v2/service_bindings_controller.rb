@@ -48,15 +48,6 @@ class V2::ServiceBindingsController < V2::BaseController
       deployment_name: service_instance.deployment_name)
     action.perform
 
-    action = Actions::CreateBindingCommands.new({
-      service_id: service_id,
-      service_instance_id: service_instance_id,
-      service_binding_id: service_binding_id,
-      deployment_name: service_instance.deployment_name,
-      request_base_url: request_base_url
-    })
-    action.perform
-
     # reload after saves
     service_binding = ServiceBinding.find_by_instance_id_and_binding_id(service_instance_id, service_binding_id)
     render status: 201, json: service_binding

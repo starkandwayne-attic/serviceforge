@@ -20,7 +20,6 @@ describe V2::ServiceBindingsController do
       let(:service_binding_klass) { class_double('ServiceBinding').as_stubbed_const }
       let(:service_binding)       { instance_double('ServiceBinding') }
       let(:prepare)       { instance_double('Actions::PrepareServiceBinding') }
-      let(:cbc)           { instance_double('Actions::CreateBindingCommands') }
 
       it "prepares binding & creates binding commands" do
         expect(service_instance).to receive(:running?).and_return(true)
@@ -40,15 +39,6 @@ describe V2::ServiceBindingsController do
           deployment_name: deployment_name
         }).and_return(prepare)
         expect(prepare).to receive(:perform)
-
-        expect(class_double('Actions::CreateBindingCommands').as_stubbed_const).to receive(:new).with({
-          service_id: service_id,
-          service_instance_id: service_instance_id,
-          service_binding_id: service_binding_id,
-          deployment_name: deployment_name,
-          request_base_url: request_base_url
-        }).and_return(cbc)
-        expect(cbc).to receive(:perform)
 
         put :update, id: service_binding_id, service_instance_id: service_instance_id
 
@@ -83,7 +73,6 @@ describe V2::ServiceBindingsController do
       let(:service_binding_klass) { class_double('ServiceBinding').as_stubbed_const }
       let(:service_binding)       { instance_double('ServiceBinding') }
       let(:prepare)       { instance_double('Actions::PrepareServiceBinding') }
-      let(:cbc)           { instance_double('Actions::CreateBindingCommands') }
 
       it "waits until BOSH deployment complete then starts CreateServiceBinding" do
         expect(service_instance).to receive(:running?).and_return(false)
@@ -111,15 +100,6 @@ describe V2::ServiceBindingsController do
           deployment_name: deployment_name
         }).and_return(prepare)
         expect(prepare).to receive(:perform)
-
-        expect(class_double('Actions::CreateBindingCommands').as_stubbed_const).to receive(:new).with({
-          service_id: service_id,
-          service_instance_id: service_instance_id,
-          service_binding_id: service_binding_id,
-          deployment_name: deployment_name,
-          request_base_url: request_base_url
-        }).and_return(cbc)
-        expect(cbc).to receive(:perform)
 
         put :update, id: service_binding_id, service_instance_id: service_instance_id, wait_til_ready: true
 

@@ -86,7 +86,8 @@ describe 'etcd service - lifecycle on warden' do
     }
 
     expect(response.status).to eq(201)
-    instance = JSON.parse(response.body)
+    binding = JSON.parse(response.body)
+    p binding
 
     ##
     ## Test bosh for deployment entry
@@ -102,9 +103,6 @@ describe 'etcd service - lifecycle on warden' do
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model").value)
 
-    # TODO still working on implementation of BindingCommands
-    binding_commands = data.fetch('credentials').delete('binding_commands')
-
     expect(data).to eq({
       'service_binding_id' => service_binding_id,
       'service_instance_id' => service_instance_id,
@@ -115,45 +113,12 @@ describe 'etcd service - lifecycle on warden' do
     })
 
 
-    p instance
-    credentials = instance.fetch('credentials')
-    binding_commands = credentials.delete('binding_commands')
-    expect(credentials).to eq({
-      'host' => '10.244.2.2',
-      'port' => 4001
-    })
-
-    # 'binding_commands' => {
-    #   'commands' => {
-    #     'vms_state' => { 'method' => 'GET', 'url' => "http://broker-address/binding_commands/CMD_AUTH_TOKEN" }
-    #   }
-    # }
-
-    vms_state_cmd = binding_commands.fetch('commands').fetch('vms-state')
-    expect(vms_state_cmd).to_not be_nil
-    expect(vms_state_cmd['method']).to eq('GET')
-
-    # GET is required for this binding_command, so PUT should fail with 405
-    put URI.parse(vms_state_cmd['url']).path
-    expect(response.status).to eq(405)
-
-    # Now try GET as required...
-    get URI.parse(vms_state_cmd['url']).path
-    expect(response.status).to eq(200)
-    vms_state = JSON.parse(response.body)
-    expect(vms_state.size).to eq(5) # one for each VM in 5-servers cluster
 
     ##
     ## Unbind
     ##
     delete "/v2/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}"
     expect(response.status).to eq(204)
-
-    ##
-    ## Test that registered BindingCommands have been removed
-    ##
-    expect($etcd.get("/binding_commands").value).to be_nil
-    expect($etcd.get("/registered_binding_commands").value).to be_nil
 
     ##
     ## Deprovision
