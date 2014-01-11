@@ -54,7 +54,17 @@ describe 'etcd service - lifecycle on warden' do
 
     expect(response.status).to eq(201)
     service_instance = JSON.parse(response.body)
+    dashboard_url = service_instance.delete("dashboard_url")
     expect(service_instance).to eq({})
+
+    ##
+    ## Test dashboard_url
+    ##
+
+    expect(dashboard_url).to_not be_nil
+    dashboard_uri = URI.parse(dashboard_url)
+    dashboard_uri.host = dashboard_uri.scheme = dashboard_uri.port = nil
+    get dashboard_uri
 
     ##
     ## Test the etcd /service_instances entry
