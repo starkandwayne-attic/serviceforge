@@ -30,13 +30,7 @@ $ foreman start -e config/environments/development/procfile.env
 * You can now connect to etcd via the `etcdctl` CLI:
 
     ```
-    $ etcdctl -C 127.0.0.1:5200
-    ```
-
-* You can now connect to redis via the `redis-cli` CLI:
-
-    ```
-    $ redis-cli -p 5100
+    $ etcdctl -C 127.0.0.1:5100
     ```
 
 ### Add local dev broker into your Cloud Foundry

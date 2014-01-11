@@ -445,7 +445,7 @@ development:
   auth_password: 'secret'
   etcd:
     host: 127.0.0.1
-    port: 5200
+    port: 5100
 
   extra_deployment_name_prefix: ~
 
@@ -457,7 +457,7 @@ test:
   auth_password: 'secret'
   etcd:
     host: 127.0.0.1
-    port: 6200
+    port: 6100
 
   extra_deployment_name_prefix: test
 
