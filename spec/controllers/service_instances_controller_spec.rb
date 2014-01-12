@@ -6,6 +6,7 @@ describe ServiceInstancesController do
   let(:service_instance_id) { 'instance-1' }
   let(:deployment_name)     { 'deployment-name' }
   let(:service_instance)    { instance_double('ServiceInstance', service_instance_id: service_instance_id, service_id: service_id, deployment_name: deployment_name) }
+  let(:update)        { instance_double('Actions::UpdateServiceInstanceState') }
 
   before do
     authenticate
@@ -14,6 +15,12 @@ describe ServiceInstancesController do
 
   describe "GET 'show'" do
     it "returns http success" do
+      expect(class_double('Actions::UpdateServiceInstanceState').as_stubbed_const).to receive(:new).with({
+        service_id: service_id,
+        service_instance_id: service_instance_id
+      }).and_return(update)
+      expect(update).to receive(:perform)
+
       get 'show', id: service_instance_id
       response.should be_success
     end
