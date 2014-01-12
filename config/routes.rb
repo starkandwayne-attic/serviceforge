@@ -6,6 +6,5 @@ Servaas::Application.routes.draw do
     end
   end
 
-  get '/binding_commands/:binding_auth_token', to: 'binding_commands#show'
-  put '/binding_commands/:binding_auth_token', to: 'binding_commands#update'
+  resources :service_instances, only: [:show]
 end

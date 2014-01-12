@@ -63,7 +63,8 @@ describe 'etcd service - lifecycle on warden' do
 
     expect(dashboard_url).to_not be_nil
     dashboard_uri = URI.parse(dashboard_url)
-    dashboard_uri.host = dashboard_uri.scheme = dashboard_uri.port = nil
+    dashboard_uri.host = dashboard_uri.scheme = dashboard_uri.port = dashboard_uri.user = dashboard_uri.password = nil
+
     get dashboard_uri
 
     ##

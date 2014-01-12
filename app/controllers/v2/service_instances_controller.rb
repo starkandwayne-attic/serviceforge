@@ -21,7 +21,7 @@ class V2::ServiceInstancesController < V2::BaseController
       instance.deployment_name = action.deployment_name
       instance.save
 
-      render status: 201, json: instance
+      render status: 201, json: instance.to_cf_json
     else
       render status: 507, json: {'description' => 'Service plan capacity has been reached'}
     end

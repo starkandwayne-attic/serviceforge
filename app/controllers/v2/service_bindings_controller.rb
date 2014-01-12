@@ -75,9 +75,6 @@ class V2::ServiceBindingsController < V2::BaseController
   end
 
   protected
-  def request_base_url
-    ENV['SERVAAS_BASE_URL'] || Settings.base_url || request.base_url
-  end
 
   def wait_til_ready?
     params[:wait_til_ready]

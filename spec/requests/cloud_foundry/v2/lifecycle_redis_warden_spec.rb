@@ -54,7 +54,21 @@ describe 'redis service - lifecycle on warden' do
 
     expect(response.status).to eq(201)
     service_instance = JSON.parse(response.body)
+    dashboard_url = service_instance.delete("dashboard_url")
     expect(service_instance).to eq({})
+
+    ##
+    ## Test dashboard_url
+    ##
+    expect(dashboard_url).to_not be_nil
+    dashboard_uri = URI.parse(dashboard_url)
+    dashboard_uri.host = dashboard_uri.scheme = dashboard_uri.port = dashboard_uri.user = dashboard_uri.password = nil
+
+    get dashboard_uri
+    expect(response.status).to eq(200)
+    dashboard_root = JSON.parse(response.body)
+    p dashboard_root
+    expect(dashboard_root["state"]).to eq("deploying")
 
     ##
     ## Test the redis /service_instances entry
@@ -142,13 +156,6 @@ describe 'redis service - lifecycle on warden' do
         'host' => '10.244.2.2',
         'port' => 6379
       }
-    })
-
-
-    credentials = instance.fetch('credentials')
-    expect(credentials).to eq({
-      'host' => '10.244.2.2',
-      'port' => 6379
     })
 
 
