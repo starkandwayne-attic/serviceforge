@@ -35,10 +35,12 @@ describe ServiceInstance do
     end
   end
 
-  describe '#to_json' do
+  describe '#to_cf_json' do
     it 'is empty json' do
-      hash = JSON.parse(service_instance.to_json)
-      expect(hash).to eq({})
+      hash = JSON.parse(service_instance.to_cf_json)
+      expect(hash).to eq({
+        "dashboard_url" => "http://cc:secret@127.0.0.1:6000/service_instances/instance-id"
+      })
     end
   end
 

@@ -54,7 +54,21 @@ describe 'redis service - lifecycle on warden' do
 
     expect(response.status).to eq(201)
     service_instance = JSON.parse(response.body)
+    dashboard_url = service_instance.delete("dashboard_url")
     expect(service_instance).to eq({})
+
+    ##
+    ## Test dashboard_url
+    ##
+    expect(dashboard_url).to_not be_nil
+    dashboard_uri = URI.parse(dashboard_url)
+    dashboard_uri.host = dashboard_uri.scheme = dashboard_uri.port = dashboard_uri.user = dashboard_uri.password = nil
+
+    get dashboard_uri
+    expect(response.status).to eq(200)
+    dashboard_root = JSON.parse(response.body)
+    p dashboard_root
+    expect(dashboard_root["state"]).to eq("deploying")
 
     ##
     ## Test the redis /service_instances entry
@@ -102,7 +116,8 @@ describe 'redis service - lifecycle on warden' do
     }
 
     expect(response.status).to eq(201)
-    instance = JSON.parse(response.body)
+    binding = JSON.parse(response.body)
+    p binding
 
     ##
     ## Test bosh for deployment entry
@@ -134,9 +149,6 @@ describe 'redis service - lifecycle on warden' do
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model").value)
 
-    # TODO still working on implementation of BindingCommands
-    binding_commands = data.fetch('credentials').delete('binding_commands')
-
     expect(data).to eq({
       'service_binding_id' => service_binding_id,
       'service_instance_id' => service_instance_id,
@@ -145,68 +157,6 @@ describe 'redis service - lifecycle on warden' do
         'port' => 6379
       }
     })
-
-
-    p instance
-    credentials = instance.fetch('credentials')
-    binding_commands = credentials.delete('binding_commands')
-    expect(credentials).to eq({
-      'host' => '10.244.2.2',
-      'port' => 6379
-    })
-
-    # 'binding_commands' => {
-    #   'commands' => {
-    #     'vms_state' => { 'method' => 'GET', 'url' => "http://broker-address/binding_commands/CMD_AUTH_TOKEN" }
-    #   }
-    # }
-
-    cmd = binding_commands.fetch('commands').fetch('vms-state')
-    expect(cmd).to_not be_nil
-    expect(cmd['method']).to eq('GET')
-
-    # GET is required for this binding_command, so PUT should fail with 405
-    put URI.parse(cmd['url']).path
-    expect(response.status).to eq(405)
-
-    # Now try GET as required...
-    vms_state_url = cmd['url']
-    get URI.parse(vms_state_url).path
-    expect(response.status).to eq(200)
-    vms_state = JSON.parse(response.body)
-    expect(vms_state.size).to eq(1) # one for each VM in 2-servers cluster
-
-    ##
-    ## Changing plans via Binding Commands
-    ##
-    # 'binding_commands' => {
-    #   'current_plan' => '2-servers',
-    #   'commands' => {
-    #     '1-server'  => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/AUTH_TOKEN" },
-    #     '2-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
-    #     '3-servers' => { 'method' => 'PUT', 'url' => "http://broker-address/binding_commands/OTHER_TOKEN" },
-    #   }
-    # }
-
-    expect(binding_commands.fetch('current_plan')).to eq('1-server')
-
-    # Let's upgrade to 3-servers...
-    cmd = binding_commands.fetch('commands').fetch('3-servers')
-    expect(cmd).to_not be_nil
-    expect(cmd['method']).to eq('PUT')
-
-    # PUT is required for this binding_command, so GET should fail with 405
-    get URI.parse(cmd['url']).path
-    expect(response.status).to eq(405)
-
-    # Now try PUT as required...
-    put URI.parse(cmd['url']).path
-    expect(response.status).to eq(200)
-
-    # Now confirm we have 3 servers instead of 1...
-    get URI.parse(vms_state_url).path
-    vms_state = JSON.parse(response.body)
-    expect(vms_state.size).to eq(3) # previously was 1, now 3, yeah yeah
 
 
     ##

@@ -55,7 +55,7 @@ class ServiceInstance
       transition [:deploying] => :running
     end
     event :destroying do
-      transition [:running] => :destroying
+      transition [:running, :failed_deployment] => :destroying
     end
     event :destroyed do
       transition any => :destroyed
@@ -63,15 +63,21 @@ class ServiceInstance
   end
 
   def save
-    $etcd.set("/service_instances/#{service_instance_id}/model", attributes.to_json)
+    $etcd.set("/service_instances/#{service_instance_id}/model", to_json)
   end
 
   def destroy
     $etcd.delete("/service_instances/#{service_instance_id}", recursive: true)
   end
 
+  def to_cf_json
+    {
+      'dashboard_url' => dashboard_url
+    }.to_json
+  end
+
   def to_json(*)
-    {}.to_json
+    attributes.to_json
   end
 
   def attributes
@@ -86,6 +92,16 @@ class ServiceInstance
     }
   end
 
+  def dashboard_url
+    @dashboard_url ||= begin
+      uri = URI.parse(request_base_url)
+      uri.path = "/service_instances/#{service_instance_id}"
+      uri.user = Settings.auth_username
+      uri.password = Settings.auth_password
+      uri.to_s
+    end
+  end
+
   private
   def debug_pre_state_change
     puts "[pre:#{state}:#{service_instance_id}]"
@@ -93,5 +109,9 @@ class ServiceInstance
 
   def debug_post_state_change
     puts "[post:#{state}:#{service_instance_id}]"
+  end
+
+  def request_base_url
+    Settings.base_url
   end
 end
