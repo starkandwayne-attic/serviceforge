@@ -121,6 +121,14 @@ Web Interface                 127.0.0.1:4040
 Avg Conn Time                 0.00ms
 ```
 
+## Adding new services
+
+1. Add an integration/request spec for the service in `spec/requests/cloud_foundry/v2/lifecycle_NAME_warden_spec.rb`
+1. Copy the spiff templates for the release into a `releases/NAME/templates` folder.
+1. Add a bosh-lite/warden service into `config/settings.yml`.
+1. [Generate a GUID](http://www.guidgenerator.com/online-guid-generator.aspx "Online GUID Generator") for the service, and GUIDs for each service plan for Warden service.
+
+
 ## Running Tests
 
 The integration tests require `etcd` to be running.

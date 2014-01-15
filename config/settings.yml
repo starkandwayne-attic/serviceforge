@@ -123,6 +123,72 @@ defaults: &defaults
           - name: etcd_z1
             instances: 4
 
+  - name: datastax-cassandra-dedicated-bosh-lite
+    deployment_name_prefix: cassandra
+    id: 4d1cab61-09ff-4442-a8e7-d270459bd025
+    description: "Datastax Cassandra: is the right choice when you need scalability and high availability without compromising performance"
+    tags:
+      - cassandra
+      - nosql
+    metadata:
+      provider:
+        name: "Stark & Wayne LLC"
+      listing:
+        imageUrl: ~
+        blurb: The right choice when you need scalability and high availability without compromising performance
+        long_description: "The DataStax Cassandra database is the right choice when you need scalability and high availability without compromising performance. Linear scalability and proven fault-tolerance on commodity hardware or cloud infrastructure make it the perfect platform for mission-critical data. Cassandra's support for replicating across multiple datacenters is best-in-class, providing lower latency for your users and the peace of mind of knowing that you can survive regional outages."
+    default_credentials:
+      port: 7000
+    detect_credentials:
+      - name: host
+        class: BindingAttributes::JobsIpAddresses
+        attributes:
+          job_names:
+            - datastax_cassandra_seed_z1
+            - datastax_cassandra_z1
+    bosh_target: https://192.168.50.4:25555
+    bosh_release:
+      releases:
+      - name: datastax_cassandra
+        version: 1
+        url: ~
+      release_templates:
+        base_path: <%= Rails.root %>/releases/datastax_cassandra/templates
+        deployment_stub: stub.yml
+        infrastructure_stub: infrastructure-warden.yml
+        templates:
+         - deployment.yml
+         - jobs.yml
+         - properties.yml
+         - infrastructure-warden.yml
+    plans:
+    - name: 3-servers
+      id: 4ca347c2-f4da-4d76-8536-f7e0b589c8a2
+      description: Cassandra running across three dedicated servers
+      metadata:
+        cost: 300
+        bullets:
+        - content: Cassandra servers
+        - content: 3 small servers
+        - content: High availability
+      bosh_deployment_stub:
+        jobs:
+          - name: cassandra_z1
+            instances: 2
+    - name: 5-servers
+      id: 069f3fd0-560d-43a5-840d-3b8aca9e63c2
+      description: Cassandra running across five dedicated servers
+      metadata:
+        cost: 500
+        bullets:
+        - content: Cassandra servers
+        - content: 5 small servers
+        - content: High availability
+      bosh_deployment_stub:
+        jobs:
+          - name: datastax_cassandra_z1
+            instances: 4
+
   - name: redis-dedicated-bosh-lite
     deployment_name_prefix: redis
     id: 1683fe81-b492-4e92-8282-0cdca7c316e1

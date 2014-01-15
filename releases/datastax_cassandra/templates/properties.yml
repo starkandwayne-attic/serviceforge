@@ -1,0 +1,5 @@
+properties:
+  networks:
+    apps: datastax_cassandra1
+
+  datastax_cassandra: {}

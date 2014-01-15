@@ -1,0 +1,31 @@
+meta:
+  environment: ~
+
+update:
+  canaries: 1
+  max_in_flight: 50
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+  serial: true
+
+jobs:
+  - name: datastax_cassandra_seed_z1
+    template: datastax-cassandra
+    instances: 0
+    resource_pool: small_z1
+    networks: (( merge ))
+    properties:
+      cassandra:
+        seeds: (( merge ))
+  - name: datastax_cassandra_z1
+    template: datastax-cassandra
+    instances: 0
+    resource_pool: small_z1
+    networks: (( merge ))
+    update:
+      canaries: 10
+    properties:
+      cassandra:
+        seeds: (( merge ))
+
+networks: (( merge ))
