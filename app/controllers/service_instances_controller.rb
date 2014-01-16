@@ -1,7 +1,11 @@
 class ServiceInstancesController < V2::BaseController
   def show
-    update_service_instance_state
-    render json: service_instance
+    if service_instance
+      update_service_instance_state
+      render json: service_instance
+    else
+      render json: {state: 'destroyed'}, status: 404
+    end
   end
 
   protected

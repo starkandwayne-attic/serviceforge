@@ -10,11 +10,11 @@ describe ServiceInstancesController do
 
   before do
     authenticate
-    expect(class_double('ServiceInstance').as_stubbed_const).to receive(:find_by_id).with(service_instance_id).at_least(1).times.and_return(service_instance)
   end
 
   describe "GET 'show'" do
-    it "returns http success" do
+    it "returns http success if service_instance found" do
+      expect(class_double('ServiceInstance').as_stubbed_const).to receive(:find_by_id).with(service_instance_id).at_least(1).times.and_return(service_instance)
       expect(class_double('Actions::UpdateServiceInstanceState').as_stubbed_const).to receive(:new).with({
         service_id: service_id,
         service_instance_id: service_instance_id
@@ -22,7 +22,14 @@ describe ServiceInstancesController do
       expect(update).to receive(:perform)
 
       get 'show', id: service_instance_id
-      response.should be_success
+      expect(response).to be_success
+    end
+
+    it "returns 404 if service_instance not found" do
+      expect(class_double('ServiceInstance').as_stubbed_const).to receive(:find_by_id).with(service_instance_id).at_least(1).times.and_return(nil)
+      get 'show', id: service_instance_id
+      expect(response.status).to eq(404)
+      expect(JSON.parse(response.body)).to eq({"state" => "destroyed"})
     end
   end
 
