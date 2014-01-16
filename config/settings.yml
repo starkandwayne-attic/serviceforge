@@ -140,7 +140,7 @@ defaults: &defaults
     default_credentials:
       port: 7000
     detect_credentials:
-      - name: host
+      - name: hosts
         class: BindingAttributes::JobsIpAddresses
         attributes:
           job_names:

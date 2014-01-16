@@ -8,7 +8,7 @@ describe 'GET /v2/catalog' do
     catalog = JSON.parse(response.body)
 
     services = catalog.fetch('services')
-    expect(services).to have(2).service
+    expect(services).to have(3).service
 
     service = services.first
     expect(service.fetch('name')).to eq('etcd-dedicated-bosh-lite')

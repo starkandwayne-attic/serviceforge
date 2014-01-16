@@ -6,7 +6,7 @@ describe 'cassandra service - lifecycle on warden' do
   let(:service)             { Service.find_by_id(service_id) }
   let(:three_server_plan_id) { '4ca347c2-f4da-4d76-8536-f7e0b589c8a2' }
   let(:five_server_plan_id) { '069f3fd0-560d-43a5-840d-3b8aca9e63c2' }
-  let(:service_plan_id)     { three_server_plan_id }
+  let(:service_plan_id)     { five_server_plan_id }
   let(:service_instance_id) { "instance-#{seed}" }
   let(:service_binding_id)  { "binding-#{seed}" }
   let(:app_guid)            { "app-guid-#{seed}" }
@@ -78,7 +78,7 @@ describe 'cassandra service - lifecycle on warden' do
     expect(data).to eq({
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
-      'service_plan_id' => three_server_plan_id,
+      'service_plan_id' => five_server_plan_id,
       'deployment_name' => deployment_name,
       'infrastructure_network' => { 'ip_range_start' => '10.244.2.0' },
       'state' => 'deploying'
@@ -124,7 +124,7 @@ describe 'cassandra service - lifecycle on warden' do
     expect(deployment_exists).to_not be_nil
 
     vms = service.director_client.list_vms(deployment_name)
-    expect(vms.size).to eq(3)
+    expect(vms.size).to eq(5)
 
     ##
     ## Test the cassandra /service_instances entry
@@ -136,7 +136,7 @@ describe 'cassandra service - lifecycle on warden' do
     expect(data).to eq({
       'service_instance_id' => service_instance_id, 
       'service_id' => service_id,
-      'service_plan_id' => three_server_plan_id,
+      'service_plan_id' => five_server_plan_id,
       'deployment_name' => deployment_name,
       'infrastructure_network' => { 'ip_range_start' => '10.244.2.0' },
       'state' => 'running'
@@ -147,11 +147,13 @@ describe 'cassandra service - lifecycle on warden' do
     ##
     data = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model").value)
 
+    expect(data['credentials']['hosts']).to_not be_nil
+    data['credentials']['hosts'].sort!
     expect(data).to eq({
       'service_binding_id' => service_binding_id,
       'service_instance_id' => service_instance_id,
       'credentials' => {
-        'hosts' => ['10.244.2.2', '10.244.2.4', '10.244.2.10'],
+        'hosts' => ['10.244.2.10', '10.244.2.14', '10.244.2.18', '10.244.2.2', '10.244.2.6'],
         'port' => 7000
       }
     })
