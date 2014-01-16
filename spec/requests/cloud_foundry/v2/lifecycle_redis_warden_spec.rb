@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'timeout'
 
 describe 'redis service - lifecycle on warden' do
   let(:seed)                { RSpec.configuration.seed }
@@ -165,17 +166,40 @@ describe 'redis service - lifecycle on warden' do
     delete "/v2/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}"
     expect(response.status).to eq(204)
 
+    expect{ $etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model") }.to raise_error(Net::HTTPServerException)
+
     ##
-    ## Deprovision
+    ## Deprovision (async)
     ##
     delete "/v2/service_instances/#{service_instance_id}"
     expect(response.status).to eq(200)
 
     ##
-    ## Test that redis entries no longer exist
+    ## State during deprovisioning
     ##
-    expect{ $etcd.get("/service_instances/#{service_instance_id}/service_bindings/#{service_binding_id}/model") }.to raise_error(Net::HTTPServerException)
-    expect{ $etcd.get("/service_instances/#{service_instance_id}/model") }.to raise_error(Net::HTTPServerException)
+    get dashboard_uri
+    expect(response.status).to eq(200)
+    dashboard_root = JSON.parse(response.body)
+    state = dashboard_root["state"]
+    expect(state).to eq("destroying")
+
+    ##
+    ## Poll until deprovision complete
+    ##
+    Timeout::timeout(10) do # 10 seconds
+      sleep(1/2.0) # poll every 1/2 second
+      while (state == "destroying")
+        get dashboard_uri
+        expect(response.status).to eq(200)
+        service_instance = JSON.parse(response.body)
+        p service_instance
+        state = service_instance["state"]
+      end
+      expect(state).to eq("destroyed")
+    end
+
+    service_instance = JSON.parse($etcd.get("/service_instances/#{service_instance_id}/model").value)
+    expect(service_instance["state"]).to eq("destroyed")
 
     ##
     ## Test deployment entry no longer exists

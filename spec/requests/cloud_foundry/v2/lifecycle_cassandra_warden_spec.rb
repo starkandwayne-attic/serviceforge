@@ -166,9 +166,11 @@ describe 'cassandra service - lifecycle on warden' do
     expect(response.status).to eq(204)
 
     ##
-    ## Deprovision
+    ## Deprovision (wait til complete)
     ##
-    delete "/v2/service_instances/#{service_instance_id}"
+    delete "/v2/service_instances/#{service_instance_id}", {
+      "wait_til_deleted" => true
+    }
     expect(response.status).to eq(200)
 
     ##

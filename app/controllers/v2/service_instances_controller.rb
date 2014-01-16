@@ -37,13 +37,23 @@ class V2::ServiceInstancesController < V2::BaseController
       })
       action.perform
 
-      # TODO - archive, not destroy
-      instance.destroy
+      if wait_til_ready?
+        Actions::WaitForServiceInstanceDeletion.new(
+          service_id: service_id,
+          service_instance_id: service_instance_id
+        ).perform
+      end
       status = 200
     else
       status = 410
     end
 
     render status: status, json: {}
+  end
+
+  protected
+
+  def wait_til_ready?
+    params[:wait_til_ready]
   end
 end

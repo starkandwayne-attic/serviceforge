@@ -43,7 +43,7 @@ describe 'etcd service - lifecycle on warden' do
     cleanup_bosh_deployments
   end
 
-  it 'provisions, deprovisions' do
+  it 'async provisions, async deprovisions' do
     ##
     ## Cloud Controller provisions the service instance
     ##
@@ -132,9 +132,11 @@ describe 'etcd service - lifecycle on warden' do
     expect(response.status).to eq(204)
 
     ##
-    ## Deprovision
+    ## Deprovision (wait til complete)
     ##
-    delete "/v2/service_instances/#{service_instance_id}"
+    delete "/v2/service_instances/#{service_instance_id}", {
+      "wait_til_deleted" => true
+    }
     expect(response.status).to eq(200)
 
     ##

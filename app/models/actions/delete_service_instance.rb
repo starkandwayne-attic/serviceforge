@@ -28,12 +28,6 @@ class Actions::DeleteServiceInstance
       status, self.bosh_task_id = bosh_director_client.delete(deployment_name)
       save
       service_instance.destroying!
-      task_status = bosh_director_client.track_task(bosh_task_id)
-      if task_status.to_sym == :done
-        release_networking_and_mark_destroyed
-      else
-        raise FailedDeleteServiceInstance, "BOSH task #{bosh_task_id} completed with status #{task_status}"
-      end
     rescue Bosh::Errors::ResourceNotFound
       release_networking_and_mark_destroyed
     end
@@ -53,5 +47,4 @@ class Actions::DeleteServiceInstance
     bosh_director_client.release_infrastructure_network(service_instance.infrastructure_network)
     service_instance.destroyed!
   end
-
 end

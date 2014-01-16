@@ -53,11 +53,12 @@ class ServiceInstance
     end
     event :deployment_successful do
       transition [:deploying] => :running
+      transition [:destroying] => :destroyed
     end
     event :destroying do
       transition [:running, :failed_deployment] => :destroying
     end
-    event :destroyed do
+    event :deletion_successful do
       transition any => :destroyed
     end
   end
