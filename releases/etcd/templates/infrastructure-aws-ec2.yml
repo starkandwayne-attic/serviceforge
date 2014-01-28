@@ -6,7 +6,7 @@ meta:
 
   stemcell:
     name: bosh-aws-xen-ubuntu
-    version: 1722
+    version: 1858
 
 jobs:
   - name: etcd_leader_z1
