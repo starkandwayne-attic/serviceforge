@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Generators::GenerateDeploymentSpiffFile do
-  let(:service_id)      { '1683fe81-b492-4e92-8282-0cdca7c316e1' } # redis-dedicated-bosh-lite
+  let(:service_id)      { '1683fe81-b492-4e92-8282-0cdca7c316e1' } # redis-dedicated   
   let(:service)         { Service.find_by_id(service_id) }
   let(:deployment_name) { 'deployment-name' }
   let(:director_uuid)   { 'director-uuid' }

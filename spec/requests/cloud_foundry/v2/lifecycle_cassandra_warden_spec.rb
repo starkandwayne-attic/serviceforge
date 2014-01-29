@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'cassandra service - lifecycle on warden' do
   let(:seed)                { RSpec.configuration.seed }
-  let(:service_id)          { '4d1cab61-09ff-4442-a8e7-d270459bd025' } # cassandra-dedicated-bosh-lite
+  let(:service_id)          { '4d1cab61-09ff-4442-a8e7-d270459bd025' } # cassandra-dedicated   
   let(:service)             { Service.find_by_id(service_id) }
   let(:three_server_plan_id) { '4ca347c2-f4da-4d76-8536-f7e0b589c8a2' }
   let(:five_server_plan_id) { '069f3fd0-560d-43a5-840d-3b8aca9e63c2' }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Actions::DeleteBindingCommands do
-  let(:service_id)      { '1683fe81-b492-4e92-8282-0cdca7c316e1' } # redis-dedicated-bosh-lite
+  let(:service_id)      { '1683fe81-b492-4e92-8282-0cdca7c316e1' } # redis-dedicated   
   let(:service_plan_id) { 'e23b4ad6-d33f-4764-803b-d507bb0b95d1' } # 2-servers
 
   let(:service_instance_id)   { 'service-instance-id-1' }

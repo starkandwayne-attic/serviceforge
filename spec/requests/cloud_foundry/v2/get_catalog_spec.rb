@@ -11,7 +11,7 @@ describe 'GET /v2/catalog' do
     expect(services).to have(3).service
 
     service = services.first
-    expect(service.fetch('name')).to eq('etcd-dedicated-bosh-lite')
+    expect(service.fetch('name')).to eq('etcd-dedicated   ')
     expect(service.fetch('description')).to eq('etcd: A highly-available key value store for shared configuration and service discovery')
     expect(service.fetch('bindable')).to be_true
     expect(service.fetch('metadata')).to eq(

@@ -81,7 +81,7 @@ etcd-dedicated   1-server, 5-servers, 3-servers   etcd: A highly-available key v
 You can now provision a service:
 
 ```
-$ gcf create-service etcd-dedicated-bosh-lite 5-servers my-5-pack
+$ gcf create-service etcd-dedicated    5-servers my-5-pack
 ```
 
 ### Custom ngrok subdomain to allow restarts
@@ -153,12 +153,12 @@ $ export appname=service-binding-proxy
 ```
 $ gcf create-service-broker servaas-dev cc secret http://servaas.ngrok.com
 $ ./bin/mark_all_public
-$ gcf create-service redis-dedicated-bosh-lite 1-server redis-1
+$ gcf create-service redis-dedicated    1-server redis-1
 
 # as an admin:
 $ bosh task last
 
-$ gcf create-service redis-dedicated-bosh-lite 3-servers redis-3
+$ gcf create-service redis-dedicated    3-servers redis-3
 
 # as an admin:
 $ bosh task last

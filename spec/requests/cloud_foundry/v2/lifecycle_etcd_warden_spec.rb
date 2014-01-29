@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'etcd service - lifecycle on warden' do
   let(:seed)                { RSpec.configuration.seed }
-  let(:service_id)          { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated-bosh-lite
+  let(:service_id)          { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated   
   let(:service)             { Service.find_by_id(service_id) }
   let(:three_server_plan_id) { '1a448d0e-bc54-4a16-8d2f-ab701be20c40' }
   let(:five_server_plan_id)  { '5cfa57fc-1474-4eb9-9afb' }

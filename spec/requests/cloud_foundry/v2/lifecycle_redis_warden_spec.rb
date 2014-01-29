@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'redis service - lifecycle on warden' do
   let(:seed)                { RSpec.configuration.seed }
-  let(:service_id)          { '1683fe81-b492-4e92-8282-0cdca7c316e1' } # redis-dedicated-bosh-lite
+  let(:service_id)          { '1683fe81-b492-4e92-8282-0cdca7c316e1' } # redis-dedicated   
   let(:service)             { Service.find_by_id(service_id) }
   let(:one_server_plan_id)  { 'f643f60d-7e5e-4fbf-934f-c089ed2f2720' }
   let(:two_server_plan_id)  { 'e23b4ad6-d33f-4764-803b-d507bb0b95d1' }

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe V2::ServiceBindingsController do
   let(:service_binding_id)  { 'binding-123' }
   let(:service)             { instance_double('Service') }
-  let(:service_id)          { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated-bosh-lite
+  let(:service_id)          { 'b9698740-4810-4dc5-8da6-54581f5108c4' } # etcd-dedicated   
   let(:instance_klass)      { class_double('ServiceInstance').as_stubbed_const }
   let(:service_instance_id) { 'instance-1' }
   let(:deployment_name)     { 'deployment-name' }

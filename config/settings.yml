@@ -46,7 +46,7 @@ defaults: &defaults
 <% end %>
 
   services:
-  - name: etcd-dedicated-bosh-lite
+  - name: etcd-dedicated   
     deployment_name_prefix: etcd
     id: b9698740-4810-4dc5-8da6-54581f5108c4
     description: "etcd: A highly-available key value store for shared configuration and service discovery"
@@ -123,7 +123,7 @@ defaults: &defaults
           - name: etcd_z1
             instances: 4
 
-  - name: datastax-cassandra-dedicated-bosh-lite
+  - name: datastax-cassandra-dedicated   
     deployment_name_prefix: cassandra
     id: 4d1cab61-09ff-4442-a8e7-d270459bd025
     description: "Datastax Cassandra: is the right choice when you need scalability and high availability without compromising performance"
@@ -189,7 +189,7 @@ defaults: &defaults
           - name: datastax_cassandra_z1
             instances: 4
 
-  - name: redis-dedicated-bosh-lite
+  - name: redis-dedicated   
     deployment_name_prefix: redis
     id: 1683fe81-b492-4e92-8282-0cdca7c316e1
     description: "redis: An advanced key-value store, can contain strings, hashes, lists, sets and sorted sets."
