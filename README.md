@@ -18,9 +18,9 @@ Services as a Service. Service Broker for Cloud Foundry that is backed by BOSH.
 
 ## Dependencies
 
-* ruby 1.9+
+* ruby 1.9.3p484 through to 2.1.0 (development done against 2.1.0)
 * etcd 0.2 - [install latest release](https://github.com/coreos/etcd/releases/)
-* Redis 2.8.3+ - [install latest release](http://redis.io/download)
+* gcf - [gcf v0.6 beta2](https://github.com/cloudfoundry/cli/releases/tag/v6.0.0-beta2)
 
 ## Run locally
 
@@ -63,10 +63,8 @@ $ gcf create-service-broker etcd-dev cc secret http://77218862.ngrok.com
 
 You now need to make each service plan public so users can provision and bind them. To do this you currently need to get the internal service IDs. Then update the cloud controller `public` attribute for each service plan to `true`.
 
-Note: this uses the old `cf` gem to get the `cf curl` command.
-
 ```
-$ gem install cf jazor
+$ gem install jazor
 $ ./bin/mark_all_public
 ```
 
