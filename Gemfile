@@ -49,7 +49,6 @@ group :development do
 end
 
 group :development do
-  gem 'cf'     # for 'cf curl' command; to allow marking service plans public
   gem 'jazor'
 end
 
