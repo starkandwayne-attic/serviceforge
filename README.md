@@ -93,6 +93,40 @@ The current API looks like:
 
 Notice that the first 7 APIs which begin with `/v2`. These are the Cloud Foundry compliant API endpoints. The other APIs are additional. ServiceForge wants to continue to be a fully-compliant Cloud Foundry service broker; whilst also exploring new realms of awesome functionality. API design is hard. Help appreciated.
 
+## Architecture
+
+Service Forge is an HTTP web app that uses [etcd](https://github.com/coreos/etcd) for DB storage and [BOSH](http://bosh.cloudfoundry.org/) for orchestration of target infrastructures.
+
+     +-------------------+      +------------------+      +-------------------+
+     |                   |      |                  |      |                   |
+     |                   |      |                  |      |  OpenStack/       |
+     |   Service Forge   |+---->|   BOSH           |+---->|  PistonCloud/     |
+     |                   |      |                  |      |  etc              |
+     |                   |      |                  |      |                   |
+     +-------------------+      +------------------+      +-------------------+
+           +         +  +
+           |         |  |
+           |         |  |       +------------------+      +-------------------+
+           v         |  |       |                  |      |                   |
+     +------------+  |  |       |                  |      |                   |
+     |            |  |  +------>|   BOSH           |+---->|  AWS EC2 & VPC    |
+     |  etcd      |  |          |                  |      |                   |
+     |            |  |          |                  |      |                   |
+     +------------+  |          +------------------+      +-------------------+
+                     |
+                     |
+                     |          +------------------+      +-------------------+
+                     |          |                  |      |                   |
+                     |          |                  |      |                   |
+                     +--------->|   BOSH           |+---->|  vSphere          |
+                                |                  |      |                   |
+                                |                  |      |                   |
+                                +------------------+      +-------------------+
+
+## Describing services
+
+
+
 ## Dependencies
 
 * ruby 1.9.3p484 through to 2.1.0 (development done against 2.1.0)
