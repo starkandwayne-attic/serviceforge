@@ -1,12 +1,16 @@
 # Service Forge
 
-The open source framework for building elastic, persistent services on any infrastructure. Services as a Service. A universal Service Broker for Cloud Foundry.
+The open source framework for building elastic, persistent services on any infrastructure. Services as a Service. Simple API to allow users to automate the provisioning, configuration and health of a cluster of VMs that provide a service.
 
      ___              _        ___                 
     / __| ___ _ ___ _(_)__ ___| __|__ _ _ __ _ ___ 
     \__ \/ -_) '_\ V / / _/ -_) _/ _ \ '_/ _` / -_)
     |___/\___|_|  \_/|_\__\___|_|\___/_| \__, \___|
                                          |___/     
+
+Use one of the [community catalog](https://github.com/serviceforge-community) of ServiceForge Services, or build your own!
+
+Fully integrated into Cloud Foundry as a universal Service Broker.
 
 
 ## Project Health
