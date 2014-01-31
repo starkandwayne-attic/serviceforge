@@ -13,6 +13,68 @@ The open source framework for building elastic, persistent services on any infra
 
 [![Code Climate](https://codeclimate.com/repos/52cee12f69568028a6006386/badges/5b9bd68a2791fdb88339/gpa.png)](https://codeclimate.com/repos/52cee12f69568028a6006386/feed)
 
+## API Examples
+
+Get a list of available services and service plans. [Cloud Foundry v2 compliant]
+
+```
+curl -XGET -u cc:secret http://serviceforge.ngrok.com/v2/catalog
+```
+
+Create a new service instance [Cloud Foundry v2 compliant]
+
+```
+$ curl -XPUT -u cc:secret -F service_id=b9698740-4810-4dc5-8da6-54581f5108c4 -F plan_id=6e8ece8c-4fe6-4d58-9aeb-497d6aeba113 http://serviceforge.ngrok.com/v2/service_instances/my-etdc-server
+{"dashboard_url":"http://cc:secret@serviceforge.ngrok.com/service_instances/my-etdc-server"}
+```
+
+The `dashboard_url` should be the same URL used to invoke API calls. It is returned to be compliant with the Cloud Foundry v2 API, and to allow Cloud Foundry clients to discover the ServiceForge API endpoint.
+
+NOTE: In future the `dashboard_url` field will stop returning the admin credentials and instead support the Cloud Foundry SSO system for user authentication and authorization.
+
+Create unique end-user credentials for the service and fetch connection information [Cloud Foundry v2 compliant]
+
+```
+$ curl -XPUT -u cc:secret -F service_id=b9698740-4810-4dc5-8da6-54581f5108c4 -F plan_id=6e8ece8c-4fe6-4d58-9aeb-497d6aeba113 http://serviceforge.ngrok.com/v2/service_instances/my-etdc-server/service_bindings/my-etcd-server-user-1
+{"error":"Service Instance not ready for binding; state deploying"}
+```
+
+The previous API call to create the service returns quickly. The service itself may not have completed being provisioned, configured and running.
+
+To poll for the current state of a service instance, say to check until its state changes from `deploying` (above) to `running`:
+
+```
+$ curl -XGET -u cc:secret http://serviceforge.ngrok.com/service_instances/my-etdc-server
+{"service_id":"b9698740-4810-4dc5-8da6-54581f5108c4","service_instance_id":"my-etdc-server","service_plan_id":"6e8ece8c-4fe6-4d58-9aeb-497d6aeba113","deployment_name":"etcd-my-etdc-server","infrastructure_network":{"ip_range_start":"10.244.2.40","template":"/Users/drnic/Sites/serviceforge/infrastructure_pools/warden/10.244.2.40.yml"},"state":"running","latest_bosh_deployment_task_id":"16"}%
+```
+
+The state of the service instance is now `running` so we can try binding again:
+
+```
+$ curl -XPUT -u cc:secret -F service_id=b9698740-4810-4dc5-8da6-54581f5108c4 -F plan_id=6e8ece8c-4fe6-4d58-9aeb-497d6aeba113 http://serviceforge.ngrok.com/v2/service_instances/my-etdc-server/service_bindings/my-etcd-server-user-1
+{"service_binding_id":"my-etcd-server-user-1","service_instance_id":"my-etdc-server","credentials":{"port":4001,"host":"10.244.2.42"}}
+```
+
+The result is compliant with the Cloud Foundry v2 API, and includes the `credentials` information that a client application would need to connect to the running service instance.
+
+In this example, the etcd service was not implemented to support per-user usernames and passwords.
+
+When an end-user application no longer requires the connection credentials, they can be requested to be deleted. [Cloud Foundry v2 compliant]
+
+```
+$ curl -XDELETE -u cc:secret http://serviceforge.ngrok.com/v2/service_instances/my-etdc-server/service_bindings/my-etcd-server-user-1
+{}
+```
+
+And finally, the service instance and all the provisioned infrastructure associated with it can be requested to be deleted. [Cloud Foundry v2 compliant]
+
+```
+$ curl -XDELETE -u cc:secret http://serviceforge.ngrok.com/v2/service_instances/my-etdc-server
+```
+
+This API currently blocks until the underlying infrastructure is completely destroyed.
+
+
 ## Dependencies
 
 * ruby 1.9.3p484 through to 2.1.0 (development done against 2.1.0)
