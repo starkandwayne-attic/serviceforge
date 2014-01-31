@@ -78,6 +78,20 @@ $ curl -XDELETE -u cc:secret http://localhost:5000/v2/service_instances/my-etdc-
 
 This API currently blocks until the underlying infrastructure is completely destroyed.
 
+### API overview
+
+The current API looks like:
+
+* GET    /v2/catalog
+* PATCH  /v2/service_instances/:service_instance_id/service_bindings/:id
+* PUT    /v2/service_instances/:service_instance_id/service_bindings/:id
+* DELETE /v2/service_instances/:service_instance_id/service_bindings/:id
+* PATCH  /v2/service_instances/:id
+* PUT    /v2/service_instances/:id
+* DELETE /v2/service_instances/:id
+* GET    /service_instances/:id
+
+Notice that the first 7 APIs which begin with `/v2`. These are the Cloud Foundry compliant API endpoints. The other APIs are additional. ServiceForge wants to continue to be a fully-compliant Cloud Foundry service broker; whilst also exploring new realms of awesome functionality. API design is hard. Help appreciated.
 
 ## Dependencies
 
