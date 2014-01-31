@@ -515,7 +515,7 @@ development:
 
   extra_deployment_name_prefix: ~
 
-  base_url: http://serviceforge.ngrok.com
+  base_url: <%= ENV['SERVICEFORGE_BASE_URL'] || 'http://127.0.0.1:5000' %>
 
   <<: *defaults
 
