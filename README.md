@@ -86,7 +86,7 @@ $ gcf create-service etcd-dedicated    5-servers my-5-pack
 
 If you stop/restart your ngrok tunnel, you will be given a new URL and you will need to update the `broker_url` for your Cloud Controller Service Broker.
 
-Instead, use a custom subdomain. For this, create a free Ngrok account and on the dashboard, register a subdomain such as "servaas-USERNAME":
+Instead, use a custom subdomain. For this, create a free Ngrok account and on the dashboard, register a subdomain such as "serviceforge-USERNAME":
 
 ![register-subdomain](https://www.evernote.com/shard/s3/sh/37aea898-fa01-46fb-9d38-f3bfcff9372f/4ac10117d828f5e8e8686df4306c3b34/deep/0/ngrok---secure-introspectable-tunnels-to-localhost.png)
 
@@ -102,7 +102,7 @@ Now edit to add your subdomain, and your Ngrok auth token (from the dashboard).
 auth_token: MY_TOKEN
 tunnels:
   broker:
-    subdomain: servaas-USERNAME
+    subdomain: serviceforge-USERNAME
     proto:
       http: 5000
 ```
@@ -113,7 +113,7 @@ You can now run Ngrok with your custom domain and credentials:
 $ ngrok -config config/environments/development/ngrok.conf start broker
 Tunnel Status                 online                                                                                                                                              
 Version                       1.6/1.5                                                                                                                                             
-Forwarding                    http://servaas-drnic.ngrok.com -> 127.0.0.1:5000                                                                                                          
+Forwarding                    http://serviceforge-drnic.ngrok.com -> 127.0.0.1:5000                                                                                                          
 Web Interface                 127.0.0.1:4040                                                                                                                                      
 # Conn                        0                                                                                                                                                   
 Avg Conn Time                 0.00ms
@@ -149,7 +149,7 @@ $ export appname=service-binding-proxy
 ```
 
 ```
-$ gcf create-service-broker servaas-dev cc secret http://servaas.ngrok.com
+$ gcf create-service-broker serviceforge-dev cc secret http://serviceforge.ngrok.com
 $ ./bin/mark_all_public
 $ gcf create-service redis-dedicated    1-server redis-1
 
@@ -178,5 +178,5 @@ $ gcf delete-service redis-3
 You can now remove the broker with:
 
 ```
-$ gcf delete-service-broker servaas-dev
+$ gcf delete-service-broker serviceforge-dev
 ```

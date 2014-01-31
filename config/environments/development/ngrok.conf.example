@@ -1,6 +1,6 @@
 auth_token: MY_TOKEN
 tunnels:
   broker:
-    subdomain: servaas-myusername
+    subdomain: serviceforge-myusername
     proto:
       http: 5000

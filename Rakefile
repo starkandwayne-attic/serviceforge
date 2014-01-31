@@ -3,4 +3,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Servaas::Application.load_tasks
+ServiceForge::Application.load_tasks

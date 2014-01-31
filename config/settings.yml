@@ -515,7 +515,7 @@ development:
 
   extra_deployment_name_prefix: ~
 
-  base_url: http://servaas.ngrok.com
+  base_url: http://serviceforge.ngrok.com
 
   <<: *defaults
 
