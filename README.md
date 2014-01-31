@@ -1,15 +1,12 @@
-# Nameless
+# Service Forge
 
-The nameless project. Name me!
+The open source framework for building elastic, persistent services on any infrastructure. Services as a Service. A universal Service Broker for Cloud Foundry.
 
-Services as a Service. Service Broker for Cloud Foundry that is backed by BOSH.
-
-     _   _                      _               
-    | \ | |                    | |              
-    |  \| | __ _ _ __ ___   ___| | ___  ___ ___ 
-    | . ` |/ _` | '_ ` _ \ / _ \ |/ _ \/ __/ __|
-    | |\  | (_| | | | | | |  __/ |  __/\__ \__ \
-    |_| \_|\__,_|_| |_| |_|\___|_|\___||___/___/
+     ___              _        ___                 
+    / __| ___ _ ___ _(_)__ ___| __|__ _ _ __ _ ___ 
+    \__ \/ -_) '_\ V / / _/ -_) _/ _ \ '_/ _` / -_)
+    |___/\___|_|  \_/|_\__\___|_|\___/_| \__, \___|
+                                         |___/     
 
 
 ## Project Health
