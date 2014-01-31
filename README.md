@@ -80,6 +80,7 @@ This API currently blocks until the underlying infrastructure is completely dest
 * ruby 1.9.3p484 through to 2.1.0 (development done against 2.1.0)
 * etcd 0.2 - [install latest release](https://github.com/coreos/etcd/releases/)
 * gcf - [gcf v0.6 beta2](https://github.com/cloudfoundry/cli/releases/tag/v6.0.0-beta2)
+* spiff - [spiff v0.3](https://github.com/cloudfoundry-incubator/spiff/releases)
 
 ## Run locally
 
