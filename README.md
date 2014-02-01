@@ -148,7 +148,7 @@ The features of the CLI that are extended:
 
 Perhaps the most interesting aspect of ServiceForge is to create and publish services. There are many ways to configure Postgresql or Cassandra, and so there may be many ServiceForge Services for each technology. There is a [community catalog](https://github.com/serviceforge-community) that you might like to share with, or help contribute to. Alternately, if you're writing new services then these may be useful examples to learn from.
 
-When preparing to author a service, it may be useful to know what ServiceForge & BOSH provides for you.
+When preparing to author a service, it may be useful to know what ServiceForge & BOSH provides your service when it is up and running.
 
 * A persistent disk (such as an EBS volume on AWS) will be mounted at `/var/vcap/store` on each server. This volume is where your service should store persistent data. ServiceForge & BOSH will automatically unmount this disk and remount it new VMs when end-users resize their servers, or upgrade the base operating system kernel. Similarly, if the server is killed (by the infrastructure provider or an administrator) and BOSH resurrects the server, the persistent disk will be remounted.
 * An ephemeral disk (such as a local disk on the VMs host machine) will be mounted at `/var/vcap/data` on each server. This volume is where your service should store log files and other temporary data.
