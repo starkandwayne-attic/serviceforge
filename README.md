@@ -155,13 +155,18 @@ The features of the CLI that are extended:
 
 Perhaps the most interesting aspect of ServiceForge is to create and publish services. There are many ways to configure Postgresql or Cassandra, and so there may be many ServiceForge Services for each technology. There is a [community catalog](https://github.com/serviceforge-community) that you might like to share with, or help contribute to. Alternately, if you're writing new services then these may be useful examples to learn from.
 
+### What is provided
+
 When preparing to author a service, it may be useful to know what ServiceForge & BOSH provides your service when it is up and running.
 
-* A persistent disk (such as an EBS volume on AWS) will be mounted at `/var/vcap/store` on each server. This volume is where your service should store persistent data. ServiceForge & BOSH will automatically unmount this disk and remount it new VMs when end-users resize their servers, or upgrade the base operating system kernel. Similarly, if the server is killed (by the infrastructure provider or an administrator) and BOSH resurrects the server, the persistent disk will be remounted.
-* An ephemeral disk (such as a local disk on the VMs host machine) will be mounted at `/var/vcap/data` on each server. This volume is where your service should store log files and other temporary data.
-* Processes that you want to start and keep running will be monitored via [monit](http://mmonit.com/monit/). In the simple case, you would use monit to run the service daemon, such as PostgreSQL or Cassandra/Java. If you want to dynamically create/remove processes, then you would author a fancy agent thingy that itself would be monitored by monit; and you'd want to perhaps use an additional monitoring service. Say, like monit. SO MANY LAYERS! Your call. But you get monit and you need to use it for the top level processes.
-* Processes that you want to run can be configured with configuration files. You provide the templates when you author the service and ServiceForge & BOSH will apply the runtime data to them before the processes are started. Just like writing a Chef cookbook, but without all the Chef cookbook, I guess. Just the template files.
+* **Automation for provisioning servers** on supported IaaS (such as AWS, OpenStack, vSphere)
+* Automation for managing the **networking bindings of servers**. For example, if a single network is to be shared across all ServiceForge running services (single VMs, or clusters of dozens of machines), then ServiceForge will automate the allocation of IPs to each server.
+* A **persistent disk** (such as an EBS volume on AWS) will be mounted at `/var/vcap/store` on each server. This volume is where your service should store persistent data. ServiceForge & BOSH will automatically unmount this disk and remount it new VMs when end-users resize their servers, or upgrade the base operating system kernel. Similarly, if the server is killed (by the infrastructure provider or an administrator) and BOSH resurrects the server, the persistent disk will be remounted.
+* An **ephemeral disk** (such as a local disk on the VMs host machine) will be mounted at `/var/vcap/data` on each server. This volume is where your service should store log files and other temporary data.
+* **Processes are monitored** (to start and keep running) via [monit](http://mmonit.com/monit/). In the simple case, you would use monit to run the service daemon, such as PostgreSQL or Cassandra/Java. If you want to dynamically create/remove processes, then you would author a fancy agent thingy that itself would be monitored by monit; and you'd want to perhaps use an additional monitoring service. Say, like monit. SO MANY LAYERS! Your call. But you get monit and you need to use it for the top level processes.
+* **Processes can be configured** with configuration files. You provide the templates when you author the service and ServiceForge & BOSH will apply the runtime data to them before the processes are started. Just like writing a Chef cookbook, but without all the Chef cookbook, I guess. Just the template files.
 * You'll want to tell monit how to run your service's processes. You'll do that in one of the template files. You'll see where. There's a generator to get you started. You'll figure it out quickly.
+* **Versioned upgrades of running services.** Each running service can independently manage the upgrade of its packages and configuration files. Service authors can confidently release new versions. Service users determine if/when to trigger upgrades.
 
 ## Dependencies
 
