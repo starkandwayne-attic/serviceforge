@@ -161,11 +161,30 @@ There may be automated tools to simplify the installation of Service Releases in
 
 1. Install BOSH releases
 
-  You will be provided with one or more `tgz` files that are BOSH releases. To install each one:
+  Each Service Release may be composed of one or more BOSH Releases. You will be provided with one or more `tgz` files that are BOSH releases. To install each one:
 
   ```
   bosh upload release RELEASE-VERSION.tgz
   ```
+
+1. Install BOSH stemcells
+
+  Each Service Release will require at least one BOSH stemcell (and most Service Releases will only use a single BOSH stemcell) which represents a base server image, such as Ubuntu or CentOS. These may be either distributed with the Service Release, or be available from the public list of BOSH stemcells. They are distributed as `tgz` files.
+
+  To find a list of stemcells and then download a public shared stemcell:
+
+  ```
+  bosh public stemcells
+  bosh download public stemcell bosh-stemcell-1868-aws-xen-ubuntu.tgz
+  ```
+
+  To install a stemcell:
+
+  ```
+  bosh upload stemcell bosh-stemcell-1868-aws-xen-ubuntu.tgz
+  ```
+
+  BOSH will then convert this into a native image for the target infrastructure. For example, it will create an AMI in the target region of AWS in the example above.
 
 ## Authoring services
 
