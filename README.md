@@ -153,13 +153,13 @@ The features of the CLI that are extended:
 
 ## Installing Service Releases
 
-Once you have ServiceForge running (which includes one or more BOSHs, one per target infrastructure/region/account), you will need to install Service Releases.
+Once you have ServiceForge running (which includes one or more BOSHs, one per target infrastructure/region/account), you will need to install Service Releases. Service Releases are built to be independent of your target infrastructure and independent of the Internet. That's right, you can install any Service Release into a private, locked-down data center running OpenStack or vSphere.
 
 You can find open source, community-contributed Service Releases in the [ServiceForge Community](https://github.com/serviceforge-community) organization on GitHub. There may also be commercially sold Service Releases. Finally, you may wish to [author your own Service Releases](#authoring-services).
 
-There may be automated tools to simplify the installation of Service Releases in future. Without tooling, the following steps are the granular steps to install a new Service Release:
+There may be automated tools to simplify the installation of Service Releases in future. The following steps are the granular steps to install a new Service Release.
 
-1. Install BOSH releases
+1. Install BOSH releases to BOSH
 
   Each Service Release may be composed of one or more BOSH Releases. You will be provided with one or more `tgz` files that are BOSH releases. To install each one:
 
@@ -167,7 +167,7 @@ There may be automated tools to simplify the installation of Service Releases in
   bosh upload release RELEASE-VERSION.tgz
   ```
 
-1. Install BOSH stemcells
+1. Install BOSH stemcells to BOSH
 
   Each Service Release will require at least one BOSH stemcell (and most Service Releases will only use a single BOSH stemcell) which represents a base server image, such as Ubuntu or CentOS. These may be either distributed with the Service Release, or be available from the public list of BOSH stemcells. They are distributed as `tgz` files.
 
@@ -185,6 +185,16 @@ There may be automated tools to simplify the installation of Service Releases in
   ```
 
   BOSH will then convert this into a native image for the target infrastructure. For example, it will create an AMI in the target region of AWS in the example above.
+
+1. Install Service Metadata & Spiff templates to ServiceForge
+
+  Another `tgz` file that contains a collection of YAML files. They include a metadata file describing the Service and different Service Plans, plus the YAML templates (called Spiff templates) that will be used to instruct BOSH how to deploy your BOSH release. 
+
+  You upload these to ServiceForge:
+
+  ```
+  serviceforge install serviceforge-RELEASE-VERSION.tgz
+  ```
 
 ## Authoring services
 
