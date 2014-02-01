@@ -151,11 +151,17 @@ The features of the CLI that are extended:
 * `gcf services` - shows an additional table column for the running state of the service
 * `gcf create-service` - waits patiently until the service instance is completely provisioned and the underlying BOSH deployment has completed. Uses the `dashboard_url` as its mechanism for polling for the running state of the service instance.
 
+## Installing Service Releases
+
+Once you have ServiceForge running (which includes one or more BOSHs, one per target infrastructure/region/account), you will need to install Service Releases.
+
+You can find open source, community-contributed Service Releases in the [ServiceForge Community](https://github.com/serviceforge-community) organization on GitHub. There may also be commercially sold Service Releases. Finally, you may wish to [author your own Service Releases](#authoring-services).
+
 ## Authoring services
 
 Perhaps the most interesting aspect of ServiceForge is to create and publish services. There are many ways to configure Postgresql or Cassandra, and so there may be many ServiceForge Services for each technology. There is a [community catalog](https://github.com/serviceforge-community) that you might like to share with, or help contribute to. Alternately, if you're writing new services then these may be useful examples to learn from.
 
-### What is provided
+### What is provided?
 
 When preparing to author a service, it may be useful to know what ServiceForge & BOSH provides your service when it is up and running.
 
@@ -166,11 +172,16 @@ When preparing to author a service, it may be useful to know what ServiceForge &
 * **Processes are monitored** (to start and keep running) via [monit](http://mmonit.com/monit/). In the simple case, you would use monit to run the service daemon, such as PostgreSQL or Cassandra/Java. If you want to dynamically create/remove processes, then you would author a fancy agent thingy that itself would be monitored by monit; and you'd want to perhaps use an additional monitoring service. Say, like monit. SO MANY LAYERS! Your call. Keep it simple and static or make is fancy and dynamic. You get monit and you need to use it for the top level processes.
 * **Processes can be configured** with configuration files. You provide the templates when you author the service and ServiceForge & BOSH will apply the runtime data to them before the processes are started. Just like writing a Chef cookbook, but without Ruby code in the Chef cookbook, I guess. Just the template files.
 * You'll want to tell monit how to run your service's processes. You'll do that in one of the template files. You'll see where. There's a generator to get you started. You'll figure it out quickly.
-* **Versioned upgrades of running services.** Each running service can independently manage the upgrade of its packages and configuration files. Service authors can confidently release new versions. Service users determine if/when to trigger upgrades.
-* **Base images for servers** that are available for all target infrastructures. Thanks to BOSH, ServiceForge offers service authors consistent base images for your services to use. Regardless of the target infrastructure that someone is using to run your service (AWS, vSphere, OpenStack) they will be using the same base image. Currently there are Ubuntu & CentOS base images.
+* **Versioned upgrades of running services.** Each running service can independently manage the upgrade of its packages and configuration files. Service Authors can confidently release new versions. Service users determine if/when to trigger upgrades.
+* **Base images for servers** that are available for all target infrastructures. Thanks to BOSH, ServiceForge offers Service Authors consistent base images for your services to use. Regardless of the target infrastructure that someone is using to run your service (AWS, vSphere, OpenStack) they will be using the same base image. Currently there are Ubuntu & CentOS base images.
+
+### What are the artifacts for a Service Release?
+
+
 
 ## Dependencies
 
+* BOSH/MicroBOSH/bosh-lite
 * ruby 1.9.3p484 through to 2.1.0 (development done against 2.1.0)
 * etcd 0.2 - [install latest release](https://github.com/coreos/etcd/releases/)
 * gcf - [gcf v0.6 beta2](https://github.com/cloudfoundry/cli/releases/tag/v6.0.0-beta2)
