@@ -157,6 +157,16 @@ Once you have ServiceForge running (which includes one or more BOSHs, one per ta
 
 You can find open source, community-contributed Service Releases in the [ServiceForge Community](https://github.com/serviceforge-community) organization on GitHub. There may also be commercially sold Service Releases. Finally, you may wish to [author your own Service Releases](#authoring-services).
 
+There may be automated tools to simplify the installation of Service Releases in future. Without tooling, the following steps are the granular steps to install a new Service Release:
+
+1. Install BOSH releases
+
+  You will be provided with one or more `tgz` files that are BOSH releases. To install each one:
+
+  ```
+  bosh upload release RELEASE-VERSION.tgz
+  ```
+
 ## Authoring services
 
 Perhaps the most interesting aspect of ServiceForge is to create and publish services. There are many ways to configure Postgresql or Cassandra, and so there may be many ServiceForge Services for each technology. There is a [community catalog](https://github.com/serviceforge-community) that you might like to share with, or help contribute to. Alternately, if you're writing new services then these may be useful examples to learn from.
@@ -177,6 +187,14 @@ When preparing to author a service, it may be useful to know what ServiceForge &
 
 ### What are the artifacts for a Service Release?
 
+See the section [Installing Service Releases](#installing-service-releases) for a Service Installer's view of the artifacts that they install into ServiceForge & BOSH.
+
+In summary:
+
+* BOSH releases - complete distribution of all packages, configuration file templates and executable scripts that describes how a Service is implemented
+* BOSH stemcell - the base image of servers. Either provide a custom stemcell or reference a public Ubuntu or CentOS base image
+* Spiff templates - various portions of configuration that are specific to: each supported infrastructure, networking, the specific Service, each provided Service Plan, and for each Service Binding User.
+* Metadata - documenting the available Service and each Service Plan. This will reference the other assets above.
 
 
 ## Dependencies
