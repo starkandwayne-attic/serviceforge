@@ -12,6 +12,13 @@ Use one of the [community catalog](https://github.com/serviceforge-community) of
 
 Fully integrated into Cloud Foundry as a universal Service Broker.
 
+Build your services with open source projects or proprietary. Wrap your running processes in Docker, Warden, bare LXC, or run them directly on the machine.
+
+Project code generators to make it faster to create new services.
+
+Ops tools to help administrators to provide hands-on assistance to running services, such as DBs. Integration options for monitoring, alerting & logging.
+
+ServiceForge's primary focus is on providing an orchestration platform for underlying infrastructure, with a simple user-facing API (including Cloud Foundry integration), and allowing people to write their own configuration management & service technologies.
 
 ## Project Health
 
