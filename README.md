@@ -123,6 +123,27 @@ Service Forge is an HTTP web app that uses [etcd](https://github.com/coreos/etcd
                                 |                  |      |                   |
                                 +------------------+      +-------------------+
 
+### Cloud Foundry Service Broker
+
+Service Forge can be integrated with a private Cloud Foundry installation as a service broker. At a high-level, this looks like:
+
+                      +-------------------+           +-------------------+
+                      |                   |           |                   |
+                      |                   |           |                   |
+    Superpowered      | Cloud Foundry     +---------->|   Service Forge   |
+    CF CLI    +------>| Cloud Controller  |           |                   |
+                      |                   |           |                   |
+                      +-------------------+           +-------------------+
+
+## Cloud Foundry CLI
+
+To support the additional functionality of ServiceForge, an extended CLI is provided for Cloud Foundry users. It is a fork of the Cloud Foundry [cli](https://github.com/cloudfoundry/cli) written in the Go language. An attempt is made to keep versions of the extended CLI kept up-to-date with new version of the basic Cloud Foundry CLI.
+
+The features of the CLI that are extended:
+
+* `gcf services` - shows an additional table column for the running state of the service
+* `gcf create-service` - waits patiently until the service instance is completely provisioned and the underlying BOSH deployment has completed. Uses the `dashboard_url` as its mechanism for polling for the running state of the service instance.
+
 ## Describing services
 
 
